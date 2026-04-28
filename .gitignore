@@ -1,0 +1,6 @@
+.DS_Store
+*.tmp
+*.log
+*.local.*
+# 若希望本地私有覆盖且不提交，可复制 api-config.example.js 命名为：
+# api-config.local.js （并在 index.html 再挂一行脚本；仓库默认仅用 api-config.js）

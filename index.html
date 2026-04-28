@@ -1,0 +1,3484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DanceNet.Lab — 身体、运动与机器</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═════════════════════════════════════════════════════════════
+   DESIGN SYSTEM · DanceNet.Lab v2 (Editorial / Curatorial)
+   Inspired by Google Arts & Culture editorial language
+═════════════════════════════════════════════════════════════ */
+:root {
+    /* Surfaces */
+    --ink:    #0a0908;
+    --ink-2:  #11100e;
+    --ink-3:  #181613;
+
+    /* Text — warm "paper" tones */
+    --paper:        #ebe7df;
+    --paper-soft:   rgba(235,231,223,0.62);
+    --paper-faint:  rgba(235,231,223,0.32);
+    --paper-trace:  rgba(235,231,223,0.14);
+
+    /* Single accent — museum-light gold */
+    --gold:       #d4a574;
+    --gold-deep:  #b8895f;
+    --gold-soft:  rgba(212,165,116,0.18);
+
+    /* Rare semantic — used like museum signage */
+    --ember:  #b54338;
+    --moss:   #6b8062;
+
+    /* Lines */
+    --line:      rgba(235,231,223,0.1);
+    --line-mid:  rgba(235,231,223,0.22);
+    --line-strong: rgba(235,231,223,0.4);
+
+    /* Type */
+    --f-serif: 'Instrument Serif', 'Cormorant Garamond', Georgia, serif;
+    --f-sans:  'Plus Jakarta Sans', -apple-system, sans-serif;
+    --f-mono:  'JetBrains Mono', monospace;
+
+    /* Spacing */
+    --gutter:  clamp(24px, 6vw, 96px);
+    --nav-h:   58px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { background: var(--ink); }
+body {
+    font-family: var(--f-sans);
+    font-weight: 300;
+    background: var(--ink);
+    color: var(--paper);
+    overflow-x: hidden;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: var(--gold); color: var(--ink); }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: var(--paper-trace); border-radius: 2px; }
+
+/* ═════════════════════════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+═════════════════════════════════════════════════════════════ */
+.serif       { font-family: var(--f-serif); font-weight: 400; }
+.serif-it    { font-family: var(--f-serif); font-style: italic; font-weight: 400; }
+.mono        { font-family: var(--f-mono); }
+.eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+}
+.eyebrow-gold { color: var(--gold); }
+.rule {
+    height: 1px; background: var(--line); width: 100%;
+}
+
+/* Display headlines */
+.display-1 {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(56px, 10vw, 156px);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    text-wrap: pretty;
+    color: var(--paper);
+}
+.display-2 {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(40px, 6.5vw, 100px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-wrap: pretty;
+}
+.display-3 {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(32px, 4vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    text-wrap: pretty;
+}
+.section-title {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(28px, 3vw, 44px);
+    line-height: 1.15;
+    color: var(--paper);
+    text-wrap: pretty;
+}
+.lede {
+    font-family: var(--f-sans);
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--paper-soft);
+    text-wrap: pretty;
+    max-width: 56ch;
+}
+.body-text {
+    font-size: 15.5px;
+    font-weight: 300;
+    line-height: 1.78;
+    color: var(--paper-soft);
+    text-wrap: pretty;
+}
+
+/* ═════════════════════════════════════════════════════════════
+   NAVIGATION
+═════════════════════════════════════════════════════════════ */
+.nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--nav-h);
+    padding: 0 var(--gutter);
+    display: flex; align-items: center; gap: 40px;
+    border-bottom: 1px solid transparent;
+    transition: background 0.4s ease, border-color 0.4s ease;
+}
+.nav.scrolled {
+    background: rgba(10,9,8,0.82);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom-color: var(--line);
+}
+
+.nav-brand {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 18px; letter-spacing: 0.01em;
+    color: var(--paper); cursor: pointer; text-decoration: none;
+    user-select: none;
+    display: flex; align-items: baseline; gap: 8px;
+}
+.nav-brand-mark {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
+    display: inline-block; transform: translateY(-3px);
+    box-shadow: 0 0 8px var(--gold);
+}
+
+.nav-spacer { flex: 1; }
+
+.nav-links { display: flex; gap: 4px; }
+
+.nav-link {
+    background: none; border: none; cursor: pointer;
+    font-family: var(--f-mono);
+    font-size: 11px; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--paper-soft);
+    padding: 8px 14px;
+    transition: color 0.2s;
+    position: relative;
+}
+.nav-link:hover { color: var(--paper); }
+.nav-link.active { color: var(--gold); }
+.nav-link.active::after {
+    content: ''; position: absolute;
+    left: 14px; right: 14px; bottom: 2px;
+    height: 1px; background: var(--gold);
+}
+
+.nav-meta {
+    font-family: var(--f-mono);
+    font-size: 10.5px; letter-spacing: 0.14em;
+    color: var(--paper-faint);
+    text-transform: uppercase;
+}
+
+/* ═════════════════════════════════════════════════════════════
+   PAGE SYSTEM
+═════════════════════════════════════════════════════════════ */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ═════════════════════════════════════════════════════════════
+   HOME · HERO
+═════════════════════════════════════════════════════════════ */
+.hero {
+    height: 100vh;
+    min-height: 720px;
+    position: relative;
+    overflow: hidden;
+}
+#hero-canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; display: block;
+}
+.hero-vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(10,9,8,0.55) 75%, rgba(10,9,8,0.92) 100%);
+    pointer-events: none;
+}
+.hero-meta-top {
+    position: absolute; top: calc(var(--nav-h) + 24px); left: var(--gutter); right: var(--gutter);
+    display: flex; justify-content: space-between; align-items: center;
+    pointer-events: none;
+}
+.hero-meta-top .left,
+.hero-meta-top .right {
+    font-family: var(--f-mono);
+    font-size: 10.5px; letter-spacing: 0.16em;
+    color: var(--paper-faint);
+    text-transform: uppercase;
+}
+.hero-content {
+    position: absolute; left: var(--gutter); right: var(--gutter); bottom: 9vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 40px; align-items: end;
+}
+.hero-headline { grid-column: 1 / 2; }
+.hero-headline .label {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--f-mono); font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 22px;
+}
+.hero-headline .label::before {
+    content: ''; width: 28px; height: 1px; background: var(--gold);
+}
+
+.hero-pull {
+    grid-column: 2 / 3;
+    display: flex; flex-direction: column; gap: 18px;
+    padding-bottom: 4px;
+    max-width: 480px; margin-left: auto;
+}
+.hero-pull .lede { color: var(--paper); }
+.hero-pull-meta {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.16em; color: var(--paper-faint);
+    text-transform: uppercase;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+    display: flex; justify-content: space-between;
+}
+
+.hero-cta {
+    display: inline-flex; align-items: center; gap: 14px;
+    font-family: var(--f-mono); font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--paper); cursor: pointer;
+    background: none; border: none;
+    padding: 14px 0;
+    transition: color 0.2s;
+}
+.hero-cta-arrow {
+    width: 36px; height: 1px; background: var(--paper);
+    position: relative; transition: width 0.3s, background 0.2s;
+}
+.hero-cta-arrow::after {
+    content: ''; position: absolute; right: 0; top: -3px;
+    width: 7px; height: 7px;
+    border-top: 1px solid var(--paper);
+    border-right: 1px solid var(--paper);
+    transform: rotate(45deg);
+}
+.hero-cta:hover { color: var(--gold); }
+.hero-cta:hover .hero-cta-arrow { background: var(--gold); width: 56px; }
+.hero-cta:hover .hero-cta-arrow::after {
+    border-top-color: var(--gold); border-right-color: var(--gold);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   ISSUE BAR (under hero)
+═════════════════════════════════════════════════════════════ */
+.issue-bar {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 18px var(--gutter);
+    display: flex; gap: 60px; align-items: center;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.issue-bar::-webkit-scrollbar { display: none; }
+.issue-bar > div {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--paper-faint);
+    white-space: nowrap;
+    display: flex; align-items: center; gap: 10px;
+}
+.issue-bar strong { color: var(--paper); font-weight: 500; }
+.issue-bar .dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--paper-faint);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   SECTION HEADER
+═════════════════════════════════════════════════════════════ */
+.sec {
+    padding: clamp(60px, 10vh, 120px) var(--gutter);
+}
+
+.sec-head {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 60px;
+    margin-bottom: 60px;
+    align-items: baseline;
+}
+.sec-head-num {
+    font-family: var(--f-mono);
+    font-size: 11px; letter-spacing: 0.2em;
+    color: var(--gold); text-transform: uppercase;
+    border-top: 1px solid var(--gold);
+    padding-top: 12px;
+}
+.sec-head-num span {
+    display: block; margin-top: 4px;
+    color: var(--paper-faint);
+    font-size: 10.5px;
+}
+
+/* ═════════════════════════════════════════════════════════════
+   TODAY · FEATURED EXHIBIT
+═════════════════════════════════════════════════════════════ */
+.today {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 70px;
+    align-items: stretch;
+}
+.today-image {
+    aspect-ratio: 4 / 5;
+    background: var(--ink-2);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
+}
+.today-image:hover { transform: translateY(-4px); }
+.today-image canvas { width: 100%; height: 100%; display: block; }
+.today-image-tag {
+    position: absolute; top: 24px; left: 24px;
+    padding: 6px 12px; background: rgba(10,9,8,0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--line-mid);
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--gold);
+}
+.today-image-caption {
+    position: absolute; bottom: 24px; left: 24px; right: 24px;
+    display: flex; justify-content: space-between; align-items: flex-end;
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper-soft);
+}
+
+.today-text {
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    padding: 8px 0;
+}
+.today-eyebrow {
+    font-family: var(--f-mono); font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 24px;
+    border-top: 1px solid var(--gold);
+    padding-top: 14px; width: fit-content;
+}
+.today-title {
+    font-family: var(--f-serif);
+    font-size: clamp(36px, 4.5vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--paper);
+    margin-bottom: 10px;
+    text-wrap: pretty;
+}
+.today-title em { font-style: italic; color: var(--gold); }
+.today-sub {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 22px; color: var(--paper-soft);
+    margin-bottom: 28px; line-height: 1.3;
+}
+.today-body { margin-bottom: 36px; }
+.today-meta {
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+.today-meta-item {
+    font-family: var(--f-mono);
+    font-size: 10.5px; letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+.today-meta-item .k { color: var(--paper-faint); display: block; margin-bottom: 5px; }
+.today-meta-item .v { color: var(--paper); font-size: 12px; letter-spacing: 0.08em; }
+
+/* ═════════════════════════════════════════════════════════════
+   EXHIBITS · 4 ON VIEW (numbered editorial rows)
+═════════════════════════════════════════════════════════════ */
+.exhibits-list { display: flex; flex-direction: column; }
+
+.exhibit-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 1.2fr 100px;
+    gap: 40px;
+    padding: 36px 0;
+    border-top: 1px solid var(--line);
+    cursor: pointer;
+    transition: padding 0.4s cubic-bezier(.2,.8,.2,1);
+    align-items: center;
+    position: relative;
+}
+.exhibit-row:last-child { border-bottom: 1px solid var(--line); }
+.exhibit-row:hover { padding-left: 16px; }
+.exhibit-row::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; height: 100%; width: 0;
+    background: var(--gold);
+    transition: width 0.4s cubic-bezier(.2,.8,.2,1);
+}
+.exhibit-row:hover::before { width: 2px; }
+
+.exhibit-num {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 64px; line-height: 1;
+    color: var(--paper-faint);
+    transition: color 0.3s;
+}
+.exhibit-row:hover .exhibit-num { color: var(--gold); }
+
+.exhibit-info { display: flex; flex-direction: column; gap: 8px; }
+.exhibit-info-tag {
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--paper-faint); margin-bottom: 4px;
+}
+.exhibit-info-title {
+    font-family: var(--f-serif);
+    font-size: clamp(26px, 2.6vw, 38px);
+    line-height: 1.05; letter-spacing: -0.02em;
+    color: var(--paper);
+}
+.exhibit-info-title em {
+    font-style: italic; color: var(--gold);
+}
+.exhibit-info-zh {
+    font-family: var(--f-sans); font-weight: 300;
+    font-size: 13px; color: var(--paper-faint);
+    letter-spacing: 0.05em;
+}
+
+.exhibit-desc {
+    font-size: 14px; font-weight: 300;
+    line-height: 1.7; color: var(--paper-soft);
+    max-width: 44ch;
+}
+
+.exhibit-thumb {
+    aspect-ratio: 1; width: 100px; background: var(--ink-2);
+    overflow: hidden; position: relative;
+    transition: transform 0.4s cubic-bezier(.2,.8,.2,1);
+    align-self: center;
+}
+.exhibit-thumb canvas { width: 100%; height: 100%; display: block; }
+.exhibit-row:hover .exhibit-thumb { transform: scale(1.06); }
+
+/* ═════════════════════════════════════════════════════════════
+   STORIES · horizontal scroll
+═════════════════════════════════════════════════════════════ */
+.stories-scroll {
+    display: flex; gap: 24px;
+    overflow-x: auto;
+    padding: 8px var(--gutter) 60px;
+    scroll-snap-type: x mandatory;
+    margin: 0 calc(-1 * var(--gutter));
+}
+.stories-scroll::-webkit-scrollbar { display: none; }
+.stories-scroll { scrollbar-width: none; }
+
+.story-card {
+    flex: 0 0 360px;
+    cursor: pointer;
+    scroll-snap-align: start;
+    transition: transform 0.5s cubic-bezier(.2,.8,.2,1);
+}
+.story-card:hover { transform: translateY(-6px); }
+.story-image {
+    aspect-ratio: 3 / 4;
+    background: var(--ink-2);
+    position: relative; overflow: hidden;
+    margin-bottom: 18px;
+}
+.story-image canvas { width: 100%; height: 100%; display: block; }
+.story-tag {
+    position: absolute; top: 16px; left: 16px;
+    font-family: var(--f-mono); font-size: 9.5px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold);
+    background: rgba(10,9,8,0.6);
+    padding: 5px 10px;
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--line-mid);
+}
+.story-meta {
+    display: flex; justify-content: space-between;
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--paper-faint);
+    margin-bottom: 12px;
+}
+.story-title {
+    font-family: var(--f-serif);
+    font-size: 24px; line-height: 1.18;
+    letter-spacing: -0.01em;
+    color: var(--paper);
+    text-wrap: pretty;
+}
+.story-title em { font-style: italic; color: var(--gold); }
+.story-card:hover .story-title { color: var(--gold); }
+
+/* ═════════════════════════════════════════════════════════════
+   MANIFESTO
+═════════════════════════════════════════════════════════════ */
+.manifesto {
+    padding: clamp(80px, 14vh, 180px) var(--gutter);
+    background: var(--ink-2);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+}
+.manifesto::before {
+    content: '“';
+    position: absolute;
+    font-family: var(--f-serif); font-style: italic;
+    font-size: clamp(180px, 26vw, 380px);
+    line-height: 1;
+    color: var(--gold);
+    opacity: 0.08;
+    top: 30px; left: var(--gutter);
+    pointer-events: none;
+    user-select: none;
+}
+.manifesto-inner {
+    max-width: 920px; margin: 0 auto;
+    position: relative; z-index: 1;
+}
+.manifesto .eyebrow { margin-bottom: 30px; }
+.manifesto-quote {
+    font-family: var(--f-serif);
+    font-style: italic; font-weight: 400;
+    font-size: clamp(28px, 3.4vw, 48px);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    color: var(--paper);
+    margin-bottom: 40px;
+    text-wrap: pretty;
+}
+.manifesto-quote .hi { color: var(--gold); }
+.manifesto-body {
+    column-count: 2; column-gap: 50px;
+    font-size: 15px; font-weight: 300;
+    line-height: 1.85; color: var(--paper-soft);
+}
+.manifesto-body p { margin-bottom: 1em; break-inside: avoid; }
+.manifesto-body p:first-child::first-letter {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 4.2em; line-height: 0.9;
+    float: left; padding: 6px 12px 0 0;
+    color: var(--gold);
+}
+.manifesto-sig {
+    margin-top: 60px;
+    font-family: var(--f-mono); font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--paper-faint);
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+}
+
+/* ═════════════════════════════════════════════════════════════
+   EXPERIMENTS
+═════════════════════════════════════════════════════════════ */
+.experiments {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+.exp-card {
+    aspect-ratio: 4 / 5;
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+}
+.exp-card:hover { border-color: var(--gold-soft); }
+.exp-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.exp-overlay {
+    position: absolute; inset: 0;
+    padding: 32px;
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    background: linear-gradient(180deg, rgba(10,9,8,0.4) 0%, transparent 30%, transparent 60%, rgba(10,9,8,0.92) 100%);
+}
+.exp-tag {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold);
+    width: fit-content;
+}
+.exp-bottom { display: flex; flex-direction: column; gap: 8px; }
+.exp-title {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 32px; line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--paper);
+}
+.exp-desc {
+    font-size: 13.5px; font-weight: 300;
+    line-height: 1.6; color: var(--paper-soft);
+    max-width: 38ch;
+}
+
+/* ═════════════════════════════════════════════════════════════
+   FOOTER
+═════════════════════════════════════════════════════════════ */
+.footer {
+    border-top: 1px solid var(--line);
+    padding: 60px var(--gutter) 40px;
+    background: var(--ink);
+}
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 60px;
+}
+.footer-brand-area {
+    display: flex; flex-direction: column; gap: 16px;
+}
+.footer-brand {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 32px; color: var(--paper);
+}
+.footer-tagline {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 17px; color: var(--paper-soft);
+    max-width: 360px; line-height: 1.5;
+}
+.footer-col-title {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 18px;
+    border-top: 1px solid var(--gold); padding-top: 12px;
+    width: fit-content;
+}
+.footer-col-list {
+    display: flex; flex-direction: column; gap: 10px;
+}
+.footer-col-list a {
+    font-size: 13.5px; font-weight: 300;
+    color: var(--paper-soft); text-decoration: none;
+    cursor: pointer; transition: color 0.2s;
+}
+.footer-col-list a:hover { color: var(--gold); }
+
+.footer-bottom {
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper-faint);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   AGENT PAGE · 智能导师
+═════════════════════════════════════════════════════════════ */
+.agent-hero {
+    padding: calc(var(--nav-h) + 80px) var(--gutter) 80px;
+    border-bottom: 1px solid var(--line);
+    position: relative; overflow: hidden;
+}
+#agent-hero-canvas {
+    position: absolute; right: -10%; top: 0; bottom: 0;
+    width: 60%; opacity: 0.6;
+    pointer-events: none;
+}
+.agent-hero-mask {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--ink) 30%, rgba(10,9,8,0.4) 60%, transparent 100%);
+    pointer-events: none;
+}
+.agent-hero-inner { position: relative; z-index: 1; max-width: 880px; }
+.agent-hero-badge {
+    font-family: var(--f-mono); font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 32px;
+    border-top: 1px solid var(--gold);
+    padding-top: 14px; width: fit-content;
+    display: flex; align-items: baseline; gap: 14px;
+}
+.agent-hero-badge .num {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 24px; color: var(--gold); line-height: 0.8;
+}
+.agent-hero-title {
+    font-family: var(--f-serif);
+    font-size: clamp(48px, 7vw, 108px);
+    font-weight: 400; line-height: 0.96;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+    text-wrap: pretty;
+}
+.agent-hero-title em { font-style: italic; color: var(--gold); }
+
+.agent-hero-curator {
+    display: grid; grid-template-columns: 200px 1fr;
+    gap: 50px; margin-top: 50px;
+    border-top: 1px solid var(--line);
+    padding-top: 40px;
+    align-items: start;
+}
+.agent-curator-label {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--paper-faint);
+}
+.agent-curator-text {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 20px; line-height: 1.55;
+    color: var(--paper-soft);
+    max-width: 60ch; text-wrap: pretty;
+}
+
+/* Studio working area */
+.studio {
+    padding: 80px var(--gutter);
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 80px;
+    align-items: start;
+}
+
+.studio-aside {
+    position: sticky; top: calc(var(--nav-h) + 24px);
+    display: flex; flex-direction: column; gap: 32px;
+}
+.aside-section { display: flex; flex-direction: column; gap: 14px; }
+.aside-section .label {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold);
+    border-top: 1px solid var(--gold);
+    padding-top: 12px;
+}
+.pipeline-step {
+    display: flex; gap: 16px; align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    transition: padding 0.3s;
+}
+.pipeline-step:hover { padding-left: 6px; }
+.ps-roman {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 22px; color: var(--paper-faint);
+    width: 36px; flex-shrink: 0;
+    transition: color 0.3s;
+}
+.pipeline-step.active .ps-roman { color: var(--gold); }
+.pipeline-step.done .ps-roman { color: var(--paper); }
+.ps-name {
+    font-family: var(--f-serif);
+    font-size: 16px; line-height: 1.2;
+    color: var(--paper);
+}
+.ps-desc {
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--paper-faint);
+    margin-top: 2px;
+}
+
+/* Studio main area */
+.studio-main { min-width: 0; }
+
+.studio-block { margin-bottom: 80px; }
+.studio-block-head {
+    display: flex; align-items: baseline; gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+}
+.studio-block-head .step-num {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 32px; color: var(--gold);
+    line-height: 0.8;
+}
+.studio-block-head .title {
+    font-family: var(--f-serif);
+    font-size: 28px; letter-spacing: -0.01em;
+    color: var(--paper);
+}
+.studio-block-head .meta {
+    margin-left: auto;
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--paper-faint);
+}
+
+/* Upload zone */
+.upload-zone {
+    border: 1px solid var(--line-mid);
+    background: var(--ink-2);
+    padding: 60px 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s, background 0.3s;
+    position: relative;
+}
+.upload-zone:hover, .upload-zone.over {
+    border-color: var(--gold);
+    background: var(--ink-3);
+}
+.upload-zone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+}
+.upload-mark {
+    width: 56px; height: 56px;
+    border: 1px solid var(--gold);
+    margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.4s;
+}
+.upload-zone:hover .upload-mark { transform: rotate(45deg); }
+.upload-mark::before, .upload-mark::after {
+    content: ''; position: absolute;
+    background: var(--gold);
+}
+.upload-mark::before { width: 16px; height: 1px; }
+.upload-mark::after { width: 1px; height: 16px; }
+.upload-title {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 22px; color: var(--paper);
+    margin-bottom: 8px;
+}
+.upload-hint {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper-faint);
+}
+.upload-file-name {
+    margin-top: 22px;
+    font-family: var(--f-mono); font-size: 12px;
+    color: var(--gold);
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+}
+
+/* Form */
+.field-row {
+    border-top: 1px solid var(--line);
+    padding: 22px 0;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 32px;
+    align-items: start;
+}
+.field-row:last-child { border-bottom: 1px solid var(--line); }
+.field-label {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--paper-faint);
+    padding-top: 11px;
+}
+.field-label .req {
+    color: var(--gold); margin-left: 4px;
+}
+.field-input {
+    width: 100%; padding: 11px 0;
+    background: none; border: none;
+    border-bottom: 1px solid var(--line-mid);
+    color: var(--paper);
+    font-family: var(--f-mono); font-size: 13px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+.field-input:focus { border-bottom-color: var(--gold); }
+.field-input::placeholder { color: var(--paper-faint); }
+.field-input[type="file"] { font-family: var(--f-mono); cursor: pointer; padding: 8px 0; }
+.field-input[type="file"]::file-selector-button {
+    background: transparent; color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 6px 14px; margin-right: 16px;
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s;
+}
+.field-input[type="file"]::file-selector-button:hover {
+    background: var(--gold); color: var(--ink);
+}
+.field-hint {
+    font-family: var(--f-mono); font-size: 10.5px;
+    color: var(--paper-faint); margin-top: 8px;
+    letter-spacing: 0.06em;
+}
+
+/* Buttons */
+.btn-row {
+    display: flex; gap: 16px; margin-top: 40px;
+    flex-wrap: wrap;
+}
+.btn-primary {
+    display: inline-flex; align-items: center; gap: 14px;
+    background: var(--gold); color: var(--ink);
+    border: none; padding: 16px 32px;
+    font-family: var(--f-mono); font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer; transition: all 0.25s;
+}
+.btn-primary:hover {
+    background: var(--paper);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--gold);
+}
+.btn-primary:disabled {
+    background: var(--ink-3); color: var(--paper-faint);
+    cursor: not-allowed; transform: none; box-shadow: none;
+}
+.btn-secondary {
+    display: inline-flex; align-items: center; gap: 14px;
+    background: transparent; color: var(--paper);
+    border: 1px solid var(--paper);
+    padding: 15px 31px;
+    font-family: var(--f-mono); font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.25s;
+}
+.btn-secondary:hover {
+    background: var(--paper); color: var(--ink);
+}
+.btn-tertiary {
+    background: none; border: none;
+    color: var(--paper-soft);
+    font-family: var(--f-mono); font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    cursor: pointer; padding: 8px 0;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s;
+}
+.btn-tertiary:hover { color: var(--gold); border-bottom-color: var(--gold); }
+.btn-tertiary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Progress */
+.progress-track {
+    margin-top: 20px;
+    height: 1px; background: var(--line);
+    position: relative; overflow: hidden;
+}
+.progress-fill {
+    position: absolute; left: 0; top: 0; height: 100%;
+    background: var(--gold);
+    width: 0%; transition: width 0.6s ease;
+}
+
+.progress-list {
+    display: flex; flex-direction: column;
+    margin-top: 28px;
+}
+.progress-item {
+    display: grid; grid-template-columns: 60px 1fr auto;
+    gap: 24px; align-items: baseline;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+}
+.progress-item:last-child { border-bottom: none; }
+.progress-item-num {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 26px; color: var(--paper-faint);
+    line-height: 1;
+}
+.progress-item.active .progress-item-num { color: var(--gold); }
+.progress-item.done .progress-item-num { color: var(--paper); }
+.progress-item-text {
+    font-family: var(--f-serif);
+    font-size: 18px; color: var(--paper);
+    line-height: 1.3;
+}
+.progress-item-status {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper-faint);
+}
+.progress-item.active .progress-item-status { color: var(--gold); }
+.progress-item.done .progress-item-status { color: var(--moss); }
+
+/* Result metrics */
+.result-metrics {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; margin: 40px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+.r-metric {
+    padding: 32px 24px;
+    border-right: 1px solid var(--line);
+    text-align: left;
+}
+.r-metric:last-child { border-right: none; }
+.r-metric-val {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 56px; line-height: 1;
+    color: var(--gold); letter-spacing: -0.03em;
+    margin-bottom: 12px;
+}
+.r-metric-label {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper-faint);
+}
+
+/* AI report */
+.report-frame {
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    padding: 40px 44px;
+    position: relative;
+}
+.report-frame::before {
+    content: ''; position: absolute;
+    top: -1px; left: -1px; width: 24px; height: 24px;
+    border-top: 1px solid var(--gold);
+    border-left: 1px solid var(--gold);
+}
+.report-frame::after {
+    content: ''; position: absolute;
+    bottom: -1px; right: -1px; width: 24px; height: 24px;
+    border-bottom: 1px solid var(--gold);
+    border-right: 1px solid var(--gold);
+}
+.report-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 18px; margin-bottom: 28px;
+}
+.report-head-title {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 22px; color: var(--paper);
+}
+.report-head-meta {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--paper-faint);
+}
+.report-body {
+    font-family: var(--f-serif);
+    font-size: 16.5px; line-height: 1.85;
+    color: var(--paper);
+    white-space: pre-wrap;
+}
+.report-loading {
+    text-align: center; padding: 40px 0;
+    font-family: var(--f-serif); font-style: italic;
+    color: var(--paper-soft);
+    font-size: 17px;
+}
+.report-loading-dots {
+    display: inline-flex; gap: 6px; margin-left: 10px;
+}
+.report-loading-dots span {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--gold);
+    animation: pulse-dot 1.4s ease-in-out infinite;
+}
+.report-loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+.report-loading-dots span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes pulse-dot {
+    0%, 80%, 100% { opacity: 0.25; transform: scale(0.7); }
+    40% { opacity: 1; transform: scale(1); }
+}
+
+/* Suggested questions */
+.q-pills {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px;
+}
+.q-pill {
+    padding: 9px 16px;
+    background: transparent;
+    border: 1px solid var(--line-mid);
+    color: var(--paper);
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 14.5px;
+    cursor: pointer; transition: all 0.2s;
+}
+.q-pill:hover {
+    background: var(--gold); color: var(--ink);
+    border-color: var(--gold);
+}
+
+/* Chat */
+.chat-wrap {
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    margin-top: 40px;
+}
+.chat-head {
+    padding: 18px 28px;
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between;
+}
+.chat-head-l {
+    display: flex; align-items: baseline; gap: 12px;
+}
+.chat-head-title {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 18px; color: var(--paper);
+}
+.chat-head-status {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--moss);
+    display: flex; align-items: center; gap: 8px;
+}
+.chat-head-status::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--moss); box-shadow: 0 0 6px var(--moss);
+}
+.chat-msgs {
+    padding: 24px 28px;
+    min-height: 140px;
+    max-height: 360px;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 18px;
+}
+.msg-empty {
+    font-family: var(--f-serif); font-style: italic;
+    color: var(--paper-faint); font-size: 15px;
+    text-align: center; padding: 30px 0;
+}
+.msg-user {
+    align-self: flex-end; max-width: 75%;
+    padding: 12px 18px;
+    background: var(--gold-soft);
+    border-left: 1px solid var(--gold);
+    color: var(--paper);
+    font-family: var(--f-mono); font-size: 13px;
+    line-height: 1.6;
+}
+.msg-ai {
+    align-self: flex-start; max-width: 88%;
+    padding: 14px 20px;
+    background: var(--ink);
+    border-left: 1px solid var(--paper);
+    color: var(--paper);
+    font-family: var(--f-serif); font-size: 15.5px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+}
+.chat-input-row {
+    display: flex; gap: 0;
+    border-top: 1px solid var(--line);
+}
+.chat-inp {
+    flex: 1; padding: 16px 28px;
+    background: transparent; border: none;
+    color: var(--paper);
+    font-family: var(--f-serif); font-size: 16px;
+    font-style: italic;
+    outline: none;
+}
+.chat-inp::placeholder { color: var(--paper-faint); }
+.chat-send {
+    padding: 0 32px;
+    background: var(--gold); color: var(--ink);
+    border: none; cursor: pointer;
+    font-family: var(--f-mono); font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+.chat-send:hover { background: var(--paper); }
+
+/* ═════════════════════════════════════════════════════════════
+   GENERIC EXHIBIT PAGE TEMPLATE (Movement / Spaces / Synthesis)
+═════════════════════════════════════════════════════════════ */
+.ex-page {
+    padding: calc(var(--nav-h) + 60px) 0 0;
+}
+.ex-cover {
+    height: 78vh; min-height: 600px;
+    position: relative; overflow: hidden;
+    border-bottom: 1px solid var(--line);
+}
+.ex-cover canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ex-cover-vignette {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10,9,8,0.4) 0%, transparent 30%, transparent 50%, rgba(10,9,8,0.95) 100%);
+    pointer-events: none;
+}
+.ex-cover-content {
+    position: absolute; left: var(--gutter); right: var(--gutter); bottom: 60px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: end;
+}
+.ex-cover-meta {
+    display: flex; gap: 30px; align-items: baseline;
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 22px;
+    border-top: 1px solid var(--gold); padding-top: 14px;
+    width: fit-content;
+}
+.ex-cover-meta .num {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 28px; line-height: 0.8; color: var(--gold);
+}
+.ex-cover-title {
+    font-family: var(--f-serif);
+    font-size: clamp(48px, 8vw, 120px);
+    line-height: 0.96; letter-spacing: -0.025em;
+    color: var(--paper); text-wrap: pretty;
+}
+.ex-cover-title em { font-style: italic; color: var(--gold); }
+.ex-cover-pull {
+    align-self: end; padding-bottom: 16px;
+    max-width: 460px; margin-left: auto;
+}
+.ex-cover-pull-text {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 19px; line-height: 1.55;
+    color: var(--paper-soft);
+}
+
+/* Editorial body */
+.ex-body {
+    padding: 100px var(--gutter);
+    display: grid;
+    grid-template-columns: 200px 1fr 320px;
+    gap: 60px;
+    align-items: start;
+}
+.ex-side {
+    position: sticky; top: calc(var(--nav-h) + 24px);
+    display: flex; flex-direction: column; gap: 14px;
+}
+.ex-side-label {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold);
+    border-top: 1px solid var(--gold); padding-top: 12px;
+}
+.ex-side-meta {
+    font-family: var(--f-mono); font-size: 11px;
+    color: var(--paper-soft); line-height: 1.7;
+    letter-spacing: 0.04em;
+}
+.ex-side-meta dt {
+    color: var(--paper-faint);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    font-size: 9.5px; margin-top: 12px; margin-bottom: 4px;
+}
+.ex-side-meta dt:first-child { margin-top: 0; }
+.ex-side-meta dd { color: var(--paper); }
+
+.ex-content {
+    max-width: 680px;
+    font-family: var(--f-serif);
+    font-size: 18px; line-height: 1.75;
+    color: var(--paper);
+}
+.ex-content > * + * { margin-top: 1.4em; }
+.ex-content h3 {
+    font-family: var(--f-serif); font-style: italic;
+    font-weight: 400;
+    font-size: 32px; line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: var(--paper);
+    margin-top: 2em !important;
+    margin-bottom: 0.4em !important;
+}
+.ex-content h3 + p { margin-top: 0; }
+.ex-content blockquote {
+    font-style: italic; font-size: 24px;
+    line-height: 1.4; color: var(--gold);
+    border-left: 1px solid var(--gold);
+    padding-left: 32px;
+    margin: 1.6em 0;
+}
+.ex-content p:first-child::first-letter {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 4em; line-height: 0.9;
+    float: left; padding: 6px 12px 0 0;
+    color: var(--gold);
+}
+.ex-content em { color: var(--gold); }
+
+.ex-aux {
+    position: sticky; top: calc(var(--nav-h) + 24px);
+    display: flex; flex-direction: column; gap: 24px;
+}
+.ex-aux-card {
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    padding: 24px;
+}
+.ex-aux-card-title {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 14px;
+    border-top: 1px solid var(--gold); padding-top: 10px;
+    width: fit-content;
+}
+.ex-aux-card p {
+    font-size: 13px; line-height: 1.65;
+    color: var(--paper-soft);
+}
+.ex-aux-card .num {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 36px; color: var(--gold);
+    margin-bottom: 6px; line-height: 1;
+}
+
+/* Plates / image gallery */
+.ex-plates {
+    padding: 60px var(--gutter) 100px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+.ex-plate {
+    aspect-ratio: 3 / 4;
+    background: var(--ink-2);
+    position: relative; overflow: hidden;
+}
+.ex-plate canvas { width: 100%; height: 100%; display: block; }
+.ex-plate-cap {
+    position: absolute; bottom: 16px; left: 16px; right: 16px;
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper-soft);
+    display: flex; justify-content: space-between;
+}
+
+/* Phases / timeline */
+.ex-phases {
+    padding: 100px var(--gutter);
+    border-top: 1px solid var(--line);
+    background: var(--ink-2);
+}
+.ex-phase-list {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-top: 60px;
+}
+.ex-phase {
+    padding: 36px;
+    border: 1px solid var(--line);
+    margin-left: -1px;
+    background: var(--ink);
+}
+.ex-phase-num {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 64px; color: var(--gold);
+    line-height: 0.8; margin-bottom: 24px;
+}
+.ex-phase-tag {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--paper-faint);
+    margin-bottom: 8px;
+}
+.ex-phase-title {
+    font-family: var(--f-serif);
+    font-size: 24px; color: var(--paper);
+    margin-bottom: 14px; line-height: 1.2;
+}
+.ex-phase-desc {
+    font-size: 14px; line-height: 1.7;
+    color: var(--paper-soft);
+    margin-bottom: 24px;
+}
+.ex-phase-status {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+    border-top: 1px solid var(--line); padding-top: 12px;
+}
+.ex-phase-status::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+}
+.ex-phase-status.live { color: var(--moss); }
+.ex-phase-status.live::before { background: var(--moss); box-shadow: 0 0 6px var(--moss); }
+.ex-phase-status.proto { color: var(--gold); }
+.ex-phase-status.proto::before { background: var(--gold); }
+.ex-phase-status.plan { color: var(--paper-faint); }
+.ex-phase-status.plan::before { background: var(--paper-faint); }
+
+/* Modal video */
+.video-modal {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(10,9,8,0.96); backdrop-filter: blur(20px);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; padding: 40px;
+}
+.video-modal video { max-width: 90vw; max-height: 80vh; box-shadow: 0 20px 80px rgba(0,0,0,0.5); }
+.video-modal-close {
+    position: absolute; top: 30px; right: 40px;
+    background: none; border: 1px solid var(--paper);
+    color: var(--paper); cursor: pointer;
+    font-family: var(--f-mono); font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 10px 20px; transition: all 0.2s;
+}
+.video-modal-close:hover { background: var(--paper); color: var(--ink); }
+
+/* Utility */
+.hidden { display: none !important; }
+
+/* ═════════════════════════════════════════════════════════════
+   RESPONSIVE
+═════════════════════════════════════════════════════════════ */
+@media (max-width: 1100px) {
+    .nav-meta { display: none; }
+    .hero-content { grid-template-columns: 1fr; gap: 30px; }
+    .hero-pull { margin-left: 0; max-width: 100%; }
+    .today { grid-template-columns: 1fr; gap: 40px; }
+    .sec-head { grid-template-columns: 1fr; gap: 20px; margin-bottom: 40px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .studio { grid-template-columns: 1fr; gap: 50px; }
+    .studio-aside { position: static; }
+    .ex-body { grid-template-columns: 1fr; }
+    .ex-side, .ex-aux { position: static; }
+    .ex-cover-content { grid-template-columns: 1fr; gap: 30px; }
+    .ex-plates { grid-template-columns: repeat(2, 1fr); }
+    .ex-phase-list { grid-template-columns: 1fr; }
+    .exhibit-row { grid-template-columns: 50px 1fr 90px; gap: 20px; }
+    .exhibit-row .exhibit-desc { display: none; }
+    .exhibit-num { font-size: 42px; }
+    .result-metrics { grid-template-columns: repeat(2, 1fr); }
+    .r-metric:nth-child(2) { border-right: none; }
+    .field-row { grid-template-columns: 1fr; gap: 12px; }
+    .agent-hero-curator { grid-template-columns: 1fr; gap: 20px; }
+    .manifesto-body { column-count: 1; }
+    .experiments { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+    .nav { padding: 0 20px; gap: 16px; }
+    .nav-links { gap: 0; }
+    .nav-link { padding: 8px 8px; font-size: 10px; letter-spacing: 0.12em; }
+    .stories-scroll { padding-left: 24px; padding-right: 24px; }
+    .story-card { flex: 0 0 280px; }
+    .footer-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<script src="./api-config.js"></script>
+
+<!-- ════════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════ -->
+<nav class="nav" id="nav">
+    <a class="nav-brand" onclick="showPage('home')">
+        <span class="nav-brand-mark"></span>
+        DanceNet<span style="opacity:.5">.Lab</span>
+    </a>
+    <div class="nav-spacer"></div>
+    <div class="nav-links">
+        <button class="nav-link" id="nav-home" onclick="showPage('home')">首页</button>
+        <button class="nav-link" id="nav-agent" onclick="showPage('agent')">智能导师</button>
+        <button class="nav-link" id="nav-art" onclick="showPage('art')">光影为媒</button>
+        <button class="nav-link" id="nav-mr" onclick="showPage('mr')">虚实之间</button>
+        <button class="nav-link" id="nav-aigc" onclick="showPage('aigc')">The Synthesis</button>
+    </div>
+    <div class="nav-meta" id="nav-meta">第 04 期 · 2026</div>
+</nav>
+
+<!-- ════════════════════════════════════════
+     HOME PAGE
+════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+    <!-- HERO -->
+    <section class="hero">
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-vignette"></div>
+        <div class="hero-meta-top">
+            <div class="left">DanceNet.Lab · 身体、运动与机器</div>
+            <div class="right">策展 · 2026.04 — 04.27</div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-headline">
+                <div class="label">实验室 · 第 04 期</div>
+                <h1 class="display-1">当身体<br>开口，<br><em style="font-style:italic;color:var(--gold);">算法在听。</em></h1>
+            </div>
+            <div class="hero-pull">
+                <p class="lede">DanceNet.Lab 是一所为身体语言而建的实验室。我们以姿态、音乐与表达为材料，让人工智能成为新的舞蹈合作者——不是取代肉身，而是延伸它。</p>
+                <button class="hero-cta" onclick="showPage('agent')">
+                    进入AI导师互动
+                    <span class="hero-cta-arrow"></span>
+                </button>
+                <div class="hero-pull-meta">
+                    <span>春 · 2026</span>
+                    <span>卷四</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ISSUE BAR -->
+    <div class="issue-bar">
+        <div><strong>首页</strong> · 2026.04.27</div>
+        <div class="dot"></div>
+        <div>本期主打 · <strong>智能导师</strong></div>
+        <div class="dot"></div>
+        <div>4 场展览开放中</div>
+        <div class="dot"></div>
+        <div>12 则故事</div>
+        <div class="dot"></div>
+        <div>策展 <strong>DanceNet.Lab</strong></div>
+        <div class="dot"></div>
+        <div>阅读约 16 分钟</div>
+    </div>
+
+    <!-- TODAY · FEATURED -->
+    <section class="sec">
+        <div class="sec-head">
+            <div class="sec-head-num">001 / 首页<span>本期特展</span></div>
+            <h2 class="section-title">本期特展。 我们将一段街舞视频<br>放进 AI 的眼睛——它看见了什么？</h2>
+        </div>
+
+        <div class="today">
+            <div class="today-image" onclick="showPage('agent')">
+                <canvas id="today-canvas"></canvas>
+                <div class="today-image-tag">正在呈现</div>
+                <div class="today-image-caption">
+                    <span>姿态 · 音乐 · 表达 · 知识</span>
+                    <span>实时</span>
+                </div>
+            </div>
+            <div class="today-text">
+                <div>
+                    <div class="today-eyebrow">展览 I · 智能导师</div>
+                    <h3 class="today-title">智能<br><em>导师</em></h3>
+                    <p class="today-sub">一位会观看、度量、并回应舞者身体的 AI Agent。</p>
+                    <p class="body-text">
+                        上传任意一段舞蹈视频，智能导师会从五个维度逐层观看它：感知关键点、解析运动学频谱、识别招式语义、调用知识库、最终以一位「导师」的口吻向你说话。
+                        它不是工具，更像一位安静的观察者——你跳，它读你。
+                    </p>
+                </div>
+                <div>
+                    <div class="today-meta">
+                        <div class="today-meta-item"><span class="k">展期</span><span class="v">线上 · v1.0</span></div>
+                        <div class="today-meta-item"><span class="k">形式</span><span class="v">视频 → 报告</span></div>
+                        <div class="today-meta-item"><span class="k">参考时长</span><span class="v">约 3 分钟 / 段</span></div>
+                        <div class="today-meta-item"><span class="k">模型</span><span class="v">MediaPipe · Gemini</span></div>
+                    </div>
+                    <button class="hero-cta" style="margin-top:24px;" onclick="showPage('agent')">
+                        进入智能导师
+                        <span class="hero-cta-arrow"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXHIBITS · 4 ON VIEW -->
+    <section class="sec" style="padding-top:0;">
+        <div class="sec-head">
+            <div class="sec-head-num">002 / 展览<span>4 场开放中</span></div>
+            <h2 class="section-title">四间展厅，<br>四种对身体的<em>提问</em>。</h2>
+        </div>
+
+        <div class="exhibits-list">
+            <div class="exhibit-row" onclick="showPage('agent')">
+                <div class="exhibit-num">I</div>
+                <div class="exhibit-info">
+                    <div class="exhibit-info-tag">展览 · 线上 · 互动</div>
+                    <div class="exhibit-info-title">智能<em>导师</em></div>
+                    <div class="exhibit-info-zh">AI Agent 教练 · 一位会看你跳舞的算法</div>
+                </div>
+                <div class="exhibit-desc">从视频到诊断的完整工作流：感知层 → 运动学 → 认知 → RAG → 报告。可上传、可追问、可下载。</div>
+                <div class="exhibit-thumb"><canvas data-thumb="studio"></canvas></div>
+            </div>
+
+            <div class="exhibit-row" onclick="showPage('art')">
+                <div class="exhibit-num">II</div>
+                <div class="exhibit-info">
+                    <div class="exhibit-info-tag">展览 · 研究 · 生成</div>
+                    <div class="exhibit-info-title">光影<em>为媒</em></div>
+                    <div class="exhibit-info-zh">舞蹈与艺术 · 让动作本身成为材料</div>
+                </div>
+                <div class="exhibit-desc">把 17 个关键点的时序数据当作画笔，让算法画出一支舞的形状、能量场与频谱。</div>
+                <div class="exhibit-thumb"><canvas data-thumb="medium"></canvas></div>
+            </div>
+
+            <div class="exhibit-row" onclick="showPage('mr')">
+                <div class="exhibit-num">III</div>
+                <div class="exhibit-info">
+                    <div class="exhibit-info-tag">展览 · 原型 · 空间</div>
+                    <div class="exhibit-info-title">虚实<em>之间</em></div>
+                    <div class="exhibit-info-zh">舞蹈与 MR · 在空间中重写身体</div>
+                </div>
+                <div class="exhibit-desc">把 AI 教练搬进混合现实——3D 骨架、运动残影、关节级标注，悬浮于真实空间之中。</div>
+                <div class="exhibit-thumb"><canvas data-thumb="spaces"></canvas></div>
+            </div>
+
+            <div class="exhibit-row" onclick="showPage('aigc')">
+                <div class="exhibit-num">IV</div>
+                <div class="exhibit-info">
+                    <div class="exhibit-info-tag">展览 · 即将 · 生成</div>
+                    <div class="exhibit-info-title">The <em>Synthesis</em></div>
+                    <div class="exhibit-info-zh">AIGC · 让 AI 成为编舞者</div>
+                </div>
+                <div class="exhibit-desc">从一句话到一段编排：文本驱动动作生成、音乐到节段、风格之间的迁移。</div>
+                <div class="exhibit-thumb"><canvas data-thumb="synthesis"></canvas></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STORIES · horizontal scroll -->
+    <section class="sec" style="padding-bottom:0;">
+        <div class="sec-head">
+            <div class="sec-head-num">003 / 故事<span>读与看</span></div>
+            <h2 class="section-title">关于身体与机器的,<br>一些<em>笔记</em>。</h2>
+        </div>
+    </section>
+
+    <div class="stories-scroll">
+        <div class="story-card" onclick="showPage('art')">
+            <div class="story-image"><canvas data-thumb="story1"></canvas><div class="story-tag">随笔</div></div>
+            <div class="story-meta"><span>社论 · 04.27</span><span>约 7 分钟</span></div>
+            <h3 class="story-title">为什么 AI 永远学不会<em>那一秒</em>的停顿。</h3>
+        </div>
+        <div class="story-card" onclick="showPage('agent')">
+            <div class="story-image"><canvas data-thumb="story2"></canvas><div class="story-tag">札记</div></div>
+            <div class="story-meta"><span>实验札记 · 04.21</span><span>约 5 分钟</span></div>
+            <h3 class="story-title">17 个关键点能描述一支舞的<em>多少</em>？</h3>
+        </div>
+        <div class="story-card" onclick="showPage('mr')">
+            <div class="story-image"><canvas data-thumb="story3"></canvas><div class="story-tag">档案</div></div>
+            <div class="story-meta"><span>现场 · 04.14</span><span>约 9 分钟</span></div>
+            <h3 class="story-title">混合现实里, 肌肉<em>记得</em>路径。</h3>
+        </div>
+        <div class="story-card" onclick="showPage('aigc')">
+            <div class="story-image"><canvas data-thumb="story4"></canvas><div class="story-tag">实验</div></div>
+            <div class="story-meta"><span>研究 · 04.07</span><span>约 6 分钟</span></div>
+            <h3 class="story-title">编舞模型的<em>风格向量</em>能不能交易？</h3>
+        </div>
+        <div class="story-card" onclick="showPage('art')">
+            <div class="story-image"><canvas data-thumb="story5"></canvas><div class="story-tag">对谈</div></div>
+            <div class="story-meta"><span>对谈 · 03.30</span><span>约 12 分钟</span></div>
+            <h3 class="story-title">与 Popping 老师 W 的<em>三次对话</em>。</h3>
+        </div>
+    </div>
+
+    <!-- MANIFESTO -->
+    <section class="manifesto">
+        <div class="manifesto-inner">
+            <div class="eyebrow eyebrow-gold">004 / 宣言 · 实验室在说话</div>
+            <p class="manifesto-quote">
+                舞蹈是人类<span class="hi">最古老</span>的语言，<br>
+                而人工智能, 是我们为它建造的<br>
+                一面<span class="hi">新的镜子</span>。
+            </p>
+            <div class="manifesto-body">
+                <p>当我们谈论"舞蹈与 AI"的时候，最常被误解的不是 AI——而是舞蹈本身。它从来不是一组动作的集合。它是一种生存方式：身体在空间里写作的方式，是一个人用肌肉记忆向另一个人说话的方式。</p>
+                <p>过去十年间，姿态估计技术让我们第一次有了一种可以"读懂"身体的语言。17 个关键点、132 维特征、每秒 30 帧——这些数字第一次让一支舞拥有了"文档"。但 DanceNet.Lab 关心的不是数字本身，而是它们之间的留白。</p>
+                <p>我们做 AI 教练，因为一位真正的舞者需要一面会说话的镜子。我们做 MR，因为身体的训练不应被一块屏幕禁锢。我们做生成模型，因为创造从来都不是单向的——人和算法可以彼此惊喜。</p>
+                <p>这不是一家公司。这是一所实验室，每一件展品都来自一次诚实的提问：当机器开始观看身体，它能看见多少？当算法开始模仿动作，它丢失了什么？当我们让 AI 进入排练厅，它会成为同伴, 还是一面冷漠的玻璃？</p>
+                <p>我们没有最终答案。我们邀请你一起观看，一起追问。</p>
+            </div>
+            <div class="manifesto-sig">— DanceNet.Lab 研究组 · 2026 春</div>
+        </div>
+    </section>
+
+    <!-- EXPERIMENTS -->
+    <section class="sec">
+        <div class="sec-head">
+            <div class="sec-head-num">005 / 实验<span>试试</span></div>
+            <h2 class="section-title">一些<em>小实验</em>。<br>请用鼠标随便玩。</h2>
+        </div>
+
+        <div class="experiments">
+            <div class="exp-card" onclick="showPage('agent')">
+                <canvas class="exp-canvas" data-exp="decoder"></canvas>
+                <div class="exp-overlay">
+                    <div class="exp-tag">实验 · 01</div>
+                    <div class="exp-bottom">
+                        <h3 class="exp-title">姿态解码</h3>
+                        <p class="exp-desc">实时姿态解码——上传一帧, 看 AI 怎么把你拆成 17 个点。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exp-card" onclick="showPage('art')">
+                <canvas class="exp-canvas" data-exp="painter"></canvas>
+                <div class="exp-overlay">
+                    <div class="exp-tag">实验 · 02</div>
+                    <div class="exp-bottom">
+                        <h3 class="exp-title">光影涂绘</h3>
+                        <p class="exp-desc">把光标当作肢体——在画布上留下舞蹈轨迹的视觉残影。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand-area">
+                <div class="footer-brand">DanceNet.Lab</div>
+                <p class="footer-tagline">一所关于身体、运动与机器的实验室。每季更新。</p>
+            </div>
+            <div>
+                <div class="footer-col-title">展览</div>
+                <div class="footer-col-list">
+                    <a onclick="showPage('agent')">智能导师</a>
+                    <a onclick="showPage('art')">光影为媒</a>
+                    <a onclick="showPage('mr')">虚实之间</a>
+                    <a onclick="showPage('aigc')">The Synthesis</a>
+                </div>
+            </div>
+            <div>
+                <div class="footer-col-title">阅读</div>
+                <div class="footer-col-list">
+                    <a>社论</a>
+                    <a>实验札记</a>
+                    <a>对谈</a>
+                    <a>档案</a>
+                </div>
+            </div>
+            <div>
+                <div class="footer-col-title">实验室</div>
+                <div class="footer-col-list">
+                    <a>关于我们</a>
+                    <a>研究</a>
+                    <a>联系</a>
+                    <a>媒体</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 DanceNet.Lab · 保留所有被观看的权利</span>
+            <span>第四期 · 实验室策展</span>
+        </div>
+    </footer>
+</div>
+
+<!-- ════════════════════════════════════════
+     AGENT PAGE · 智能导师
+════════════════════════════════════════ -->
+<div id="page-agent" class="page">
+
+    <!-- HERO -->
+    <section class="agent-hero">
+        <canvas id="agent-hero-canvas"></canvas>
+        <div class="agent-hero-mask"></div>
+        <div class="agent-hero-inner">
+            <div class="agent-hero-badge"><span class="num">I</span><span>展览 · 线上 · v1.0</span></div>
+            <h1 class="agent-hero-title">智能<br><em>导师</em>。</h1>
+            <p class="lede" style="font-size:19px;color:var(--paper-soft);max-width:680px;">一位安静的观察者——上传任意一段舞蹈视频, 它会从五个维度逐层"看"你, 最后以一个导师的语气, 告诉你它看到了什么。</p>
+
+            <div class="agent-hero-curator">
+                <div class="agent-curator-label">策展人语</div>
+                <p class="agent-curator-text">
+                    "我们不打算做一台会打分的机器。 我们想做一面会回话的镜子——它先于你看见你, 然后再以人能听懂的方式, 把它看见的还回来。"
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- STUDIO WORKING AREA -->
+    <section class="studio">
+        <!-- Sidebar -->
+        <aside class="studio-aside">
+            <div class="aside-section">
+                <div class="label">处理管线 · 5 层</div>
+                <div class="pipeline-step" id="ps1">
+                    <span class="ps-roman">I</span>
+                    <div>
+                        <div class="ps-name">上传</div>
+                        <div class="ps-desc">MP4 · MOV · AVI</div>
+                    </div>
+                </div>
+                <div class="pipeline-step" id="ps2">
+                    <span class="ps-roman">II</span>
+                    <div>
+                        <div class="ps-name">感知</div>
+                        <div class="ps-desc">姿态关键点</div>
+                    </div>
+                </div>
+                <div class="pipeline-step" id="ps3">
+                    <span class="ps-roman">III</span>
+                    <div>
+                        <div class="ps-name">运动学</div>
+                        <div class="ps-desc">DSP 特征</div>
+                    </div>
+                </div>
+                <div class="pipeline-step" id="ps4">
+                    <span class="ps-roman">IV</span>
+                    <div>
+                        <div class="ps-name">认知</div>
+                        <div class="ps-desc">招式引擎</div>
+                    </div>
+                </div>
+                <div class="pipeline-step" id="ps5">
+                    <span class="ps-roman">V</span>
+                    <div>
+                        <div class="ps-name">融合</div>
+                        <div class="ps-desc">RAG 检索</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="aside-section">
+                <div class="label">工具</div>
+                <button class="btn-tertiary" id="sidebar-download" onclick="downloadResults()" disabled style="text-align:left;justify-content:flex-start;">↓ 下载 JSON</button>
+                <button class="btn-tertiary" onclick="location.reload()" style="text-align:left;justify-content:flex-start;">↻ 重置页面</button>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <div class="studio-main">
+
+            <!-- BLOCK 1: Upload -->
+            <div class="studio-block" id="upload-block">
+                <div class="studio-block-head">
+                    <span class="step-num">i.</span>
+                    <span class="title">让一具身体入场。</span>
+                    <span class="meta">第 1 / 3 步</span>
+                </div>
+
+                <div class="upload-zone" id="upload-zone">
+                    <input type="file" id="videoFile" accept="video/mp4,video/mov,video/avi" onchange="onVideoSelect(event)">
+                    <div class="upload-mark"></div>
+                    <div class="upload-title">将舞蹈视频拖放至此</div>
+                    <div class="upload-hint">MP4 · MOV · AVI &nbsp; · &nbsp; 最大 500MB</div>
+                    <div class="upload-file-name hidden" id="upload-file-name"></div>
+                </div>
+
+                <div class="field-row">
+                    <label class="field-label">Gemini API Key<span class="req">选填</span></label>
+                    <div>
+                        <input class="field-input" type="text" id="apiKey" placeholder="AIzaSy... — 留空则跳过 LLM 导师点评">
+                        <div class="field-hint">用于生成策展式报告，仅留在本机浏览器，不会上传给我们。</div>
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <label class="field-label">知识库文件<span class="req">选填</span></label>
+                    <div>
+                        <input class="field-input" type="file" id="skillFile" accept=".md,.txt,.markdown">
+                        <div class="field-hint">上传舞蹈招式等 Markdown/文本，以丰富 RAG 检索层。</div>
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn-primary" id="waveAnalyzeBtn" onclick="startWaveAnalysis()">开始 · 全量运动频谱分析 →</button>
+                    <button class="btn-secondary" id="poseAnalyzeBtn" onclick="startPoseAnalysis()">仅姿态分析</button>
+                </div>
+            </div>
+
+            <!-- BLOCK 2: Progress -->
+            <div class="studio-block hidden" id="progress-block">
+                <div class="studio-block-head">
+                    <span class="step-num">ii.</span>
+                    <span class="title">智能导师正在观看。</span>
+                    <span class="meta">第 2 / 3 步</span>
+                </div>
+
+                <div class="progress-list">
+                    <div class="progress-item" id="step1">
+                        <span class="progress-item-num">I</span>
+                        <span class="progress-item-text">接收视频</span>
+                        <span class="progress-item-status" id="step1-text">待开始</span>
+                    </div>
+                    <div class="progress-item" id="step2">
+                        <span class="progress-item-num">II</span>
+                        <span class="progress-item-text">逐帧阅读身体</span>
+                        <span class="progress-item-status" id="step2-text">姿态 · 运动学</span>
+                    </div>
+                    <div class="progress-item" id="step3">
+                        <span class="progress-item-num">III</span>
+                        <span class="progress-item-text">推理与检索</span>
+                        <span class="progress-item-status" id="step3-text">招式 · RAG</span>
+                    </div>
+                </div>
+                <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+            </div>
+
+            <!-- BLOCK 3: Result -->
+            <div class="studio-block hidden" id="result-block">
+                <div class="studio-block-head">
+                    <span class="step-num">iii.</span>
+                    <span class="title">它看见了什么。</span>
+                    <span class="meta">第 3 / 3 步</span>
+                </div>
+
+                <div class="result-metrics" id="statsGrid"></div>
+
+                <!-- AI Report -->
+                <div class="hidden" id="llm-report-card">
+                    <div class="report-frame">
+                        <div class="report-head">
+                            <div class="report-head-title">策展式读解</div>
+                            <div class="report-head-meta">LLM 生成</div>
+                        </div>
+                        <div class="report-loading hidden" id="llm-loading">
+                            <span>智能导师正在书写</span>
+                            <span class="report-loading-dots"><span></span><span></span><span></span></span>
+                            <div class="progress-track" style="margin-top:24px;"><div class="progress-fill" id="llm-progress"></div></div>
+                        </div>
+                        <div class="report-body hidden" id="llm-report-content"></div>
+                    </div>
+                </div>
+
+                <!-- Suggested questions -->
+                <div class="hidden" id="suggested-questions" style="margin-top:32px;">
+                    <div class="eyebrow eyebrow-gold" style="margin-bottom:16px;">可追问 · 点击即问</div>
+                    <div class="q-pills" id="question-buttons"></div>
+                </div>
+
+                <!-- Video recommend -->
+                <div class="hidden" id="video-button-container" style="margin-top:24px;"></div>
+
+                <div class="btn-row">
+                    <button class="btn-primary" id="getLlmBtn" onclick="getLLMReport()">生成策展式读解 →</button>
+                    <button class="btn-secondary" id="downloadBtn" onclick="downloadResults()">下载 JSON</button>
+                    <button class="btn-tertiary" onclick="location.reload()">重新开始</button>
+                </div>
+
+                <!-- Chat -->
+                <div class="hidden chat-wrap" id="chat-card">
+                    <div class="chat-head">
+                        <div class="chat-head-l">
+                            <span class="chat-head-title">与策展助手对话</span>
+                        </div>
+                        <span class="chat-head-status">可对话</span>
+                    </div>
+                    <div class="chat-msgs" id="chat-messages">
+                        <div class="msg-empty">就本支视频，向智能导师任意追问它看见了什么。</div>
+                    </div>
+                    <div class="chat-input-row">
+                        <input class="chat-inp" type="text" id="chat-input" placeholder="第二拍里我的手臂怎么样？" onkeypress="if(event.key==='Enter')sendChatMessage()">
+                        <button class="chat-send" onclick="sendChatMessage()">发送</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-bottom" style="border:none;padding:0;">
+            <span>展览 I · 智能导师 · DanceNet.Lab</span>
+            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+        </div>
+    </footer>
+</div>
+
+<!-- ════════════════════════════════════════
+     ART · 光影为媒
+════════════════════════════════════════ -->
+<div id="page-art" class="page">
+    <section class="ex-page">
+        <div class="ex-cover">
+            <canvas id="art-cover-canvas"></canvas>
+            <div class="ex-cover-vignette"></div>
+            <div class="ex-cover-content">
+                <div>
+                    <div class="ex-cover-meta"><span class="num">II</span><span>展览 · 研究 · 生成</span></div>
+                    <h1 class="ex-cover-title">光影<br>为<em>媒</em>。</h1>
+                </div>
+                <div class="ex-cover-pull">
+                    <p class="ex-cover-pull-text">"如果一支舞可以被画下来——不是被表演的样子, 而是它<em style="color:var(--gold);">留下的痕迹</em>——那张画会是什么样子？"</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="ex-body">
+            <aside class="ex-side">
+                <div class="ex-side-label">本展简介</div>
+                <dl class="ex-side-meta">
+                    <dt>状态</dt><dd>研究中</dd>
+                    <dt>年份</dt><dd>2026 — 持续</dd>
+                    <dt>媒介</dt><dd>17 关键点 · canvas · 时间</dd>
+                    <dt>相关</dt><dd><a onclick="showPage('agent')" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
+                </dl>
+            </aside>
+
+            <article class="ex-content">
+                <p>身体在空间里运动时, 留下的不只是肌肉的疲劳, 还有看不见的轨迹。 当我们把每秒 30 帧、17 个关键点的数据保存下来, 一支三分钟的 solo 就拥有了它的"化石"——一段可以被反复阅读的运动记录。</p>
+
+                <h3>三种阅读方式</h3>
+
+                <p>第一种, 我们让骨骼自己画。 把每一帧的关节连成一支笔, 让它在 RGB 空间里慢慢留下轨迹——结果不是一具人, 而是一团从骨头里长出的<em>线条植物</em>。 它不知道身体的轮廓, 只知道身体的路径。</p>
+
+                <blockquote>线条不是身体, 但每一笔都来自一根真的骨头。</blockquote>
+
+                <p>第二种, 我们绘制能量场。 把每个关键点的速度向量当作一个粒子源, 用流体场模拟它在空间里推开的"空气"。 一段安静的动作会在画面上留下平静的同心圆; 一段爆发的 Popping freeze 会撕开画面, 留下放射状的伤痕。</p>
+
+                <h3>能量, 而不是姿势</h3>
+
+                <p>第三种, 也是 DanceNet.Lab 最近最沉迷的——把 DSP 特征写成一张<em>频谱印记</em>。 我们对每个关节的轨迹做傅里叶变换, 取它的低频成分作为底色, 高频成分作为颗粒。 整支舞被压缩成一张抽象画, 但你仍能从画的"密度"里读出节拍, 从"裂缝"里读出失误。</p>
+
+                <p>这些不是艺术, 也不只是数据可视化。 它们更像我们用 AI 给舞蹈写的<em>俳句</em>——每一张画都试图用最少的笔触, 说出关于一具身体的全部。</p>
+            </article>
+
+            <aside class="ex-aux">
+                <div class="ex-aux-card">
+                    <div class="ex-aux-card-title">进行中</div>
+                    <div class="num">3</div>
+                    <p>三种生成性视觉研究, 同时在迭代中。</p>
+                </div>
+                <div class="ex-aux-card">
+                    <div class="ex-aux-card-title">延伸阅读</div>
+                    <p style="margin-bottom:14px;"><a onclick="showPage('agent')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 智能导师</a></p>
+                    <p><a onclick="showPage('aigc')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ The Synthesis</a></p>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Plates -->
+        <div class="ex-plates">
+            <div class="ex-plate">
+                <canvas data-plate="plate-trails"></canvas>
+                <div class="ex-plate-cap"><span>图版 I · 骨架拖尾</span><span>2026</span></div>
+            </div>
+            <div class="ex-plate">
+                <canvas data-plate="plate-energy"></canvas>
+                <div class="ex-plate-cap"><span>图版 II · 能量场</span><span>2026</span></div>
+            </div>
+            <div class="ex-plate">
+                <canvas data-plate="plate-wave"></canvas>
+                <div class="ex-plate-cap"><span>图版 III · 频谱印记</span><span>2026</span></div>
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="footer-bottom" style="border:none;padding:0;">
+            <span>展览 II · 光影为媒 · DanceNet.Lab</span>
+            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+        </div>
+    </footer>
+</div>
+
+<!-- ════════════════════════════════════════
+     MR · 虚实之间
+════════════════════════════════════════ -->
+<div id="page-mr" class="page">
+    <section class="ex-page">
+        <div class="ex-cover">
+            <canvas id="mr-cover-canvas"></canvas>
+            <div class="ex-cover-vignette"></div>
+            <div class="ex-cover-content">
+                <div>
+                    <div class="ex-cover-meta"><span class="num">III</span><span>展览 · 原型 · 空间</span></div>
+                    <h1 class="ex-cover-title">虚<br>实<em>之间</em>。</h1>
+                </div>
+                <div class="ex-cover-pull">
+                    <p class="ex-cover-pull-text">"屏幕是一面墙。 我们试图把它推开, 让 AI 教练<em style="color:var(--gold);">站到舞者身边</em>, 而不是隔着一层玻璃。"</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="ex-body">
+            <aside class="ex-side">
+                <div class="ex-side-label">本展简介</div>
+                <dl class="ex-side-meta">
+                    <dt>状态</dt><dd>原型</dd>
+                    <dt>硬件</dt><dd>Vision Pro · ARKit</dd>
+                    <dt>技术栈</dt><dd>WebXR · MediaPipe 3D</dd>
+                    <dt>相关</dt><dd><a onclick="showPage('agent')" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
+                </dl>
+            </aside>
+
+            <article class="ex-content">
+                <p>当一位舞者训练时, 屏幕从来都是干扰项。 它要求你低头看, 而舞蹈要求你<em>抬头活</em>。 这之间的矛盾, 是 DanceNet.Lab 最早决定要解决的事——把 AI 教练从屏幕里搬出来, 让它存在于真实的空间里, 浮在身体旁边。</p>
+
+                <h3>三层覆盖</h3>
+
+                <p>我们正在原型一种"三层空间叠加":<em>骨架层</em>实时绘制你身体当前姿态的 3D 镜像;<em>残影层</em>保留过去两秒的运动轨迹, 像光绘摄影一样浮在空气中;<em>批注层</em>把 AI 的反馈钉在出问题的关节上, 一个红色的小标签悬停在你的右肘旁边, 写着"角度偏 15°"。</p>
+
+                <blockquote>不是反馈得更快, 而是反馈得更<em style="color:var(--gold);">就近</em>。</blockquote>
+
+                <h3>从单人到双人</h3>
+
+                <p>下一步, 我们想让两个佩戴头显的舞者看到对方的骨架重叠。 这是 cypher 的全新语言: 你能"看见"对手的发力链, 看见他动作里的预备动作, 提前 0.3 秒读到他的下一个 freeze。 这是身体的 ESP, 由算法供电。</p>
+
+                <p>这个项目还在原型阶段。 它假设了未来五年内 MR 头显会变得轻、便宜、续航足够长。 这是一个赌注, 但也是一个我们愿意下的赌注。</p>
+            </article>
+
+            <aside class="ex-aux">
+                <div class="ex-aux-card">
+                    <div class="ex-aux-card-title">阶段</div>
+                    <div class="num">02</div>
+                    <p>原型阶段 · 桌面端模拟器已上线。</p>
+                </div>
+                <div class="ex-aux-card">
+                    <div class="ex-aux-card-title">延伸阅读</div>
+                    <p><a onclick="showPage('agent')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 智能导师</a></p>
+                </div>
+            </aside>
+        </div>
+
+        <div class="ex-phases">
+            <div class="sec-head" style="margin-bottom:0;">
+                <div class="sec-head-num">路线图<span>从屏幕到空间</span></div>
+                <h2 class="section-title">三个阶段。<br>当前在 <em>第一阶段</em>。</h2>
+            </div>
+            <div class="ex-phase-list">
+                <div class="ex-phase">
+                    <div class="ex-phase-num">I</div>
+                    <div class="ex-phase-tag">阶段 01</div>
+                    <h3 class="ex-phase-title">2D 屏幕智能导师</h3>
+                    <p class="ex-phase-desc">桌面端: 视频上传 → 骨架提取 → AI 报告。目前智能导师即此阶段，已经可用。</p>
+                    <div class="ex-phase-status live">已上线</div>
+                </div>
+                <div class="ex-phase">
+                    <div class="ex-phase-num">II</div>
+                    <div class="ex-phase-tag">阶段 02</div>
+                    <h3 class="ex-phase-title">移动 AR</h3>
+                    <p class="ex-phase-desc">手机 AR 实时反馈: 摄像头采集 → 实时关键点 → AR 标注。 训练随身, 不挑场地。</p>
+                    <div class="ex-phase-status proto">原型</div>
+                </div>
+                <div class="ex-phase">
+                    <div class="ex-phase-num">III</div>
+                    <div class="ex-phase-tag">阶段 03</div>
+                    <h3 class="ex-phase-title">空间 MR 教练</h3>
+                    <p class="ex-phase-desc">头显内全沉浸式 AI 教练。 3D 骨架、运动残影、关节批注、双人共训空间。</p>
+                    <div class="ex-phase-status plan">规划中</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-bottom" style="border:none;padding:0;">
+            <span>展览 III · 虚实之间 · DanceNet.Lab</span>
+            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+        </div>
+    </footer>
+</div>
+
+<!-- ════════════════════════════════════════
+     AIGC · The Synthesis
+════════════════════════════════════════ -->
+<div id="page-aigc" class="page">
+    <section class="ex-page">
+        <div class="ex-cover">
+            <canvas id="aigc-cover-canvas"></canvas>
+            <div class="ex-cover-vignette"></div>
+            <div class="ex-cover-content">
+                <div>
+                    <div class="ex-cover-meta"><span class="num">IV</span><span>展览 · 即将 · 生成</span></div>
+                    <h1 class="ex-cover-title">The<br><em>Synthesis</em>.</h1>
+                </div>
+                <div class="ex-cover-pull">
+                    <p class="ex-cover-pull-text">"AI 不只是看舞——它也可以<em style="color:var(--gold);">编</em>。 给它一段音乐、 一句话、 一种风格——它会还给你一支舞。"</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="ex-body">
+            <aside class="ex-side">
+                <div class="ex-side-label">本展简介</div>
+                <dl class="ex-side-meta">
+                    <dt>状态</dt><dd>即将推出</dd>
+                    <dt>模型</dt><dd>MDM · MoMask · Custom</dd>
+                    <dt>格式</dt><dd>SMPL-X · BVH</dd>
+                    <dt>相关</dt><dd><a onclick="showPage('agent')" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
+                </dl>
+            </aside>
+
+            <article class="ex-content">
+                <p>过去几年, 文本生成图像、 图像生成视频已经成为常识。 而文本生成<em>动作</em>, 仍是一片相对安静的水域。 The Synthesis 是 DanceNet.Lab 投向这片水的第一颗石头。</p>
+
+                <h3>三个方向</h3>
+
+                <p><em>Text → Motion</em>: 输入一句"给我一段 16 拍的 Popping freeze 组合, 难度中等, 强调上肢控制", 模型输出一段可视化的动作序列, 附带教学拆解。 当前在内部 alpha。</p>
+
+                <p><em>Music → Choreography</em>: 输入音乐, 模型读取节拍、律动、情绪曲线, 自动生成与之呼应的动作段落结构。 我们更在意"呼应"而不是"对齐"——一段好的编排不是踩在每个鼓点上。</p>
+
+                <p><em>Style Transfer</em>: 上传一段参考舞者的视频, 模型提取风格向量, 注入你的动作序列。 像把莫奈的笔触套在一张你自己的速写上。</p>
+
+                <blockquote>不是替你跳, 而是<em style="color:var(--gold);">和你一起想</em>。</blockquote>
+
+                <h3>关于"创造"的一个保留意见</h3>
+
+                <p>我们不相信 AI 能替代编舞家, 也不打算尝试。 The Synthesis 的设计原点是: 一个真正的编舞家面对空白排练厅时, 最先需要的不是答案, 是<em>启发</em>。 AI 在这个阶段最值钱的不是它生成得多准, 而是它能否在凌晨三点给你一个让你想骂"妈的还行"的版本。</p>
+            </article>
+
+            <aside class="ex-aux">
+                <div class="ex-aux-card">
+                    <div class="ex-aux-card-title">状态</div>
+                    <div class="num" style="font-size:24px;font-style:italic;">即将</div>
+                    <p>三个生成方向, 不同进度。</p>
+                </div>
+                <div class="ex-aux-card">
+                    <div class="ex-aux-card-title">延伸阅读</div>
+                    <p><a onclick="showPage('art')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 光影为媒</a></p>
+                </div>
+            </aside>
+        </div>
+
+        <div class="ex-phases">
+            <div class="sec-head" style="margin-bottom:0;">
+                <div class="sec-head-num">三种模态<span>不同进度</span></div>
+                <h2 class="section-title">三个方向。<br>不同的<em>进度</em>。</h2>
+            </div>
+            <div class="ex-phase-list">
+                <div class="ex-phase">
+                    <div class="ex-phase-num">α</div>
+                    <div class="ex-phase-tag">模态 01</div>
+                    <h3 class="ex-phase-title">Text → Motion</h3>
+                    <p class="ex-phase-desc">从一句中文提示生成一段编排动作序列, 附带 8 拍拆解与可视化骨架。</p>
+                    <div class="ex-phase-status live">内测 Alpha</div>
+                </div>
+                <div class="ex-phase">
+                    <div class="ex-phase-num">β</div>
+                    <div class="ex-phase-tag">模态 02</div>
+                    <h3 class="ex-phase-title">Music → Choreography</h3>
+                    <p class="ex-phase-desc">读节拍、读情绪、读律动——生成的不是动作, 是动作的<em>结构</em>。</p>
+                    <div class="ex-phase-status proto">研究中</div>
+                </div>
+                <div class="ex-phase">
+                    <div class="ex-phase-num">γ</div>
+                    <div class="ex-phase-tag">模态 03</div>
+                    <h3 class="ex-phase-title">Style Transfer</h3>
+                    <p class="ex-phase-desc">把任意风格的"舞蹈口音"注入你的动作。 像换一支笔, 不换内容。</p>
+                    <div class="ex-phase-status plan">概念</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-bottom" style="border:none;padding:0;">
+            <span>展览 IV · The Synthesis · DanceNet.Lab</span>
+            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+        </div>
+    </footer>
+</div>
+
+<!-- ════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ─────────── Page router ─────────── */
+function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    const navEl = document.getElementById('nav-' + name);
+    if (navEl) navEl.classList.add('active');
+    window.scrollTo({ top: 0 });
+    // Lazy init canvases on demand
+    requestAnimationFrame(() => {
+        if (name === 'home') initHomeCanvases();
+        if (name === 'agent') initAgentHero();
+        if (name === 'art') initArtCanvases();
+        if (name === 'mr') initMRCanvas();
+        if (name === 'aigc') initAIGCCanvas();
+    });
+}
+
+/* ─────────── Nav scroll effect ─────────── */
+window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+}, { passive: true });
+
+/* ═════════════════════════════════════════════════════════════
+   CANVAS HELPERS
+═════════════════════════════════════════════════════════════ */
+function setupCanvas(canvas) {
+    const ctx = canvas.getContext('2d');
+    function resize() {
+        const r = canvas.getBoundingClientRect();
+        canvas.width = Math.max(1, r.width * devicePixelRatio);
+        canvas.height = Math.max(1, r.height * devicePixelRatio);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(devicePixelRatio, devicePixelRatio);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    return { ctx, getW: () => canvas.getBoundingClientRect().width, getH: () => canvas.getBoundingClientRect().height };
+}
+
+const COCO_EDGES = [[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
+/* 渲染用 — 去掉头部到肩膀的连接线（[3,5][4,6]），改用颈部单线代替 */
+const BODY_EDGES = [[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
+/** 绘制骨架（含头圆 + 颈线，只渲染体骨关节光晕）*/
+function drawSkeleton(ctx, mapped, figureH, cfg) {
+    const lw = cfg.lw || 1.4;
+    const bc = cfg.bc || 'rgba(235,231,223,0.85)';
+    const bc2 = cfg.bc2 || 'rgba(212,165,116,0.65)';
+    const jr = cfg.jr || 2.4;
+    const jc = cfg.jc || '#ebe7df';
+    const gradient = cfg.gradient !== false;
+
+    // 头圆（中心略近鼻点，头圆更「坐下」，颈部长度缩短）
+    const headR = figureH * 0.052;
+    const hx = mapped[0][0], hy = mapped[0][1] - headR * 0.88;
+    if (cfg.headGlow !== false) {
+        const hgr = ctx.createRadialGradient(hx, hy, 0, hx, hy, headR * 2.2);
+        hgr.addColorStop(0, 'rgba(212,165,116,0.22)');
+        hgr.addColorStop(1, 'rgba(212,165,116,0)');
+        ctx.beginPath(); ctx.arc(hx, hy, headR * 2.2, 0, Math.PI*2);
+        ctx.fillStyle = hgr; ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(hx, hy, headR, 0, Math.PI*2);
+    ctx.strokeStyle = bc; ctx.lineWidth = lw; ctx.stroke();
+
+    // 颈部：自下颌处（头圆内偏下）连至双肩中点，长度比「整圆底边→肩」更短
+    const nx = (mapped[5][0] + mapped[6][0]) / 2;
+    const ny = (mapped[5][1] + mapped[6][1]) / 2;
+    const neckFromY = hy + headR * 0.72;
+    ctx.beginPath();
+    ctx.moveTo(hx, neckFromY);
+    ctx.lineTo(nx, ny);
+    ctx.strokeStyle = bc; ctx.lineWidth = lw; ctx.stroke();
+
+    // 体骨
+    BODY_EDGES.forEach(([i, j]) => {
+        if (gradient) {
+            const g = ctx.createLinearGradient(mapped[i][0], mapped[i][1], mapped[j][0], mapped[j][1]);
+            g.addColorStop(0, bc); g.addColorStop(1, bc2);
+            ctx.strokeStyle = g;
+        } else { ctx.strokeStyle = bc; }
+        ctx.beginPath();
+        ctx.moveTo(mapped[i][0], mapped[i][1]);
+        ctx.lineTo(mapped[j][0], mapped[j][1]);
+        ctx.lineWidth = lw; ctx.stroke();
+    });
+
+    // 关节（只画体骨节点 5-16，头面点略去）
+    for (let k = 5; k < 17; k++) {
+        const p = mapped[k];
+        if (cfg.jointGlow !== false) {
+            const g = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], jr * 4.5);
+            g.addColorStop(0, 'rgba(212,165,116,0.58)');
+            g.addColorStop(1, 'rgba(212,165,116,0)');
+            ctx.beginPath(); ctx.arc(p[0], p[1], jr * 4.5, 0, Math.PI*2);
+            ctx.fillStyle = g; ctx.fill();
+        }
+        ctx.beginPath(); ctx.arc(p[0], p[1], jr, 0, Math.PI*2);
+        ctx.fillStyle = jc; ctx.fill();
+    }
+}
+
+/*
+ * 6 舞蹈姿态帧 — 真实人体骨骼比例（COCO 17点）
+ * 关键点顺序: 鼻[0] 左眼[1] 右眼[2] 左耳[3] 右耳[4]
+ *             左肩[5] 右肩[6] 左肘[7] 右肘[8] 左腕[9] 右腕[10]
+ *             左髋[11] 右髋[12] 左膝[13] 右膝[14] 左踝[15] 右踝[16]
+ * x/y 在图形包围盒内归一化，可超出[0,1]以实现宽展手臂
+ */
+const POSE_FRAMES = [
+    /* 0 — 左臂高举、右臂侧垂（起势）*/
+    [[.50,.055],[.46,.044],[.54,.044],[.42,.055],[.58,.055],
+     [.36,.200],[.64,.200],
+     [.16,.130],[.72,.350],
+     [.07,.020],[.76,.500],
+     [.43,.530],[.57,.530],
+     [.41,.730],[.59,.730],
+     [.40,.940],[.60,.940]],
+
+    /* 1 — 双臂同时上扬过渡 */
+    [[.50,.055],[.46,.044],[.54,.044],[.42,.055],[.58,.055],
+     [.34,.200],[.66,.200],
+     [.15,.170],[.82,.150],
+     [.09,.060],[.90,.050],
+     [.43,.530],[.57,.530],
+     [.41,.730],[.59,.730],
+     [.40,.940],[.60,.940]],
+
+    /* 2 — 双臂高举（舞蹈欢呼姿势）*/
+    [[.50,.055],[.46,.044],[.54,.044],[.42,.055],[.58,.055],
+     [.33,.200],[.67,.200],
+     [.13,.130],[.87,.130],
+     [.09,.010],[.91,.010],
+     [.43,.530],[.57,.530],
+     [.41,.730],[.59,.730],
+     [.40,.940],[.60,.940]],
+
+    /* 3 — 双臂平展（T字大开）*/
+    [[.50,.055],[.46,.044],[.54,.044],[.42,.055],[.58,.055],
+     [.33,.210],[.67,.210],
+     [.05,.270],[.95,.270],
+     [-.10,.330],[1.10,.330],
+     [.43,.530],[.57,.530],
+     [.41,.730],[.59,.730],
+     [.40,.940],[.60,.940]],
+
+    /* 4 — 右臂高举、左臂侧展（单侧爆发）*/
+    [[.50,.055],[.46,.044],[.54,.044],[.42,.055],[.58,.055],
+     [.35,.200],[.65,.200],
+     [.08,.270],[.81,.120],
+     [-.03,.330],[.87,.020],
+     [.43,.530],[.57,.530],
+     [.41,.730],[.59,.730],
+     [.40,.940],[.60,.940]],
+
+    /* 5 — 手臂自然垂下（收势，准备循环）*/
+    [[.50,.055],[.46,.044],[.54,.044],[.42,.055],[.58,.055],
+     [.36,.210],[.64,.210],
+     [.28,.370],[.72,.370],
+     [.25,.540],[.75,.540],
+     [.43,.530],[.57,.530],
+     [.41,.730],[.59,.730],
+     [.40,.940],[.60,.940]],
+];
+
+function easeInOut(t) { return t < .5 ? 2*t*t : -1 + (4 - 2*t)*t; }
+
+function lerpFrames(t) {
+    const seg = Math.floor(t) % POSE_FRAMES.length;
+    const A = POSE_FRAMES[seg];
+    const B = POSE_FRAMES[(seg + 1) % POSE_FRAMES.length];
+    const f = easeInOut(t - Math.floor(t));
+    return A.map((p, i) => [p[0] + (B[i][0] - p[0]) * f, p[1] + (B[i][1] - p[1]) * f]);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   HERO CANVAS · long-exposure golden dancer
+═════════════════════════════════════════════════════════════ */
+let heroInit = false;
+function initHeroCanvas() {
+    if (heroInit) return; heroInit = true;
+    const canvas = document.getElementById('hero-canvas');
+    const { ctx, getW, getH } = setupCanvas(canvas);
+    let t = 0;
+    const trails = [];
+    const maxTrails = 65;
+
+    function frame() {
+        if (!document.getElementById('page-home').classList.contains('active')) {
+            requestAnimationFrame(frame); return;
+        }
+        const w = getW(), h = getH();
+        // Soft fade — long exposure feel
+        ctx.fillStyle = 'rgba(10,9,8,0.04)';
+        ctx.fillRect(0, 0, w, h);
+
+        t += 0.0030;
+        const pts = lerpFrames(t);
+        const cx = w * 0.5, cy = h * 0.07;
+        const figureW = Math.min(w * 0.30, h * 0.50);
+        const figureH = h * 0.74;
+        const mapped = pts.map(p => [cx - figureW/2 + p[0] * figureW, cy + p[1] * figureH]);
+
+        trails.push(mapped.map(p => [...p]));
+        if (trails.length > maxTrails) trails.shift();
+
+        // 长曝光拖影 (只画体骨边)
+        trails.forEach((fr, fi) => {
+            const a = fi / maxTrails;
+            BODY_EDGES.forEach(([i, j]) => {
+                ctx.beginPath();
+                ctx.moveTo(fr[i][0], fr[i][1]);
+                ctx.lineTo(fr[j][0], fr[j][1]);
+                ctx.strokeStyle = `rgba(212,165,116,${a * 0.065})`;
+                ctx.lineWidth = 0.65; ctx.stroke();
+            });
+        });
+
+        // 骨架（含头圆 + 颈部）
+        drawSkeleton(ctx, mapped, figureH, {
+            lw: 1.4,
+            bc: 'rgba(235,231,223,0.86)',
+            bc2: 'rgba(212,165,116,0.60)',
+            jr: 2.3,
+            jc: '#ebe7df',
+        });
+
+        // 腕部粒子星尘
+        for (let i = 0; i < 4; i++) {
+            const idx = [9, 10, 7, 8][i];
+            const p = mapped[idx];
+            ctx.beginPath();
+            ctx.arc(p[0] + (Math.random()-.5)*32, p[1] + (Math.random()-.5)*32, Math.random()*1.3, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(212,165,116,${Math.random()*0.55})`;
+            ctx.fill();
+        }
+
+        requestAnimationFrame(frame);
+    }
+    frame();
+}
+
+/* ═════════════════════════════════════════════════════════════
+   TODAY CANVAS · larger version of dancer painting
+═════════════════════════════════════════════════════════════ */
+let todayInit = false;
+function initTodayCanvas() {
+    if (todayInit) return; todayInit = true;
+    const canvas = document.getElementById('today-canvas');
+    const { ctx, getW, getH } = setupCanvas(canvas);
+    let t = 0;
+    const trails = [];
+
+    function frame() {
+        if (!document.getElementById('page-home').classList.contains('active')) {
+            requestAnimationFrame(frame); return;
+        }
+        const w = getW(), h = getH();
+        ctx.fillStyle = 'rgba(10,9,8,0.06)';
+        ctx.fillRect(0, 0, w, h);
+
+        t += 0.005;
+        const pts = lerpFrames(t * 1.2);
+        const figW = Math.min(w * 0.55, h * 0.66);
+        const figH = h * 0.82;
+        const mapped = pts.map(p => [w*0.5 - figW/2 + p[0] * figW, h*0.06 + p[1] * figH]);
+
+        trails.push(mapped.map(p => [...p]));
+        if (trails.length > 30) trails.shift();
+        trails.forEach((fr, fi) => {
+            const a = fi / trails.length * 0.26;
+            BODY_EDGES.forEach(([i, j]) => {
+                ctx.beginPath();
+                ctx.moveTo(fr[i][0], fr[i][1]);
+                ctx.lineTo(fr[j][0], fr[j][1]);
+                ctx.strokeStyle = `rgba(212,165,116,${a})`;
+                ctx.lineWidth = 0.9; ctx.stroke();
+            });
+        });
+
+        drawSkeleton(ctx, mapped, figH, {
+            lw: 1.6,
+            bc: 'rgba(235,231,223,0.88)',
+            bc2: 'rgba(212,165,116,0.62)',
+            jr: 2.5,
+            jc: '#ebe7df',
+        });
+
+        requestAnimationFrame(frame);
+    }
+    frame();
+}
+
+/* ═════════════════════════════════════════════════════════════
+   THUMBNAILS for exhibits & stories
+═════════════════════════════════════════════════════════════ */
+const THUMB_PAINTERS = {
+    studio(ctx, t, w, h) {
+        const pts = lerpFrames(t * 1.2);
+        const fw = Math.min(w*0.68, h*0.62), fh = h*0.76;
+        const mapped = pts.map(p => [w*.5 - fw/2 + p[0]*fw, h*.10 + p[1]*fh]);
+        drawSkeleton(ctx, mapped, fh, {
+            lw: 1.1,
+            bc: 'rgba(212,165,116,0.82)',
+            bc2: 'rgba(235,231,223,0.55)',
+            jr: 1.8,
+            jc: '#ebe7df',
+            headGlow: true,
+            jointGlow: false,
+        });
+    },
+    medium(ctx, t, w, h) {
+        // ink-wash brush strokes
+        ctx.fillStyle = 'rgba(10,9,8,0.08)';
+        ctx.fillRect(0,0,w,h);
+        for (let i = 0; i < 3; i++) {
+            ctx.beginPath();
+            const sy = h * (0.2 + i*0.25);
+            ctx.moveTo(0, sy);
+            for (let x = 0; x <= w; x += 4) {
+                ctx.lineTo(x, sy + Math.sin(x*0.04 + t*1.2 + i*1.5) * 12);
+            }
+            ctx.strokeStyle = `rgba(212,165,116,${0.4 - i*0.08})`;
+            ctx.lineWidth = 6 - i*1.2; ctx.stroke();
+        }
+    },
+    spaces(ctx, t, w, h) {
+        // depth wireframe
+        ctx.strokeStyle = 'rgba(212,165,116,0.4)';
+        ctx.lineWidth = 0.6;
+        const cx = w*.5, cy = h*.5;
+        for (let i = 0; i < 6; i++) {
+            const r = 12 + i * 12;
+            const offset = Math.sin(t*0.8 + i) * 3;
+            ctx.beginPath();
+            ctx.ellipse(cx + offset, cy, r, r*0.6, t*0.2, 0, Math.PI*2);
+            ctx.stroke();
+        }
+        // crosshairs
+        ctx.strokeStyle = 'rgba(235,231,223,0.6)';
+        ctx.beginPath(); ctx.moveTo(cx-8, cy); ctx.lineTo(cx+8, cy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, cy-8); ctx.lineTo(cx, cy+8); ctx.stroke();
+    },
+    synthesis(ctx, t, w, h) {
+        // Morph between shapes
+        for (let i = 0; i < 8; i++) {
+            const phase = t + i*0.3;
+            ctx.beginPath();
+            const r = 6 + Math.sin(phase)*4;
+            const x = w*.2 + (i/7)*(w*.6) + Math.sin(phase*0.7)*6;
+            const y = h*.5 + Math.cos(phase*1.2 + i)*h*0.2;
+            ctx.arc(x, y, r, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(212,165,116,${0.2 + i*0.08})`;
+            ctx.fill();
+        }
+    },
+    story1(ctx, t, w, h) {
+        const pts = POSE_FRAMES[2]; // 双臂高举定格
+        const fw = Math.min(w*0.62, h*0.60), fh = h*0.78;
+        const mapped = pts.map(p => [w*.5 - fw/2 + p[0]*fw, h*.08 + p[1]*fh]);
+        drawSkeleton(ctx, mapped, fh, {
+            lw: 1.0, bc: 'rgba(235,231,223,0.55)', bc2: 'rgba(212,165,116,0.40)',
+            jr: 1.6, jc: '#ebe7df', headGlow: false, jointGlow: false,
+        });
+        // 左腕发光
+        const wrist = mapped[9];
+        ctx.beginPath();
+        ctx.arc(wrist[0], wrist[1], 7 + Math.sin(t*2)*3, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(181,67,56,${0.3 + Math.sin(t*2)*0.2})`;
+        ctx.fill();
+    },
+    story2(ctx, t, w, h) {
+        // 17 floating dots
+        for (let i = 0; i < 17; i++) {
+            const a = (i/17)*Math.PI*2 + t*0.3;
+            const r = w * 0.3 + Math.sin(t + i) * 8;
+            const x = w*.5 + Math.cos(a) * r;
+            const y = h*.5 + Math.sin(a) * r * 0.6;
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, Math.PI*2);
+            ctx.fillStyle = 'rgba(212,165,116,0.7)';
+            ctx.fill();
+            // connect to center
+            ctx.beginPath();
+            ctx.moveTo(x, y); ctx.lineTo(w*.5, h*.5);
+            ctx.strokeStyle = 'rgba(212,165,116,0.1)';
+            ctx.lineWidth = 0.5; ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.arc(w*.5, h*.5, 5, 0, Math.PI*2);
+        ctx.fillStyle = '#ebe7df'; ctx.fill();
+    },
+    story3(ctx, t, w, h) {
+        // MR depth
+        for (let z = 0; z < 5; z++) {
+            const scale = 1 - z*0.15;
+            const offset = z * 8 - t * 20;
+            ctx.strokeStyle = `rgba(212,165,116,${0.6 - z*0.1})`;
+            ctx.lineWidth = 0.8;
+            ctx.strokeRect(w*.5 - w*.3*scale + offset%40, h*.5 - h*.3*scale, w*.6*scale, h*.6*scale);
+        }
+    },
+    story4(ctx, t, w, h) {
+        // morphing shape grid
+        for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < 5; j++) {
+                const phase = t + i*0.4 + j*0.2;
+                const r = 4 + Math.sin(phase)*3;
+                ctx.beginPath();
+                ctx.arc(w*.15 + i*(w*.18), h*.18 + j*(h*.16), r, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(212,165,116,${0.3 + Math.sin(phase)*0.2})`;
+                ctx.fill();
+            }
+        }
+    },
+    story5(ctx, t, w, h) {
+        // Two figures — offset double figure
+        for (let s = 0; s < 2; s++) {
+            const offsetX = s === 0 ? -w*.20 : w*.20;
+            const pts = POSE_FRAMES[s === 0 ? 0 : 4];
+            const fw = w*0.30, fh = h*0.68;
+            const mapped = pts.map(p => [w*.5 + offsetX - fw/2 + p[0]*fw, h*.12 + p[1]*fh]);
+            const col = s === 0 ? '212,165,116' : '235,231,223';
+            drawSkeleton(ctx, mapped, fh, {
+                lw: 0.9,
+                bc: `rgba(${col},0.68)`,
+                bc2: `rgba(${col},0.40)`,
+                jr: 1.5,
+                jc: `rgba(${col},0.9)`,
+                headGlow: false,
+                jointGlow: false,
+            });
+        }
+    },
+};
+
+let homeCanvasesInit = false;
+function initHomeCanvases() {
+    initHeroCanvas();
+    initTodayCanvas();
+    if (homeCanvasesInit) return; homeCanvasesInit = true;
+
+    const all = document.querySelectorAll('[data-thumb]');
+    all.forEach(c => {
+        const style = c.dataset.thumb;
+        const { ctx, getW, getH } = setupCanvas(c);
+        let t = Math.random() * 10;
+        function loop() {
+            const w = getW(), h = getH();
+            ctx.fillStyle = '#11100e';
+            ctx.fillRect(0,0,w,h);
+            t += 0.012;
+            (THUMB_PAINTERS[style] || THUMB_PAINTERS.studio)(ctx, t, w, h);
+            requestAnimationFrame(loop);
+        }
+        loop();
+    });
+
+    // Experiments
+    const decoder = document.querySelector('[data-exp="decoder"]');
+    if (decoder) {
+        const { ctx, getW, getH } = setupCanvas(decoder);
+        let t = 0;
+        function loop() {
+            const w = getW(), h = getH();
+            ctx.fillStyle = 'rgba(17,16,14,0.15)';
+            ctx.fillRect(0,0,w,h);
+            t += 0.008;
+            // Grid
+            ctx.strokeStyle = 'rgba(235,231,223,0.04)';
+            ctx.lineWidth = .5;
+            for (let x = 0; x < w; x += 30) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+            for (let y = 0; y < h; y += 30) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+            // Skeleton
+            const pts = lerpFrames(t * 0.8);
+            const fw = w*0.55, fh = h*0.7;
+            const mapped = pts.map(p => [w*.5 - fw/2 + p[0]*fw, h*.15 + p[1]*fh]);
+            COCO_EDGES.forEach(([i,j]) => {
+                ctx.beginPath();
+                ctx.moveTo(mapped[i][0], mapped[i][1]);
+                ctx.lineTo(mapped[j][0], mapped[j][1]);
+                ctx.strokeStyle = 'rgba(212,165,116,0.7)';
+                ctx.lineWidth = 1.2; ctx.stroke();
+            });
+            mapped.forEach((p, i) => {
+                ctx.beginPath(); ctx.arc(p[0], p[1], 2.5, 0, Math.PI*2);
+                ctx.fillStyle = '#ebe7df'; ctx.fill();
+                if (i < 5) {
+                    ctx.beginPath();
+                    ctx.arc(p[0], p[1], 6 + Math.sin(t*3 + i)*2, 0, Math.PI*2);
+                    ctx.strokeStyle = 'rgba(212,165,116,0.4)';
+                    ctx.lineWidth = 0.6; ctx.stroke();
+                }
+            });
+            requestAnimationFrame(loop);
+        }
+        loop();
+    }
+
+    const painter = document.querySelector('[data-exp="painter"]');
+    if (painter) {
+        const { ctx, getW, getH } = setupCanvas(painter);
+        let mx = -1, my = -1;
+        const trails = [];
+        painter.addEventListener('mousemove', e => {
+            const r = painter.getBoundingClientRect();
+            mx = e.clientX - r.left; my = e.clientY - r.top;
+            trails.push({ x: mx, y: my, life: 1, hue: Math.random() < 0.5 ? '212,165,116' : '235,231,223' });
+        });
+        painter.addEventListener('mouseleave', () => { mx = -1; my = -1; });
+        function loop() {
+            const w = getW(), h = getH();
+            ctx.fillStyle = 'rgba(17,16,14,0.04)';
+            ctx.fillRect(0,0,w,h);
+            // simulated default motion if no mouse
+            if (mx < 0) {
+                const px = w*.5 + Math.cos(Date.now()*0.001)*w*.2;
+                const py = h*.5 + Math.sin(Date.now()*0.0014)*h*.2;
+                trails.push({ x: px, y: py, life: 1, hue: '212,165,116' });
+            }
+            for (let i = trails.length - 1; i >= 0; i--) {
+                const tr = trails[i];
+                tr.life -= 0.012;
+                if (tr.life <= 0) { trails.splice(i,1); continue; }
+                ctx.beginPath();
+                ctx.arc(tr.x, tr.y, 2 + tr.life*4, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(${tr.hue},${tr.life * 0.6})`;
+                ctx.fill();
+            }
+            // line connecting last 30 trails
+            ctx.beginPath();
+            const recent = trails.slice(-30);
+            recent.forEach((tr, i) => i === 0 ? ctx.moveTo(tr.x, tr.y) : ctx.lineTo(tr.x, tr.y));
+            ctx.strokeStyle = 'rgba(212,165,116,0.4)';
+            ctx.lineWidth = 1; ctx.stroke();
+            requestAnimationFrame(loop);
+        }
+        loop();
+    }
+}
+
+/* ═════════════════════════════════════════════════════════════
+   AGENT HERO CANVAS
+═════════════════════════════════════════════════════════════ */
+let agentHeroInit = false;
+function initAgentHero() {
+    if (agentHeroInit) return; agentHeroInit = true;
+    const canvas = document.getElementById('agent-hero-canvas');
+    const { ctx, getW, getH } = setupCanvas(canvas);
+    let t = 0;
+    const trails = [];
+    function frame() {
+        if (!document.getElementById('page-agent').classList.contains('active')) {
+            requestAnimationFrame(frame); return;
+        }
+        const w = getW(), h = getH();
+        ctx.fillStyle = 'rgba(10,9,8,0.05)';
+        ctx.fillRect(0,0,w,h);
+        t += 0.0035;
+        const pts = lerpFrames(t);
+        const fw = Math.min(w*0.38, h*0.58), fh = h*0.78;
+        const mapped = pts.map(p => [w*0.5 - fw/2 + p[0]*fw, h*0.08 + p[1]*fh]);
+        trails.push(mapped.map(p=>[...p]));
+        if (trails.length > 40) trails.shift();
+        trails.forEach((fr, fi) => {
+            const a = fi/trails.length;
+            BODY_EDGES.forEach(([i,j]) => {
+                ctx.beginPath();
+                ctx.moveTo(fr[i][0], fr[i][1]);
+                ctx.lineTo(fr[j][0], fr[j][1]);
+                ctx.strokeStyle = `rgba(212,165,116,${a*0.08})`;
+                ctx.lineWidth = 0.7; ctx.stroke();
+            });
+        });
+        drawSkeleton(ctx, mapped, fh, {
+            lw: 1.4,
+            bc: 'rgba(212,165,116,0.78)',
+            bc2: 'rgba(212,165,116,0.45)',
+            jr: 2.0,
+            jc: '#ebe7df',
+        });
+        requestAnimationFrame(frame);
+    }
+    frame();
+}
+
+/* ═════════════════════════════════════════════════════════════
+   ART · cover & plates
+═════════════════════════════════════════════════════════════ */
+let artInit = false;
+function initArtCanvases() {
+    if (artInit) return; artInit = true;
+
+    // Cover — combined ink & energy
+    const cover = document.getElementById('art-cover-canvas');
+    if (cover) {
+        const { ctx, getW, getH } = setupCanvas(cover);
+        let t = 0;
+        function frame() {
+            const w = getW(), h = getH();
+            ctx.fillStyle = 'rgba(10,9,8,0.025)';
+            ctx.fillRect(0,0,w,h);
+            t += 0.006;
+            for (let i = 0; i < 4; i++) {
+                ctx.beginPath();
+                const sy = h * (0.2 + i*0.18);
+                ctx.moveTo(0, sy);
+                for (let x = 0; x <= w; x += 6) {
+                    ctx.lineTo(x, sy + Math.sin(x*0.005 + t + i*1.5) * (15 + i*4));
+                }
+                ctx.strokeStyle = `rgba(212,165,116,${0.5 - i*0.1})`;
+                ctx.lineWidth = (5 - i)*1.2; ctx.stroke();
+            }
+            // central radiating
+            const cx = w*0.5, cy = h*0.5;
+            for (let i = 0; i < 12; i++) {
+                const a = i/12 * Math.PI*2 + t*0.3;
+                const len = 80 + Math.sin(t*2 + i)*40;
+                ctx.beginPath();
+                ctx.moveTo(cx + Math.cos(a)*40, cy + Math.sin(a)*40);
+                ctx.lineTo(cx + Math.cos(a)*(40+len), cy + Math.sin(a)*(40+len));
+                ctx.strokeStyle = `rgba(212,165,116,${0.2 + Math.sin(t+i)*0.15})`;
+                ctx.lineWidth = 1; ctx.stroke();
+            }
+            requestAnimationFrame(frame);
+        }
+        frame();
+    }
+
+    // Plates
+    const plates = {
+        'plate-trails': drawPlateTrails,
+        'plate-energy': drawPlateEnergy,
+        'plate-wave': drawPlateWave
+    };
+    document.querySelectorAll('[data-plate]').forEach(c => {
+        const fn = plates[c.dataset.plate];
+        if (fn) {
+            const { ctx, getW, getH } = setupCanvas(c);
+            fn(ctx, getW, getH);
+        }
+    });
+}
+function drawPlateTrails(ctx, getW, getH) {
+    let t = 0;
+    const trails = [];
+    function frame() {
+        const w = getW(), h = getH();
+        ctx.fillStyle = 'rgba(17,16,14,0.06)';
+        ctx.fillRect(0,0,w,h);
+        t += 0.018;
+        const pts = lerpFrames(t * 0.7);
+        const fw = Math.min(w*.62, h*.56), fh = h*.76;
+        const mapped = pts.map(p => [w*.5 - fw/2 + p[0]*fw, h*.08 + p[1]*fh]);
+        trails.push(mapped.map(p=>[...p]));
+        if (trails.length > 50) trails.shift();
+        trails.forEach((fr, fi) => {
+            const a = fi/trails.length * 0.55;
+            BODY_EDGES.forEach(([i,j]) => {
+                ctx.beginPath();
+                ctx.moveTo(fr[i][0], fr[i][1]);
+                ctx.lineTo(fr[j][0], fr[j][1]);
+                ctx.strokeStyle = `rgba(212,165,116,${a*0.42})`;
+                ctx.lineWidth = 0.7; ctx.stroke();
+            });
+        });
+        drawSkeleton(ctx, mapped, fh, {
+            lw: 0.9,
+            bc: 'rgba(235,231,223,0.65)',
+            bc2: 'rgba(212,165,116,0.45)',
+            jr: 2.0,
+            jc: '#ebe7df',
+            headGlow: false,
+            jointGlow: false,
+        });
+        requestAnimationFrame(frame);
+    }
+    frame();
+}
+function drawPlateEnergy(ctx, getW, getH) {
+    let t = 0;
+    function frame() {
+        const w = getW(), h = getH();
+        ctx.fillStyle = '#11100e';
+        ctx.fillRect(0,0,w,h);
+        t += 0.012;
+        const cx = w*.5 + Math.sin(t*0.4)*w*0.08;
+        const cy = h*.5 + Math.cos(t*0.3)*h*0.06;
+        for (let r = 0; r < 18; r++) {
+            const rad = 12 + r*16 + Math.sin(t + r*0.3)*6;
+            const a = (0.7 - r*0.035) * (0.5 + Math.sin(t*2 + r)*0.3);
+            ctx.beginPath();
+            ctx.arc(cx, cy, rad, 0, Math.PI*2);
+            ctx.strokeStyle = `rgba(212,165,116,${Math.max(0,a)})`;
+            ctx.lineWidth = 0.8; ctx.stroke();
+        }
+        for (let i = 0; i < 12; i++) {
+            const a = i/12*Math.PI*2 + t*0.4;
+            const len = 80 + Math.sin(t*3+i)*30;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + Math.cos(a)*len, cy + Math.sin(a)*len);
+            ctx.strokeStyle = `rgba(212,165,116,${0.3 + Math.sin(t+i)*0.2})`;
+            ctx.lineWidth = 1; ctx.stroke();
+        }
+        requestAnimationFrame(frame);
+    }
+    frame();
+}
+function drawPlateWave(ctx, getW, getH) {
+    let t = 0;
+    function frame() {
+        const w = getW(), h = getH();
+        ctx.fillStyle = '#11100e';
+        ctx.fillRect(0,0,w,h);
+        t += 0.014;
+        const lines = 30;
+        for (let i = 0; i < lines; i++) {
+            const y = (i/lines)*h;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            for (let x = 0; x <= w; x++) {
+                const amp = 6 + Math.sin(t*2 + i*0.3)*10;
+                const f = 0.025 + Math.sin(t*0.4 + i*0.1)*0.008;
+                ctx.lineTo(x, y + Math.sin(x*f + t*1.5 + i*0.5) * amp * Math.sin(Math.PI*i/lines));
+            }
+            const a = 0.15 + Math.sin(t + i*0.3)*0.1;
+            ctx.strokeStyle = `rgba(212,165,116,${a})`;
+            ctx.lineWidth = 0.7; ctx.stroke();
+        }
+        requestAnimationFrame(frame);
+    }
+    frame();
+}
+
+/* ═════════════════════════════════════════════════════════════
+   MR cover canvas
+═════════════════════════════════════════════════════════════ */
+let mrInit = false;
+function initMRCanvas() {
+    if (mrInit) return; mrInit = true;
+    const canvas = document.getElementById('mr-cover-canvas');
+    if (!canvas) return;
+    const { ctx, getW, getH } = setupCanvas(canvas);
+    let t = 0;
+    function frame() {
+        const w = getW(), h = getH();
+        ctx.fillStyle = 'rgba(10,9,8,0.05)';
+        ctx.fillRect(0,0,w,h);
+        t += 0.01;
+        // Grid
+        ctx.strokeStyle = 'rgba(212,165,116,0.06)';
+        ctx.lineWidth = 0.5;
+        const gz = 50;
+        for (let x = 0; x < w; x += gz) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+        for (let y = 0; y < h; y += gz) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+
+        // Multiple skeletons in depth
+        for (let z = 0; z < 4; z++) {
+            const scale = 1 - z*0.18;
+            const offset = (Math.sin(t + z) * 80) * (1 - z*0.2);
+            const pts = lerpFrames(t * 0.8 + z*0.3);
+            const fw = w*0.4*scale, fh = h*0.8*scale;
+            const cx = w*0.5 + offset;
+            const cy = h*0.1;
+            const mapped = pts.map(p => [cx - fw/2 + p[0]*fw, cy + p[1]*fh]);
+            const a = 1 - z*0.2;
+            COCO_EDGES.forEach(([i,j]) => {
+                ctx.beginPath();
+                ctx.moveTo(mapped[i][0], mapped[i][1]);
+                ctx.lineTo(mapped[j][0], mapped[j][1]);
+                ctx.strokeStyle = `rgba(212,165,116,${a * 0.5})`;
+                ctx.lineWidth = (1.4*scale); ctx.stroke();
+            });
+            mapped.forEach(p => {
+                ctx.beginPath(); ctx.arc(p[0], p[1], 2*scale, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(235,231,223,${a})`; ctx.fill();
+            });
+        }
+        // HUD label
+        ctx.fillStyle = 'rgba(212,165,116,0.4)';
+        ctx.font = '11px "JetBrains Mono", monospace';
+        ctx.fillText('MR · 深度 · 4 层', 24, 30);
+        ctx.fillText(`视差 ${(Math.sin(t)*80).toFixed(0)}px`, 24, 50);
+        requestAnimationFrame(frame);
+    }
+    frame();
+}
+
+/* ═════════════════════════════════════════════════════════════
+   AIGC cover canvas
+═════════════════════════════════════════════════════════════ */
+let aigcInit = false;
+function initAIGCCanvas() {
+    if (aigcInit) return; aigcInit = true;
+    const canvas = document.getElementById('aigc-cover-canvas');
+    if (!canvas) return;
+    const { ctx, getW, getH } = setupCanvas(canvas);
+    let t = 0;
+    const seq = Array.from({length: 8}, () => ({
+        joints: Array.from({length: 17}, () => ({ x: Math.random(), y: Math.random()*0.85 + 0.075 }))
+    }));
+    function drawFigure(joints, alpha, w, h) {
+        const fw = w*0.45, fh = h*0.85;
+        const mapped = joints.map(j => [w*0.5 - fw/2 + j.x*fw, h*0.07 + j.y*fh]);
+        COCO_EDGES.forEach(([i,j]) => {
+            ctx.beginPath();
+            ctx.moveTo(mapped[i][0], mapped[i][1]);
+            ctx.lineTo(mapped[j][0], mapped[j][1]);
+            ctx.strokeStyle = `rgba(212,165,116,${alpha*0.7})`;
+            ctx.lineWidth = 1.2 * alpha; ctx.stroke();
+        });
+        mapped.forEach(p => {
+            ctx.beginPath(); ctx.arc(p[0],p[1], 2*alpha, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(235,231,223,${alpha})`; ctx.fill();
+        });
+    }
+    function frame() {
+        const w = getW(), h = getH();
+        ctx.fillStyle = 'rgba(10,9,8,0.04)';
+        ctx.fillRect(0,0,w,h);
+        t += 0.008;
+        const total = seq.length;
+        const cycleT = t % total;
+        const fi = Math.floor(cycleT);
+        const frac = cycleT - fi;
+        // ghost
+        for (let i = 0; i < 4; i++) {
+            const idx = ((fi - i) + total) % total;
+            drawFigure(seq[idx].joints, (4-i)/4 * 0.18, w, h);
+        }
+        // current interpolated
+        const A = seq[fi % total].joints;
+        const B = seq[(fi+1) % total].joints;
+        const interp = A.map((j, k) => ({
+            x: j.x + (B[k].x - j.x) * frac,
+            y: j.y + (B[k].y - j.y) * frac
+        }));
+        drawFigure(interp, 0.95, w, h);
+
+        // Bottom progress
+        ctx.fillStyle = 'rgba(212,165,116,0.15)';
+        ctx.fillRect(w*0.1, h*0.92, w*0.8, 2);
+        ctx.fillStyle = '#d4a574';
+        ctx.fillRect(w*0.1, h*0.92, w*0.8 * (cycleT/total), 2);
+        ctx.fillStyle = 'rgba(212,165,116,0.5)';
+        ctx.font = '11px "JetBrains Mono", monospace';
+        ctx.fillText(`生成中 · 帧 ${fi+1}/${total}`, w*0.1, h*0.9);
+
+        requestAnimationFrame(frame);
+    }
+    frame();
+}
+
+/* ═════════════════════════════════════════════════════════════
+   AGENT API — 根地址来自 api-config.js（window.__DANCENET_API_ORIGIN__）
+   或调试：?api=https%3A%2F%2F主机%2F子路径 （需 URL 编码）
+═════════════════════════════════════════════════════════════ */
+function resolveApiOrigin() {
+    if (typeof window !== 'undefined' && window.__DANCENET_API_ORIGIN__)
+        return String(window.__DANCENET_API_ORIGIN__).replace(/\/$/, '');
+    try {
+        const u = new URLSearchParams(window.location.search);
+        const q = u.get('api');
+        if (q) return decodeURIComponent(q).replace(/\/$/, '');
+    } catch (_) {}
+    return '';
+}
+const API_ORIGIN = resolveApiOrigin();
+const API_BASE = API_ORIGIN ? API_ORIGIN + '/api' : '/api';
+let currentResult = null;
+let currentVideoFile = null;
+
+function onVideoSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    currentVideoFile = file;
+    const label = document.getElementById('upload-file-name');
+    label.textContent = '↳ ' + file.name;
+    label.classList.remove('hidden');
+}
+
+const uploadZone = document.getElementById('upload-zone');
+if (uploadZone) {
+    uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('over'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('over'));
+    uploadZone.addEventListener('drop', e => {
+        e.preventDefault(); uploadZone.classList.remove('over');
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            document.getElementById('videoFile').files = e.dataTransfer.files;
+            onVideoSelect({ target: { files: [file] } });
+        }
+    });
+}
+
+function downloadResults() {
+    if (!currentResult) { alert('暂无可下载的分析结果。'); return; }
+    const blob = new Blob([JSON.stringify(currentResult, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `dance_analysis_${Date.now()}.json`;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+function updateStep(num, status, text) {
+    const el = document.getElementById('step' + num);
+    if (el) {
+        el.classList.remove('active', 'done');
+        if (status === 'active') el.classList.add('active');
+        if (status === 'done') el.classList.add('done');
+        document.getElementById('step' + num + '-text').textContent = text;
+    }
+    const ps = document.getElementById('ps' + num);
+    if (ps) {
+        ps.classList.remove('active', 'done');
+        if (status === 'active') ps.classList.add('active');
+        if (status === 'done') ps.classList.add('done');
+    }
+}
+
+function updateProgress(pct) {
+    const el = document.getElementById('progressFill');
+    if (el) el.style.width = pct + '%';
+}
+
+function showProgress() {
+    document.getElementById('upload-block').classList.add('hidden');
+    document.getElementById('progress-block').classList.remove('hidden');
+    document.getElementById('result-block').classList.add('hidden');
+}
+
+function showResult() {
+    document.getElementById('progress-block').classList.add('hidden');
+    document.getElementById('result-block').classList.remove('hidden');
+}
+
+async function startPoseAnalysis() {
+    const videoFile = document.getElementById('videoFile').files[0];
+    if (!videoFile) { alert('请先选择视频文件'); return; }
+    currentVideoFile = videoFile;
+    document.getElementById('poseAnalyzeBtn').disabled = true;
+    showProgress();
+    try {
+        updateStep(1, 'active', '上传中…');
+        updateProgress(10);
+        const fd = new FormData(); fd.append('video', videoFile);
+        const up = await fetch(`${API_BASE}/upload`, { method: 'POST', body: fd });
+        if (!up.ok) throw new Error('上传失败');
+        const { filename } = await up.json();
+        updateStep(1, 'done', `已接收 · ${filename}`);
+        updateProgress(30);
+
+        updateStep(2, 'active', '读取姿态…');
+        const an = await fetch(`${API_BASE}/analyze`, {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ filename })
+        });
+        if (!an.ok) { const e = await an.json(); throw new Error(e.error || '分析失败'); }
+        const result = await an.json();
+        updateStep(2, 'done', '已提取姿态');
+        updateStep(3, 'done', '时序分析完成');
+        updateProgress(100);
+        showPoseResults(result);
+    } catch(e) {
+        alert('错误：' + e.message);
+    } finally {
+        document.getElementById('poseAnalyzeBtn').disabled = false;
+    }
+}
+
+function showPoseResults(result) {
+    currentResult = result;
+    showResult();
+    const html = `
+        <div class="r-metric"><div class="r-metric-val">${result.agent1_pose_analysis?.duration ?? '—'}<span style="font-size:24px;">s</span></div><div class="r-metric-label">时长</div></div>
+        <div class="r-metric"><div class="r-metric-val">${result.agent1_pose_analysis?.keyframes_count ?? '—'}</div><div class="r-metric-label">关键帧</div></div>
+        <div class="r-metric"><div class="r-metric-val">${result.agent2_temporal_analysis?.total_segments ?? '—'}</div><div class="r-metric-label">片段数</div></div>
+        <div class="r-metric"><div class="r-metric-val">${result.agent2_temporal_analysis?.estimated_bpm ?? '—'}</div><div class="r-metric-label">BPM</div></div>
+    `;
+    document.getElementById('statsGrid').innerHTML = html;
+    document.getElementById('sidebar-download').disabled = false;
+    document.getElementById('result-block').scrollTop = 0;
+    window.scrollTo({ top: document.getElementById('result-block').offsetTop - 100, behavior: 'smooth' });
+}
+
+async function startWaveAnalysis() {
+    const videoFile = document.getElementById('videoFile').files[0];
+    if (!videoFile) { alert('请先选择视频文件'); return; }
+    currentVideoFile = videoFile;
+    document.getElementById('waveAnalyzeBtn').disabled = true;
+    showProgress();
+    try {
+        updateStep(1, 'active', '上传中…');
+        updateProgress(10);
+        const fd = new FormData(); fd.append('video', videoFile);
+        const up = await fetch(`${API_BASE}/upload`, { method: 'POST', body: fd });
+        if (!up.ok) throw new Error('上传失败：' + up.status);
+        const { filename } = await up.json();
+        updateStep(1, 'done', `已接收 · ${filename}`);
+        updateProgress(28);
+
+        updateStep(2, 'active', '提取运动中…');
+        updateProgress(45);
+        const an = await fetch(`${API_BASE}/analyze`, {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ filename })
+        });
+        if (!an.ok) { const e = await an.json(); throw new Error(e.error || '姿态分析失败'); }
+        await an.json();
+        updateStep(2, 'done', '已提取姿态');
+        updateProgress(62);
+
+        updateStep(3, 'active', '计算 Wave 分数…');
+        const wv = await fetch(`${API_BASE}/wave_analyze`, {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ filename, arm: 'both' })
+        });
+        if (!wv.ok) { const e = await wv.json(); throw new Error(e.error || 'Wave 分析失败'); }
+        const result = await wv.json();
+        updateStep(3, 'done', 'Wave 已计算');
+        updateProgress(100);
+        showWaveResults(result);
+    } catch(e) {
+        alert('错误：' + e.message);
+        updateStep(2, 'active', '✕ ' + e.message);
+    } finally {
+        document.getElementById('waveAnalyzeBtn').disabled = false;
+    }
+}
+
+function showWaveResults(result) {
+    currentResult = result;
+    const wave = result.wave_analysis;
+    const left = wave.left_arm, right = wave.right_arm;
+    showResult();
+    document.getElementById('statsGrid').innerHTML = `
+        <div class="r-metric"><div class="r-metric-val">${wave.overall_score}</div><div class="r-metric-label">综合</div></div>
+        <div class="r-metric"><div class="r-metric-val">${left.total_score}</div><div class="r-metric-label">左臂</div></div>
+        <div class="r-metric"><div class="r-metric-val">${right.total_score}</div><div class="r-metric-label">右臂</div></div>
+        <div class="r-metric"><div class="r-metric-val">${result.visualization ? '✓' : '✕'}</div><div class="r-metric-label">可视化</div></div>
+    `;
+    document.getElementById('sidebar-download').disabled = false;
+    window.scrollTo({ top: document.getElementById('result-block').offsetTop - 100, behavior: 'smooth' });
+}
+
+async function getLLMReport() {
+    const btn = document.getElementById('getLlmBtn');
+    const card = document.getElementById('llm-report-card');
+    const loading = document.getElementById('llm-loading');
+    const content = document.getElementById('llm-report-content');
+    const chatCard = document.getElementById('chat-card');
+
+    card.classList.remove('hidden');
+    loading.classList.remove('hidden');
+    content.classList.add('hidden');
+    chatCard.classList.add('hidden');
+    btn.disabled = true; btn.textContent = '正在生成…';
+
+    let prog = 0;
+    const iv = setInterval(() => {
+        prog = Math.min(90, prog + Math.random()*15);
+        document.getElementById('llm-progress').style.width = prog + '%';
+    }, 500);
+
+    try {
+        const res = await fetch(`${API_BASE}/llm_report`, {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                filename: currentResult.file,
+                wave_result: currentResult,
+                video_filename: currentVideoFile?.name
+            })
+        });
+        const data = await res.json();
+        clearInterval(iv);
+        document.getElementById('llm-progress').style.width = '100%';
+
+        if (data.error) {
+            alert('失败：' + data.error);
+        } else {
+            const text = data.report;
+            const qRegex = /👉 提问：(.+?)(?=\n|👉 提问：|$)/g;
+            let qs = [], m;
+            while ((m = qRegex.exec(text)) !== null) qs.push(m[1].trim());
+            const cleanText = text.replace(/💬 导师随堂问答[\s\S]*/, '').trim();
+
+            loading.classList.add('hidden');
+            content.classList.remove('hidden');
+            content.innerHTML = cleanText;
+
+            const qContainer = document.getElementById('suggested-questions');
+            const qBtns = document.getElementById('question-buttons');
+            if (qs.length > 0) {
+                qBtns.innerHTML = '';
+                qs.forEach(q => {
+                    const b = document.createElement('button');
+                    b.className = 'q-pill'; b.textContent = q;
+                    b.onclick = () => handleQuestionClick(q);
+                    qBtns.appendChild(b);
+                });
+                qContainer.classList.remove('hidden');
+            }
+
+            const vParts = text.split('推荐视频：');
+            const vContainer = document.getElementById('video-button-container');
+            vContainer.innerHTML = '';
+            if (vParts.length > 1) {
+                const [vTitle, vUrl] = vParts[1].split('|').map(s => s.trim());
+                if (vTitle && vUrl) {
+                    const vb = document.createElement('button');
+                    vb.className = 'btn-secondary';
+                    vb.style.cssText = 'width:100%; justify-content:center;';
+                    vb.textContent = '▷ ' + vTitle;
+                    vb.onclick = () => showVideoModal(vUrl);
+                    vContainer.appendChild(vb);
+                    vContainer.classList.remove('hidden');
+                }
+            }
+
+            chatCard.classList.remove('hidden');
+        }
+        btn.textContent = '重新生成读解';
+        btn.disabled = false;
+    } catch(e) {
+        clearInterval(iv);
+        alert('请求失败：' + e.message);
+        btn.disabled = false;
+        btn.textContent = '生成策展式读解 →';
+    }
+}
+
+async function handleQuestionClick(q) {
+    document.getElementById('suggested-questions').classList.add('hidden');
+    await sendChatMessageDirect(q);
+}
+
+async function sendChatMessageDirect(message) {
+    if (!message || !currentResult) return;
+    const msgs = document.getElementById('chat-messages');
+    // Remove empty hint
+    const empty = msgs.querySelector('.msg-empty');
+    if (empty) empty.remove();
+    const userDiv = document.createElement('div');
+    userDiv.className = 'msg-user'; userDiv.textContent = message;
+    msgs.appendChild(userDiv);
+    const loadDiv = document.createElement('div');
+    loadDiv.className = 'msg-ai';
+    loadDiv.innerHTML = '<span class="report-loading-dots"><span></span><span></span><span></span></span>';
+    msgs.appendChild(loadDiv);
+    msgs.scrollTop = msgs.scrollHeight;
+    try {
+        const res = await fetch(`${API_BASE}/chat`, {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ question: message, previous_data: currentResult })
+        });
+        const data = await res.json();
+        msgs.removeChild(loadDiv);
+        const aiDiv = document.createElement('div');
+        aiDiv.className = 'msg-ai';
+        aiDiv.innerHTML = data.error
+            ? `<span style="color:var(--ember)">错误：${data.error}</span>`
+            : data.reply.replace(/\n/g, '<br>');
+        msgs.appendChild(aiDiv);
+        msgs.scrollTop = msgs.scrollHeight;
+    } catch(e) {
+        if (loadDiv.parentNode) msgs.removeChild(loadDiv);
+        alert('发送失败：' + e.message);
+    }
+}
+
+async function sendChatMessage() {
+    const inp = document.getElementById('chat-input');
+    const msg = inp.value.trim();
+    if (!msg) return;
+    if (!currentResult) { alert('请先完成一次分析。'); return; }
+    inp.value = '';
+    await sendChatMessageDirect(msg);
+}
+
+function showVideoModal(url) {
+    const m = document.createElement('div');
+    m.className = 'video-modal';
+    m.innerHTML = `
+        <video controls autoplay><source src="${url}" type="video/mp4">当前浏览器无法播放此视频。</video>
+        <button class="video-modal-close" onclick="this.parentNode.remove()">关闭</button>
+    `;
+    m.addEventListener('click', e => { if (e.target === m) m.remove(); });
+    document.addEventListener('keydown', function h(e) {
+        if (e.key === 'Escape') { if (m.parentNode) m.remove(); document.removeEventListener('keydown', h); }
+    });
+    document.body.appendChild(m);
+}
+
+/* ─────────── Initial init ─────────── */
+document.getElementById('nav-home').classList.add('active');
+initHomeCanvases();
+</script>
+</body>
+</html>
