@@ -50,7 +50,10 @@
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-html { background: var(--ink); }
+html {
+    background: var(--ink);
+    scroll-behavior: smooth;
+}
 body {
     font-family: var(--f-sans);
     font-weight: 300;
@@ -666,6 +669,9 @@ body {
 .lab-stage {
     padding: 0 var(--gutter) 100px;
 }
+#exp1-playground {
+    scroll-margin-top: calc(var(--nav-h) + 28px);
+}
 .lab-stage-head {
     display: flex; justify-content: space-between; align-items: baseline;
     border-top: 1px solid var(--gold);
@@ -699,12 +705,18 @@ body {
     width: 1px; height: 1px;
 }
 .lab-frame-hud {
-    position: absolute; left: 22px; top: 20px;
+    position: absolute; left: 18px; top: 16px;
     font-family: var(--f-mono); font-size: 10.5px;
     letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--paper-faint);
+    color: var(--paper-soft);
     pointer-events: none;
-    display: flex; flex-direction: column; gap: 6px;
+    display: flex; flex-direction: column; gap: 8px;
+    padding: 12px 14px;
+    background: rgba(10, 9, 8, 0.72);
+    border: 1px solid rgba(212, 165, 116, 0.22);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    max-width: min(340px, calc(100% - 36px));
 }
 .lab-frame-hud .hud-row { display: flex; gap: 14px; align-items: baseline; }
 .lab-frame-hud .hud-key { color: var(--gold); }
@@ -946,12 +958,12 @@ body {
 }
 .exp1-step.is-active { display: flex; }
 
-/* Upload step — let ambient bg breathe through; upload card carries its own surface */
+/* Upload step — 略提亮底层，避免与环境网格叠出「脏糊」感 */
 .exp1-step[data-step="upload"] {
-    background: rgba(10,9,8,0.32);
+    background: rgba(10, 9, 8, 0.82);
 }
 .exp1-upload-zone {
-    width: min(620px, 86%);
+    width: min(680px, 92%);
     max-height: calc(100% - 24px);
     overflow-y: auto;
     border: 1px dashed var(--line-mid);
@@ -1057,8 +1069,12 @@ body {
     content: ''; flex: 1; height: 1px; background: var(--line);
 }
 .exp1-examples {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
-    max-width: 320px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    gap: 10px;
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto;
 }
 .exp1-example {
     background: var(--ink-2);
@@ -1075,13 +1091,13 @@ body {
 }
 .exp1-example canvas { width: 100%; height: 100%; display: block; }
 
-/* Crop step */
+/* Crop step — 实心底，避免透视底层 canvas 叠出双重影像 */
 .exp1-step[data-step="crop"] {
-    background: rgba(10,9,8,0.78);
+    background: var(--ink-2);
 }
 .exp1-crop-topbar {
     position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
-    z-index: 8;
+    z-index: 10;
     display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
     justify-content: center; max-width: calc(100% - 40px);
     pointer-events: auto;
@@ -1092,8 +1108,16 @@ body {
     color: var(--paper-faint);
 }
 .exp1-crop-stage {
-    position: absolute; inset: 0;
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    top: 58px;
+    bottom: 54px;
+    z-index: 1;
     cursor: move;
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid rgba(235, 231, 223, 0.08);
 }
 .exp1-crop-stage canvas {
     position: absolute; inset: 0;
@@ -1101,7 +1125,7 @@ body {
     display: block;
 }
 .exp1-crop-tip {
-    position: absolute; left: 22px; bottom: 22px;
+    position: absolute; left: 22px; bottom: 14px;
     font-family: var(--f-mono); font-size: 10.5px;
     letter-spacing: 0.18em; text-transform: uppercase;
     color: var(--paper-soft);
@@ -1109,6 +1133,7 @@ body {
     background: rgba(10,9,8,0.45);
     padding: 10px 14px;
     border-left: 1px solid var(--gold);
+    z-index: 11;
 }
 
 /* Stage D · Mask + Joints — shared work-stage layout */
@@ -1118,7 +1143,7 @@ body {
     flex-direction: row;
     align-items: stretch;
     justify-content: flex-start;
-    background: rgba(10,9,8,0.78);
+    background: var(--ink-2);
 }
 .exp1-work-stage {
     flex: 1; min-width: 0;
@@ -1235,7 +1260,7 @@ body {
     flex-direction: row;
     align-items: stretch;
     justify-content: flex-start;
-    background: rgba(10,9,8,0.78);
+    background: var(--ink-2);
 }
 .exp1-anim-status {
     position: absolute; left: 22px; bottom: 22px;
@@ -1310,6 +1335,16 @@ body {
 
 /* Tablet/mobile: stack tool panel below stage */
 @media (max-width: 760px) {
+    .exp1-examples {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: 100%;
+    }
+    .exp1-crop-stage {
+        left: 10px;
+        right: 10px;
+        top: 52px;
+        bottom: 48px;
+    }
     .exp1-step[data-step="mask"],
     .exp1-step[data-step="joints"],
     .exp1-step[data-step="animate"] {
@@ -1325,9 +1360,10 @@ body {
     .exp1-tool-section { flex: 1; padding-bottom: 0; border-bottom: none; }
 }
 
-/* Crop preview thumb (after confirm) */
+/* Crop preview thumb（mask/joints 阶段参考缩略图） */
 .exp1-handoff {
     position: absolute; right: 22px; bottom: 22px;
+    z-index: 12;
     width: 88px;
     background: var(--ink-2);
     border: 1px solid var(--gold);
@@ -1998,10 +2034,51 @@ body {
     border-bottom: 1px solid var(--line);
 }
 .ex-cover canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* 实验 01 · 封面背景视频（单段循环、低速） */
+.exp1-cover #exp1-cover-video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+    z-index: 1;
+}
+.exp1-cover-hit {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    text-decoration: none;
+    outline: none;
+}
+.exp1-cover-hit:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: -6px;
+}
+.exp1-cover .ex-cover-content {
+    pointer-events: none;
+}
+.exp1-cover-chorus {
+    margin-top: 28px;
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(17px, 2vw, 21px);
+    letter-spacing: 0.38em;
+    color: rgba(235,231,223,0.36);
+    text-shadow: 0 1px 3px rgba(10,9,8,0.75);
+}
+
 .ex-cover-vignette {
     position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(10,9,8,0.4) 0%, transparent 30%, transparent 50%, rgba(10,9,8,0.95) 100%);
     pointer-events: none;
+    z-index: 2;
 }
 
 /* ── 光影为媒 hero 专属 ── */
@@ -2037,6 +2114,7 @@ body {
 .ex-cover-content {
     position: absolute; left: var(--gutter); right: var(--gutter); bottom: 60px;
     display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: end;
+    z-index: 4;
 }
 .ex-cover-meta {
     display: flex; gap: 30px; align-items: baseline;
@@ -4073,7 +4151,7 @@ body {
 
                 <h3>关于"创造"的一个保留意见</h3>
 
-                <p>我们不相信 AI 能替代编舞家, 也不打算尝试。 The Synthesis 的设计原点是: 一个真正的编舞家面对空白排练厅时, 最先需要的不是答案, 是<em>启发</em>。 AI 在这个阶段最值钱的不是它生成得多准, 而是它能否在凌晨三点给你一个让你想骂"妈的还行"的版本。</p>
+                <p>我们不相信 AI 能替代编舞家, 也不打算尝试。 The Synthesis 的设计原点是: 一个真正的编舞家面对空白排练厅时, 最先需要的不是答案, 是<em>启发</em>。 AI 在这个阶段最值钱的不是它生成得多准, 而是它能否基于你的创意给你一个"超级懂你"的版本。</p>
             </article>
 
             <aside class="ex-aux">
@@ -4133,9 +4211,13 @@ body {
 ════════════════════════════════════════ -->
 <div id="page-exp1" class="page">
     <section class="ex-page">
-        <div class="ex-cover">
-            <canvas id="exp1-cover-canvas"></canvas>
+        <div class="ex-cover exp1-cover">
+            <video id="exp1-cover-video"
+                src="assets/exp1-hero-april30.mov"
+                muted loop playsinline autoplay
+                preload="auto"></video>
             <div class="ex-cover-vignette"></div>
+            <a href="#exp1-playground" class="exp1-cover-hit" aria-label="前往工作台 · 上传作品并试玩"></a>
             <div class="ex-cover-content">
                 <div>
                     <div class="ex-cover-meta"><span class="num">01</span><span>实验 · 绘画 + 舞蹈</span></div>
@@ -4143,6 +4225,7 @@ body {
                 </div>
                 <div class="ex-cover-pull">
                     <p class="ex-cover-pull-text">"上传一张你随手画的纸人——给它找到关节，<em style="color:var(--gold);">挑一段动作</em>，让它在屏幕上替你跳。"</p>
+                    <p class="exp1-cover-chorus">与画舞动</p>
                 </div>
             </div>
         </div>
@@ -4183,7 +4266,7 @@ body {
             </aside>
         </div>
 
-        <div class="lab-stage">
+        <div class="lab-stage" id="exp1-playground">
             <div class="lab-stage-head">
                 <div class="lab-stage-title">实验工作台 · WORKBENCH</div>
                 <div class="lab-stage-meta" id="exp1-stage-meta">步骤 1/5 · 上传照片或绘画</div>
@@ -4223,6 +4306,7 @@ body {
                                 <button type="button" class="exp1-example" data-ex="1" onclick="exp1LoadExample(1)" title="标准站姿"></button>
                                 <button type="button" class="exp1-example" data-ex="2" onclick="exp1LoadExample(2)" title="招手的小人"></button>
                                 <button type="button" class="exp1-example" data-ex="3" onclick="exp1LoadExample(3)" title="卡通女孩"></button>
+                                <button type="button" class="exp1-example" data-ex="4" onclick="exp1LoadExample(4)" title="卷发裙装小人"></button>
                             </div>
                             <div class="exp1-checklist">
                                 <div class="exp1-checklist-title">CHECKLIST · 拍得越好, 它跳得越自然</div>
@@ -4893,6 +4977,22 @@ function resolveMediaUrl(relPath) {
     return new URL(relPath.replace(/^\//, ''), u.origin + path).href;
 }
 
+/** 实验 01 封面视频播放速率（1 = 原速，越小越慢） */
+const EXP1_COVER_PLAYBACK_RATE = 0.75;
+
+function exp1PauseCoverVideo() {
+    const v = document.getElementById('exp1-cover-video');
+    if (v) v.pause();
+}
+function exp1ResumeCoverVideo() {
+    const pg = document.getElementById('page-exp1');
+    if (!pg || !pg.classList.contains('active')) return;
+    const v = document.getElementById('exp1-cover-video');
+    if (!v) return;
+    v.playbackRate = EXP1_COVER_PLAYBACK_RATE;
+    v.play().catch(() => {});
+}
+
 /* ─────────── Page router ─────────── */
 function showPage(name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -4931,6 +5031,10 @@ function showPage(name) {
     if (name !== 'exp2' && typeof exp2Pause === 'function') exp2Pause();
     // exp1: 切走时停掉动画播放与录制
     if (name !== 'exp1' && typeof exp1Pause === 'function') exp1Pause();
+    if (name !== 'exp1') exp1PauseCoverVideo();
+    if (name === 'exp1' && typeof exp1Init !== 'undefined' && exp1Init) {
+        requestAnimationFrame(() => requestAnimationFrame(() => exp1ResumeCoverVideo()));
+    }
 }
 
 /* 图版 III：从 display:none 切到可见时单次 play() 常被忽略，需延迟重试 + 视口内再播 */
@@ -6182,56 +6286,13 @@ function initExp1Page() {
     window.addEventListener('resize', exp1ScheduleResize);
 }
 
-/* ── Cover canvas (unchanged: paper + dancing skeleton) ── */
+/* ── Cover · 单段背景视频：循环播放 + 较慢速度（HTML loop，速度用 playbackRate） ── */
 function exp1SetupCover() {
-    const cover = document.getElementById('exp1-cover-canvas');
-    if (!cover) return;
-    const { ctx, getW, getH } = setupCanvas(cover);
-    let t = 0;
-    function frame() {
-        if (!document.getElementById('page-exp1').classList.contains('active')) {
-            requestAnimationFrame(frame); return;
-        }
-        const w = getW(), h = getH();
-        ctx.fillStyle = 'rgba(10,9,8,0.06)';
-        ctx.fillRect(0,0,w,h);
-        t += 0.0035;
-
-        ctx.strokeStyle = 'rgba(212,165,116,0.04)';
-        ctx.lineWidth = 0.5;
-        for (let i = 0; i < 50; i++) {
-            ctx.beginPath();
-            ctx.moveTo(0, i * 26 - 30);
-            ctx.lineTo(w, i * 26 + 30);
-            ctx.stroke();
-        }
-
-        const pts = lerpFrames(t);
-        const fw = Math.min(w*0.30, h*0.50), fh = h*0.74;
-        const mapped = pts.map(p => [w*0.5 - fw/2 + p[0]*fw, h*0.10 + p[1]*fh]);
-        drawSkeleton(ctx, mapped, fh, {
-            lw: 1.5,
-            bc: 'rgba(235,231,223,0.85)',
-            bc2: 'rgba(212,165,116,0.55)',
-            jr: 2.2,
-            jc: '#ebe7df',
-        });
-
-        BODY_EDGES.forEach(([i, j]) => {
-            const a = mapped[i], b = mapped[j];
-            for (let k = 0; k < 2; k++) {
-                const u = Math.random();
-                const x = a[0] + (b[0]-a[0])*u + (Math.random()-.5)*1.5;
-                const y = a[1] + (b[1]-a[1])*u + (Math.random()-.5)*1.5;
-                ctx.beginPath();
-                ctx.arc(x, y, 0.5 + Math.random()*0.7, 0, Math.PI*2);
-                ctx.fillStyle = `rgba(212,165,116,${0.10 + Math.random()*0.25})`;
-                ctx.fill();
-            }
-        });
-        requestAnimationFrame(frame);
-    }
-    frame();
+    const v = document.getElementById('exp1-cover-video');
+    if (!v) return;
+    const applyRate = () => { v.playbackRate = EXP1_COVER_PLAYBACK_RATE; };
+    v.addEventListener('loadedmetadata', applyRate);
+    if (v.readyState >= 1) applyRate();
 }
 
 /* ── Ambient bg behind wizard
@@ -6263,12 +6324,49 @@ function exp1SetupAmbient() {
 }
 
 /* ── Example thumbnail buttons ── */
+/** data-ex 索引 → PNG 示例（其余索引仍走程序化 exp1DrawExample） */
+const EXP1_EXAMPLE_ASSETS = {
+    4: 'assets/canva-MAFg6ay4I2Y.png',
+};
+
+function exp1FitExampleThumb(img, ctx, tw, th) {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.fillStyle = '#11100e';
+    ctx.fillRect(0, 0, tw, th);
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    if (!iw || !ih) return;
+    const scale = Math.min(tw / iw, th / ih);
+    const dw = iw * scale, dh = ih * scale;
+    const dx = (tw - dw) / 2, dy = (th - dh) / 2;
+    ctx.drawImage(img, dx, dy, dw, dh);
+}
+
 function exp1SetupExamples() {
     const buttons = document.querySelectorAll('#exp1-examples .exp1-example');
-    buttons.forEach(btn => {
+    buttons.forEach((btn) => {
+        btn.replaceChildren();
         const idx = parseInt(btn.dataset.ex || '0', 10);
+        const path = EXP1_EXAMPLE_ASSETS[idx];
+        if (path) {
+            const img = new Image();
+            img.onload = () => {
+                const tc = document.createElement('canvas');
+                tc.width = 120;
+                tc.height = 160;
+                exp1FitExampleThumb(img, tc.getContext('2d'), 120, 160);
+                btn.appendChild(tc);
+            };
+            img.onerror = () => {
+                btn.textContent = '!';
+                btn.title = '示例加载失败';
+            };
+            img.src = resolveMediaUrl(path);
+            return;
+        }
         const tc = document.createElement('canvas');
-        tc.width = 120; tc.height = 160;
+        tc.width = 120;
+        tc.height = 160;
         exp1DrawExample(tc.getContext('2d'), idx, 120, 160);
         btn.appendChild(tc);
     });
@@ -6316,9 +6414,18 @@ function exp1ReadFile(file) {
 
 /* ── Example loader ── */
 function exp1LoadExample(idx) {
+    const assetPath = EXP1_EXAMPLE_ASSETS[idx];
+    if (assetPath) {
+        const img = new Image();
+        img.onload = () => exp1AcceptImage(img);
+        img.onerror = () => exp1SetStatus('示例图加载失败 · 请确认 assets/canva-MAFg6ay4I2Y.png 存在');
+        img.src = resolveMediaUrl(assetPath);
+        return;
+    }
     const c = document.createElement('canvas');
-    c.width = 480; c.height = 640;
-    exp1DrawExample(c.getContext('2d'), idx, 480, 640);
+    c.width = 720;
+    c.height = 960;
+    exp1DrawExample(c.getContext('2d'), idx, 720, 960);
     const img = new Image();
     img.onload = () => exp1AcceptImage(img);
     img.src = c.toDataURL('image/png');
