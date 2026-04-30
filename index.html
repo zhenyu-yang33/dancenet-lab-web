@@ -930,10 +930,12 @@ body {
 .lab-step.is-done .lab-step-desc  { color: var(--paper-faint); }
 
 /* ─── Experiment 01 · Wizard (upload + crop) ─── */
-.lab-frame-hud, .lab-frame-watermark { z-index: 5; }
+/* 工作台交互层必须在环境 canvas 之上, 否则会"看得见图点不到上传" */
+.lab-frame-hud, .lab-frame-watermark { z-index: 6; }
 
 .exp1-wizard {
     position: absolute; inset: 0;
+    z-index: 4;
     display: block;
     pointer-events: auto;
 }
@@ -949,12 +951,58 @@ body {
     background: rgba(10,9,8,0.32);
 }
 .exp1-upload-zone {
-    width: min(560px, 78%);
+    width: min(620px, 86%);
+    max-height: calc(100% - 24px);
+    overflow-y: auto;
     border: 1px dashed var(--line-mid);
-    padding: 36px 40px 32px;
-    background: rgba(17,16,14,0.72);
+    padding: 28px 36px 26px;
+    background: rgba(17,16,14,0.78);
     text-align: center;
     transition: border-color 0.2s, background 0.2s;
+}
+.exp1-upload-progress {
+    display: flex; align-items: center; gap: 8px;
+    justify-content: center;
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--paper-faint);
+    margin-bottom: 14px;
+}
+.exp1-upload-progress .ip-step {
+    width: 28px; height: 2px;
+    background: var(--line-mid);
+}
+.exp1-upload-progress .ip-step.is-active { background: var(--gold); }
+.exp1-upload-progress .ip-num { color: var(--gold); font-weight: 600; }
+
+.exp1-checklist {
+    text-align: left;
+    margin: 22px auto 4px;
+    max-width: 460px;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+}
+.exp1-checklist-title {
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+}
+.exp1-checklist ul {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 7px;
+}
+.exp1-checklist li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.06em; line-height: 1.55;
+    color: var(--paper-soft);
+}
+.exp1-checklist li::before {
+    content: '✓';
+    color: var(--gold); font-weight: 700;
+    flex-shrink: 0;
+    font-size: 12px;
 }
 .exp1-upload-zone.is-over {
     border-color: var(--gold);
@@ -1030,6 +1078,18 @@ body {
 /* Crop step */
 .exp1-step[data-step="crop"] {
     background: rgba(10,9,8,0.78);
+}
+.exp1-crop-topbar {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    z-index: 8;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    justify-content: center; max-width: calc(100% - 40px);
+    pointer-events: auto;
+}
+.exp1-crop-topbar-hint {
+    font-family: var(--f-mono); font-size: 9px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--paper-faint);
 }
 .exp1-crop-stage {
     position: absolute; inset: 0;
@@ -1194,17 +1254,20 @@ body {
 .exp1-action-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 6px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 2px;
 }
 .exp1-action-btn {
     background: transparent;
     border: 1px solid var(--line-mid);
-    padding: 14px 10px;
+    padding: 11px 6px 9px;
     cursor: pointer;
     text-align: center;
     color: var(--paper-soft);
     transition: border-color 0.2s, color 0.2s, background 0.2s;
-    display: flex; flex-direction: column; gap: 6px;
+    display: flex; flex-direction: column; gap: 4px;
 }
 .exp1-action-btn:hover {
     border-color: var(--gold);
@@ -1218,13 +1281,13 @@ body {
 .exp1-action-btn-glyph {
     font-family: var(--f-serif);
     font-style: italic;
-    font-size: 22px;
+    font-size: 19px;
     line-height: 1;
 }
 .exp1-action-btn-name {
     font-family: var(--f-mono);
-    font-size: 9.5px;
-    letter-spacing: 0.18em;
+    font-size: 9px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
 }
 
@@ -4123,7 +4186,7 @@ body {
         <div class="lab-stage">
             <div class="lab-stage-head">
                 <div class="lab-stage-title">实验工作台 · WORKBENCH</div>
-                <div class="lab-stage-meta" id="exp1-stage-meta">阶段 C · 上传你的画</div>
+                <div class="lab-stage-meta" id="exp1-stage-meta">步骤 1/5 · 上传照片或绘画</div>
             </div>
 
             <div class="lab-frame" id="exp1-frame" style="aspect-ratio: 16 / 9;">
@@ -4139,11 +4202,19 @@ body {
                     <!-- Step C-1 · Upload -->
                     <div class="exp1-step is-active" data-step="upload">
                         <div class="exp1-upload-zone" id="exp1-upload-zone">
-                            <div class="exp1-upload-eyebrow">阶段 C · 让它进来</div>
-                            <div class="exp1-upload-prompt">交一张你画的<em style="color:var(--gold);">纸人</em>或<em style="color:var(--gold);">动物</em>。</div>
-                            <div class="exp1-upload-sub">JPG / PNG · 全程不上传到任何服务器</div>
+                            <div class="exp1-upload-progress">
+                                <span class="ip-num">步骤 1/5</span>
+                                <span class="ip-step is-active"></span>
+                                <span class="ip-step"></span>
+                                <span class="ip-step"></span>
+                                <span class="ip-step"></span>
+                                <span class="ip-step"></span>
+                            </div>
+                            <div class="exp1-upload-eyebrow">UPLOAD A DRAWING</div>
+                            <div class="exp1-upload-prompt">交一张<em style="color:var(--gold);">手绘</em>、<em style="color:var(--gold);">照片</em>或<em style="color:var(--gold);">扫描件</em>。</div>
+                            <div class="exp1-upload-sub">JPG / PNG · 可从相册选择或用手机拍照 · 仅在浏览器内处理</div>
                             <label class="exp1-upload-button">
-                                ▲ 选择图片
+                                📷 选择或拍摄图片
                                 <input type="file" accept="image/*" id="exp1-file-input" onchange="exp1HandleFile(event)">
                             </label>
                             <div class="exp1-divider">或试试这些示例</div>
@@ -4153,11 +4224,24 @@ body {
                                 <button type="button" class="exp1-example" data-ex="2" onclick="exp1LoadExample(2)" title="招手的小人"></button>
                                 <button type="button" class="exp1-example" data-ex="3" onclick="exp1LoadExample(3)" title="卡通女孩"></button>
                             </div>
+                            <div class="exp1-checklist">
+                                <div class="exp1-checklist-title">CHECKLIST · 拍得越好, 它跳得越自然</div>
+                                <ul>
+                                    <li>角色画/拍在白纸或纯色背景上, 没有褶皱、阴影或暗角。</li>
+                                    <li>四肢分开, 手臂和腿不要叠在身体上, 让它能被分段识别。</li>
+                                    <li>整个身体落在画面里, 不要让头或脚被裁掉。</li>
+                                    <li>光线均匀, 别让一半亮一半暗。</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Step C-2 · Crop -->
                     <div class="exp1-step" data-step="crop">
+                        <div class="exp1-crop-topbar">
+                            <button type="button" class="lab-btn primary" onclick="exp1ToolbarUpload()">📷 上传作品</button>
+                            <span class="exp1-crop-topbar-hint">换图会清空当前进度</span>
+                        </div>
                         <div class="exp1-crop-stage" id="exp1-crop-stage">
                             <canvas id="exp1-crop-canvas"></canvas>
                         </div>
@@ -4253,8 +4337,9 @@ body {
 
             <div class="lab-toolbar" id="exp1-toolbar">
                 <div class="lab-toolbar-group">
+                    <button type="button" class="lab-btn primary" id="exp1-upload-toolbar" onclick="exp1ToolbarUpload()">📷 上传作品</button>
                     <button type="button" class="lab-btn" id="exp1-back-btn" onclick="exp1Back()" disabled>← 上一步</button>
-                    <button type="button" class="lab-btn primary" id="exp1-next-btn" onclick="exp1Next()" disabled>下一步 →</button>
+                    <button type="button" class="lab-btn" id="exp1-next-btn" onclick="exp1Next()" disabled>下一步 →</button>
                 </div>
                 <div class="lab-status" id="exp1-status">阶段 C · 等待上传</div>
                 <div class="lab-toolbar-group">
@@ -4321,7 +4406,7 @@ body {
                     <h1 class="ex-cover-title">梵高<br><em>之眼</em>。</h1>
                 </div>
                 <div class="ex-cover-pull">
-                    <p class="ex-cover-pull-text">"打开摄像头， 把你的舞动转成<em style="color:var(--gold);">梵高式的笔触</em>。 拖入一段音乐——低音推动速度， 高音点亮新笔触。"</p>
+                    <p class="ex-cover-pull-text">"打开摄像头， 把你的舞动转成<em style="color:var(--gold);">梵高式的笔触</em>。 拖入一段音乐——让绘画与音乐一起舞蹈。"</p>
                 </div>
             </div>
             <div class="lab-scroll-hint" onclick="exp2ScrollToLab(event)">
@@ -4790,6 +4875,23 @@ body {
 ════════════════════════════════════════ -->
 <script>
 'use strict';
+
+/** Static hosts (e.g. GitHub Pages) may serve the app at /repo with no trailing slash; relative "assets/…" would wrongly resolve to /assets/…. */
+function resolveMediaUrl(relPath) {
+    const u = new URL(window.location.href);
+    // file:// 页面 origin 在浏览器里常为 "null"，不能拼 u.origin + pathname
+    if (u.protocol === 'file:') {
+        return new URL(relPath.replace(/^\//, ''), window.location.href).href;
+    }
+    let path = u.pathname;
+    if (!path.endsWith('/') && path !== '') {
+        const last = path.split('/').pop() || '';
+        if (/\.[a-z0-9]+$/i.test(last)) path = path.replace(/\/[^/]+$/, '/');
+        else path = path + '/';
+    }
+    if (path !== '' && !path.endsWith('/')) path += '/';
+    return new URL(relPath.replace(/^\//, ''), u.origin + path).href;
+}
 
 /* ─────────── Page router ─────────── */
 function showPage(name) {
@@ -5644,78 +5746,86 @@ function drawPlateFlow(ctx, getW, getH, canvasEl) {
     });
 
     const img = new Image();
-    img.src = 'assets/plate1-figure.png';
+    img.src = resolveMediaUrl('assets/plate1-figure.png');
     img.onload = () => {
-        imgW = 220;
-        imgH = Math.round(imgW * img.height / img.width);
-        const off = document.createElement('canvas');
-        off.width = imgW; off.height = imgH;
-        const oc = off.getContext('2d');
-        oc.drawImage(img, 0, 0, imgW, imgH);
-        const d = oc.getImageData(0, 0, imgW, imgH).data;
+        try {
+            // 整张图像粒子化：每个非透明 / 非纯黑像素都成为一个粒子，
+            // 粒子保留它在原图中的颜色。鼠标推开时颜色被略微提亮。
+            imgW = 260;
+            imgH = Math.round(imgW * img.height / img.width);
+            const off = document.createElement('canvas');
+            off.width = imgW; off.height = imgH;
+            const oc = off.getContext('2d');
+            oc.drawImage(img, 0, 0, imgW, imgH);
+            const d = oc.getImageData(0, 0, imgW, imgH).data;
 
-        const palPool = [];
-        const seeds = [];
-        for (let py = 0; py < imgH; py++) {
-            for (let px = 0; px < imgW; px++) {
-                const idx = (py * imgW + px) * 4;
-                const r = d[idx], g = d[idx + 1], b = d[idx + 2], a = d[idx + 3];
-                if (a < 30) continue;
-                const [, s, l] = rgbToHsl(r, g, b);
-                if (l >= 0.62 && s <= 0.35) {
-                    if ((px + py * 31) % 2 === 0) seeds.push([px, py]);
-                } else if (s > 0.35 && l > 0.30 && l < 0.78) {
-                    palPool.push([r, g, b]);
+            const seeds = [];
+            const STEP = 2;
+            for (let py = 0; py < imgH; py += STEP) {
+                for (let px = 0; px < imgW; px += STEP) {
+                    const idx = (py * imgW + px) * 4;
+                    const r = d[idx], g = d[idx + 1], b = d[idx + 2], a = d[idx + 3];
+                    if (a < 30) continue;
+                    // 跳过近黑背景，避免无意义的粒子
+                    if (r + g + b < 60) continue;
+                    seeds.push([px, py, r, g, b]);
                 }
             }
-        }
-        if (palPool.length > 0) {
-            for (let i = 0; i < 96; i++) {
-                palette.push(palPool[Math.floor(Math.random() * palPool.length)]);
-            }
-        } else {
-            palette = [[230,90,140],[210,80,200],[140,120,220],[230,60,90]];
-        }
 
-        particles = seeds.map(([ix, iy]) => ({
-            ix, iy,
-            x: 0, y: 0, vx: 0, vy: 0,
-            c: palette[Math.floor(Math.random() * palette.length)],
-            excite: 0,
-            ph: Math.random() * Math.PI * 2,
-            inited: false
-        }));
-        imgLoaded = true;
+            particles = seeds.map(([ix, iy, r, g, b]) => ({
+                ix, iy,
+                x: 0, y: 0, vx: 0, vy: 0,
+                r, g, b,
+                excite: 0,
+                ph: Math.random() * Math.PI * 2,
+                inited: false
+            }));
+            imgLoaded = true;
+        } catch (e) {
+            console.error('图版 I · plate1-figure 粒子采样失败（多为跨域或未部署该资源）', e);
+            particles = [];
+            imgLoaded = false;
+        }
     };
-    img.onerror = () => { imgLoaded = false; };
+    img.onerror = () => {
+        console.warn('图版 I · 无法加载', img.src, '— 请确认 assets/plate1-figure.png 已随站点部署');
+        imgLoaded = false;
+    };
 
     let t = 0;
-    let demoT = 0;
     function frame() {
         const w = getW(), h = getH();
-        ctx.fillStyle = 'rgba(10,9,8,0.18)';
+        // 同步 canvas 像素尺寸（应对 page 切换后 layout 延迟生效）
+        const dpr = window.devicePixelRatio || 1;
+        const targetW = Math.max(1, Math.round(w * dpr));
+        const targetH = Math.max(1, Math.round(h * dpr));
+        if (Math.abs(canvasEl.width - targetW) > 1 || Math.abs(canvasEl.height - targetH) > 1) {
+            canvasEl.width = targetW;
+            canvasEl.height = targetH;
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.scale(dpr, dpr);
+        }
+        // 直接清空（粒子每帧重绘）
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = 'rgba(10,9,8,1)';
         ctx.fillRect(0, 0, w, h);
         t += 0.012;
 
         if (imgLoaded && particles.length > 0) {
-            const scale = Math.min(w / imgW, h / imgH) * 0.78;
+            const scale = Math.min(w / imgW, h / imgH) * 0.82;
             const offX = w * 0.5 - imgW * scale * 0.5;
             const offY = h * 0.5 - imgH * scale * 0.5;
 
-            const idle = (performance.now() - mouse.lastMove) > 1600;
-            let mx = mouse.x, my = mouse.y;
-            if (idle) {
-                demoT += 0.018;
-                const cx = w * 0.55, cy = h * 0.5;
-                const a = w * 0.26, b = h * 0.20;
-                const denom = 1 + Math.cos(demoT) * Math.cos(demoT);
-                mx = cx + a * Math.cos(demoT) / denom;
-                my = cy + b * Math.sin(demoT) * Math.cos(demoT) / denom;
-            }
+            // 不做自动 demo——plate I 默认就是一个完整的发光人形，
+            // 只有鼠标真的进入图版时才把粒子推开成彩色流场。
+            const mx = mouse.x, my = mouse.y;
 
-            const repelR = 80;
+            const repelR = 75;
             const repelR2 = repelR * repelR;
             const maxF = 4.5;
+
+            // 粒子叠加用 lighter 让多粒子重合处更亮
+            ctx.globalCompositeOperation = 'lighter';
 
             for (let i = 0; i < particles.length; i++) {
                 const p = particles[i];
@@ -5724,7 +5834,7 @@ function drawPlateFlow(ctx, getW, getH, canvasEl) {
                 if (!p.inited) { p.x = ox; p.y = oy; p.inited = true; }
 
                 let fx = (ox - p.x) * 0.06;
-                let fy = (oy - p.y) * 0.06 + Math.sin(t * 1.4 + p.ph) * 0.18;
+                let fy = (oy - p.y) * 0.06 + Math.sin(t * 1.4 + p.ph) * 0.16;
 
                 const dx = p.x - mx, dy = p.y - my;
                 const d2 = dx * dx + dy * dy;
@@ -5735,7 +5845,7 @@ function drawPlateFlow(ctx, getW, getH, canvasEl) {
                     fy += (dy / d) * f;
                     p.excite = Math.min(1, p.excite + 0.18);
                 } else {
-                    p.excite *= 0.97;
+                    p.excite *= 0.96;
                 }
                 p.vx = (p.vx + fx) * 0.82;
                 p.vy = (p.vy + fy) * 0.82;
@@ -5743,19 +5853,18 @@ function drawPlateFlow(ctx, getW, getH, canvasEl) {
                 p.y += p.vy;
 
                 const e = p.excite;
-                const px = p.x | 0, py = p.y | 0;
-                if (e < 0.05) {
-                    const a = 0.55 + Math.sin(t * 2 + p.ph) * 0.14;
-                    ctx.fillStyle = `rgba(245,240,230,${a})`;
-                    ctx.fillRect(px, py, 1.3, 1.3);
-                } else {
-                    const c = p.c;
-                    const a = 0.55 + e * 0.4;
-                    ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${a})`;
-                    const sz = 1.3 + e * 0.7;
-                    ctx.fillRect(px - sz * 0.5, py - sz * 0.5, sz, sz);
-                }
+                const px = p.x, py = p.y;
+                // 激发态稍微提亮颜色
+                const k = 1 + e * 0.4;
+                const r = Math.min(255, p.r * k) | 0;
+                const g = Math.min(255, p.g * k) | 0;
+                const b = Math.min(255, p.b * k) | 0;
+                const a = 0.72 + e * 0.25 + Math.sin(t * 2 + p.ph) * 0.05;
+                const sz = 1.8 + e * 1.0;
+                ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+                ctx.fillRect(px - sz * 0.5, py - sz * 0.5, sz, sz);
             }
+            ctx.globalCompositeOperation = 'source-over';
         } else {
             const pts = lerpFrames(t * 0.7);
             const fw = Math.min(w * .62, h * .56), fh = h * .76;
@@ -6047,7 +6156,7 @@ function initExp1Page() {
         segments: null,       // 10 segments: head/torso/4 arms/4 legs
         restJoints: null,     // copy of joints at segment-build time (image coords)
         bboxH: 0, bboxW: 0,   // bbox in image coords (for delta scaling)
-        action: 'idle',
+        action: EXP1_DEFAULT_ACTION,
         actionTime: 0,
         lastFrameMs: 0,
         playing: false,
@@ -6247,7 +6356,7 @@ function exp1AcceptImage(img) {
     exp1State.segments         = null;
     exp1State.restJoints       = null;
     exp1State.bboxH = 0; exp1State.bboxW = 0;
-    exp1State.action           = 'idle';
+    exp1State.action           = EXP1_DEFAULT_ACTION;
     exp1State.actionTime       = 0;
     exp1State.animSize         = null;
     exp1HideHandoff();
@@ -6278,7 +6387,7 @@ function exp1Next() {
     if (exp1State.stage === 'joints') {
         exp1State.stage = 'animate';
         exp1BuildSegments();
-        exp1SetAction('idle', { silent: true });
+        exp1SetAction(EXP1_DEFAULT_ACTION, { silent: true });
         exp1State.playing = true;
         exp1RenderStage();
         exp1AnimateLoop();
@@ -6299,6 +6408,7 @@ function exp1Back() {
         exp1State.maskCanvas = null;
         exp1State.brushDrag = null;
         exp1State.brushPos = null;
+        exp1HideHandoff();
     } else if (exp1State.stage === 'joints') {
         exp1State.stage = 'mask';
         exp1State.joints = null;
@@ -6315,24 +6425,73 @@ function exp1Reset() {
     exp1State.stage = 'upload';
     exp1State.image = null;
     exp1State.crop = null;
+    exp1State.fit = null;
+    exp1State.drag = null;
     exp1State.croppedCanvas = null;
     exp1State.mask = null;
     exp1State.maskCanvas = null;
-    exp1State.joints = null;
+    exp1State.maskCacheDirty = false;
+    exp1State.maskFit = null;
+    exp1State.threshold = 80;
+    exp1State.brushMode = 'add';
+    exp1State.brushSize = 20;
     exp1State.brushPos = null;
+    exp1State.brushDrag = null;
+    exp1State.joints = null;
+    exp1State.jointsFit = null;
+    exp1State.jointDrag = null;
+    exp1State.hoverJoint = null;
     exp1State.segments = null;
+    exp1State.restJoints = null;
+    exp1State.bboxH = 0;
+    exp1State.bboxW = 0;
+    exp1State.action = EXP1_DEFAULT_ACTION;
+    exp1State.actionTime = 0;
+    exp1State.lastFrameMs = 0;
+    exp1State.playing = false;
+    exp1State.speed = 1.0;
+    exp1State.animSize = null;
+    exp1State.recorder = null;
+    exp1State.recordChunks = null;
+    exp1State.gifEncoder = null;
+    exp1State.rafId = 0;
     exp1HideHandoff();
+    const th = document.getElementById('exp1-threshold');
+    const thLab = document.getElementById('exp1-threshold-val');
+    if (th) th.value = '80';
+    if (thLab) thLab.textContent = '80';
+    const bs = document.getElementById('exp1-brush-size');
+    const bsLab = document.getElementById('exp1-brush-size-val');
+    if (bs) bs.value = '20';
+    if (bsLab) bsLab.textContent = '20';
+    if (typeof exp1SetBrush === 'function') exp1SetBrush('add');
+    const sp = document.getElementById('exp1-speed');
+    const spLab = document.getElementById('exp1-speed-val');
+    if (sp) sp.value = '1.0';
+    if (spLab) spLab.textContent = '1.0';
     exp1RenderStage();
+}
+
+/** 工具栏「上传作品」：在任意步骤均可重新选图；非上传步会先完整重置工作台 */
+function exp1ToolbarUpload() {
+    if (!exp1State) return;
+    if (exp1State.stage !== 'upload') {
+        exp1Reset();
+    }
+    requestAnimationFrame(() => {
+        const inp = document.getElementById('exp1-file-input');
+        if (inp) inp.click();
+    });
 }
 
 /* ── Top-level render dispatch ── */
 const EXP1_STAGE_INDEX = { upload: 0, crop: 1, mask: 2, joints: 3, animate: 4 };
 const EXP1_STAGE_HUD = {
-    upload:  { stage: 'C · UPLOAD',  next: 'AWAITING IMAGE',      meta: '阶段 C · 上传你的画'  },
-    crop:    { stage: 'C · CROP',    next: 'CROP & CONFIRM',      meta: '阶段 C · 裁剪主体'    },
-    mask:    { stage: 'D · MASK',    next: 'AUTO + BRUSH',        meta: '阶段 D · 自动抠图 + 画笔修正' },
-    joints:  { stage: 'D · JOINTS',  next: '14 KEYPOINTS · DRAG', meta: '阶段 D · 14 关节标定' },
-    animate: { stage: 'E · ANIMATE', next: 'PICK ACTION · EXPORT',meta: '阶段 E · 选一段动作' },
+    upload:  { stage: 'C · UPLOAD',  next: 'AWAITING IMAGE',      meta: '步骤 1/5 · 上传照片或绘画'  },
+    crop:    { stage: 'C · CROP',    next: 'CROP & CONFIRM',      meta: '步骤 2/5 · 框选角色主体'    },
+    mask:    { stage: 'D · MASK',    next: 'AUTO + BRUSH',        meta: '步骤 3/5 · 抠图与画笔修正' },
+    joints:  { stage: 'D · JOINTS',  next: '14 KEYPOINTS · DRAG', meta: '步骤 4/5 · 14 关节微调' },
+    animate: { stage: 'E · ANIMATE', next: 'PICK ACTION · EXPORT',meta: '步骤 5/5 · 动作与导出' },
 };
 const EXP1_NEXT_LABEL = {
     upload:  '下一步 →',
@@ -6385,6 +6544,11 @@ function exp1RenderStage() {
 
     exp1SetStatus(EXP1_STATUS[exp1State.stage] || '');
 
+    // handoff thumbnail 只在 mask/joints 阶段有效；其他阶段一律隐藏防残影
+    if (exp1State.stage !== 'mask' && exp1State.stage !== 'joints') {
+        exp1HideHandoff();
+    }
+
     if (exp1State.stage === 'crop')    exp1RenderCrop();
     if (exp1State.stage === 'mask')    exp1RenderMask();
     if (exp1State.stage === 'joints')  exp1RenderJoints();
@@ -6424,6 +6588,8 @@ function exp1RenderCrop() {
 
     const ctx = canvas.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.clearRect(0, 0, cw, ch);
 
     const img = exp1State.image;
@@ -7312,49 +7478,6 @@ const EXP1_DRAW_ORDER = [
 
 // 动作 keyframes —— deltas 是相对 rest pose 的偏移，单位 = bboxH 的比例
 const EXP1_ACTIONS = {
-    idle: {
-        name: '待机', glyph: '◌', duration: 3.2, loop: true,
-        keyframes: [
-            { t: 0.0, deltas: {} },
-            { t: 0.8, deltas: {
-                head: [0, -0.008], neck: [0, -0.005],
-                L_wrist: [-0.012, 0.008], R_wrist: [0.012, 0.008],
-            } },
-            { t: 1.6, deltas: {} },
-            { t: 2.4, deltas: {
-                head: [0, 0.005], neck: [0, 0.003],
-                L_wrist: [0.012, -0.008], R_wrist: [-0.012, -0.008],
-            } },
-            { t: 3.2, deltas: {} },
-        ],
-    },
-    wave: {
-        name: '挥手', glyph: '✺', duration: 2.0, loop: true,
-        keyframes: [
-            { t: 0.0, deltas: {} },
-            { t: 0.4, deltas: {
-                R_shoulder: [0, -0.02],
-                R_elbow: [0.06, -0.18], R_wrist: [0.18, -0.32],
-                head: [0, -0.005],
-            } },
-            { t: 0.8, deltas: {
-                R_shoulder: [0, -0.02],
-                R_elbow: [0.10, -0.18], R_wrist: [0.30, -0.30],
-                head: [0.005, -0.005],
-            } },
-            { t: 1.2, deltas: {
-                R_shoulder: [0, -0.02],
-                R_elbow: [0.06, -0.18], R_wrist: [0.10, -0.36],
-                head: [-0.005, -0.005],
-            } },
-            { t: 1.6, deltas: {
-                R_shoulder: [0, -0.02],
-                R_elbow: [0.10, -0.18], R_wrist: [0.30, -0.30],
-                head: [0.005, -0.005],
-            } },
-            { t: 2.0, deltas: {} },
-        ],
-    },
     walk: {
         name: '走路', glyph: '↬', duration: 1.4, loop: true,
         keyframes: [
@@ -7465,7 +7588,157 @@ const EXP1_ACTIONS = {
             { t: 1.60, deltas: {} },
         ],
     },
+    /* ─── 新增舞蹈动作 ─── */
+    twist: {
+        name: '扭腰', glyph: '◐', duration: 1.6, loop: true,
+        keyframes: [
+            { t: 0.00, deltas: {} },
+            { t: 0.40, deltas: {
+                neck: [-0.02, 0],
+                L_shoulder: [-0.05, 0], R_shoulder: [-0.05, 0],
+                L_elbow: [-0.07, -0.02], R_elbow: [-0.07, -0.02],
+                L_wrist: [-0.10, -0.04], R_wrist: [-0.10, -0.04],
+                L_hip: [0.04, 0], R_hip: [0.04, 0],
+                L_knee: [0.04, 0], R_knee: [0.04, 0],
+                L_ankle: [0.04, 0], R_ankle: [0.04, 0],
+            } },
+            { t: 0.80, deltas: {} },
+            { t: 1.20, deltas: {
+                neck: [0.02, 0],
+                L_shoulder: [0.05, 0], R_shoulder: [0.05, 0],
+                L_elbow: [0.07, -0.02], R_elbow: [0.07, -0.02],
+                L_wrist: [0.10, -0.04], R_wrist: [0.10, -0.04],
+                L_hip: [-0.04, 0], R_hip: [-0.04, 0],
+                L_knee: [-0.04, 0], R_knee: [-0.04, 0],
+                L_ankle: [-0.04, 0], R_ankle: [-0.04, 0],
+            } },
+            { t: 1.60, deltas: {} },
+        ],
+    },
+    sway: {
+        name: '摇摆', glyph: '∿', duration: 2.4, loop: true,
+        keyframes: [
+            { t: 0.00, deltas: {} },
+            { t: 0.60, deltas: {
+                head: [0.04, -0.02], neck: [0.03, -0.015],
+                L_shoulder: [0.025, -0.015], R_shoulder: [0.025, -0.015],
+                L_elbow: [0.04, 0.04], R_elbow: [0.06, -0.10], R_wrist: [0.10, -0.20],
+                L_wrist: [0.06, 0.10],
+                L_hip: [-0.025, 0], R_hip: [-0.025, 0],
+                L_knee: [-0.02, 0.02], R_knee: [-0.04, 0],
+                L_ankle: [-0.02, 0.02], R_ankle: [-0.06, 0],
+            } },
+            { t: 1.20, deltas: {} },
+            { t: 1.80, deltas: {
+                head: [-0.04, -0.02], neck: [-0.03, -0.015],
+                L_shoulder: [-0.025, -0.015], R_shoulder: [-0.025, -0.015],
+                L_elbow: [-0.06, -0.10], R_elbow: [-0.04, 0.04],
+                L_wrist: [-0.10, -0.20], R_wrist: [-0.06, 0.10],
+                L_hip: [0.025, 0], R_hip: [0.025, 0],
+                L_knee: [0.04, 0], R_knee: [0.02, 0.02],
+                L_ankle: [0.06, 0], R_ankle: [0.02, 0.02],
+            } },
+            { t: 2.40, deltas: {} },
+        ],
+    },
+    spin: {
+        name: '旋转', glyph: '↻', duration: 2.0, loop: true,
+        keyframes: [
+            // 用躯干上下 + 双臂大幅左右挥, 模拟旋转的视觉错觉
+            { t: 0.00, deltas: {} },
+            { t: 0.50, deltas: {
+                head: [0, -0.04], neck: [0, -0.03],
+                L_shoulder: [0.04, -0.03], R_shoulder: [-0.04, -0.03],
+                L_elbow: [0.16, -0.12], R_elbow: [-0.16, -0.12],
+                L_wrist: [0.28, -0.18], R_wrist: [-0.28, -0.18],
+                L_hip: [-0.02, 0], R_hip: [0.02, 0],
+                L_knee: [-0.02, 0], R_knee: [0.02, 0],
+                L_ankle: [-0.02, 0.01], R_ankle: [0.02, 0.01],
+            } },
+            { t: 1.00, deltas: {
+                head: [0, -0.06], neck: [0, -0.04],
+                L_shoulder: [0, -0.05], R_shoulder: [0, -0.05],
+                L_elbow: [0, -0.22], R_elbow: [0, -0.22],
+                L_wrist: [0, -0.36], R_wrist: [0, -0.36],
+            } },
+            { t: 1.50, deltas: {
+                head: [0, -0.04], neck: [0, -0.03],
+                L_shoulder: [-0.04, -0.03], R_shoulder: [0.04, -0.03],
+                L_elbow: [-0.16, -0.12], R_elbow: [0.16, -0.12],
+                L_wrist: [-0.28, -0.18], R_wrist: [0.28, -0.18],
+                L_hip: [0.02, 0], R_hip: [-0.02, 0],
+                L_knee: [0.02, 0], R_knee: [-0.02, 0],
+                L_ankle: [0.02, 0.01], R_ankle: [-0.02, 0.01],
+            } },
+            { t: 2.00, deltas: {} },
+        ],
+    },
+    jumpJack: {
+        name: '开合跳', glyph: '⨯', duration: 1.2, loop: true,
+        keyframes: [
+            { t: 0.00, deltas: {} },
+            // 闭合: 微下蹲蓄力
+            { t: 0.20, deltas: {
+                head: [0, 0.04], neck: [0, 0.03],
+                L_shoulder: [0.01, 0.02], R_shoulder: [-0.01, 0.02],
+                L_elbow: [0.01, 0.04], R_elbow: [-0.01, 0.04],
+                L_wrist: [0.02, 0.06], R_wrist: [-0.02, 0.06],
+                L_hip: [0, 0.03], R_hip: [0, 0.03],
+                L_knee: [0, 0.04], R_knee: [0, 0.04],
+                L_ankle: [0, 0.03], R_ankle: [0, 0.03],
+            } },
+            // 张开: 双臂上举 + 双腿外开 + 腾空
+            { t: 0.60, deltas: {
+                head: [0, -0.16], neck: [0, -0.13],
+                L_shoulder: [-0.03, -0.12], R_shoulder: [0.03, -0.12],
+                L_elbow: [-0.10, -0.22], R_elbow: [0.10, -0.22],
+                L_wrist: [-0.18, -0.32], R_wrist: [0.18, -0.32],
+                L_hip: [-0.03, -0.10], R_hip: [0.03, -0.10],
+                L_knee: [-0.08, -0.06], R_knee: [0.08, -0.06],
+                L_ankle: [-0.16, -0.04], R_ankle: [0.16, -0.04],
+            } },
+            { t: 1.00, deltas: {
+                head: [0, 0.03], neck: [0, 0.02],
+                L_shoulder: [0.01, 0.02], R_shoulder: [-0.01, 0.02],
+                L_elbow: [0.01, 0.03], R_elbow: [-0.01, 0.03],
+                L_wrist: [0.02, 0.04], R_wrist: [-0.02, 0.04],
+                L_hip: [0, 0.02], R_hip: [0, 0.02],
+                L_knee: [0, 0.03], R_knee: [0, 0.03],
+                L_ankle: [0, 0.02], R_ankle: [0, 0.02],
+            } },
+            { t: 1.20, deltas: {} },
+        ],
+    },
+    cheer: {
+        name: '欢呼', glyph: '✷', duration: 1.6, loop: true,
+        keyframes: [
+            { t: 0.00, deltas: {} },
+            // 双臂高举 + 头略仰
+            { t: 0.40, deltas: {
+                head: [0, -0.04], neck: [0, -0.03],
+                L_shoulder: [0, -0.02], R_shoulder: [0, -0.02],
+                L_elbow: [-0.05, -0.22], R_elbow: [0.05, -0.22],
+                L_wrist: [-0.08, -0.40], R_wrist: [0.08, -0.40],
+            } },
+            // 维持举起 + 微微左摇
+            { t: 0.80, deltas: {
+                head: [-0.01, -0.045], neck: [-0.01, -0.035],
+                L_shoulder: [-0.01, -0.025], R_shoulder: [-0.01, -0.025],
+                L_elbow: [-0.06, -0.235], R_elbow: [0.04, -0.21],
+                L_wrist: [-0.10, -0.42], R_wrist: [0.06, -0.39],
+            } },
+            { t: 1.20, deltas: {
+                head: [0.01, -0.045], neck: [0.01, -0.035],
+                L_shoulder: [0.01, -0.025], R_shoulder: [0.01, -0.025],
+                L_elbow: [-0.04, -0.21], R_elbow: [0.06, -0.235],
+                L_wrist: [-0.06, -0.39], R_wrist: [0.10, -0.42],
+            } },
+            { t: 1.60, deltas: {} },
+        ],
+    },
 };
+
+const EXP1_DEFAULT_ACTION = 'walk';
 
 function exp1BuildActionGrid() {
     const grid = document.getElementById('exp1-action-grid');
@@ -7474,7 +7747,7 @@ function exp1BuildActionGrid() {
     Object.entries(EXP1_ACTIONS).forEach(([key, act]) => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'exp1-action-btn' + (key === 'idle' ? ' is-active' : '');
+        btn.className = 'exp1-action-btn' + (key === EXP1_DEFAULT_ACTION ? ' is-active' : '');
         btn.dataset.action = key;
         btn.innerHTML = `<span class="exp1-action-btn-glyph">${act.glyph}</span><span class="exp1-action-btn-name">${act.name}</span>`;
         btn.addEventListener('click', () => exp1SetAction(key));
@@ -7482,45 +7755,101 @@ function exp1BuildActionGrid() {
     });
 }
 
-/* ── 1. Build segments (extract skin per capsule region ∩ mask) ── */
+/* ── 1. Build segments — 每个 mask 像素分配给最近的骨段 (Voronoi) ──
+   旧实现是「胶囊∩mask」, 相邻段半径会重叠 → 同一像素被多段重复绘制 →
+   动作起来后产生重影/重四肢/重叠裙子 (用户图一)。
+   新实现：扫描整张 mask, 计算每个前景像素到 10 条骨段的距离, 取最近段。
+   每像素只属于一段, 渲染时不再有重叠 ghost。 ── */
 function exp1BuildSegments() {
     const J = exp1State.joints, mskInfo = exp1State.mask, img = exp1State.croppedCanvas;
     if (!J || !mskInfo || !img) return;
 
-    // 派生 mid_hip 关节（动作驱动时也派生它，所以记进 restJoints）
     const mid_hip = [(J.L_hip[0] + J.R_hip[0]) / 2, (J.L_hip[1] + J.R_hip[1]) / 2];
     const Jrest = { ...J, mid_hip };
 
     const bb = exp1MaskBBox();
     if (!bb) return;
     const bbW = bb.xmax - bb.xmin, bbH = bb.ymax - bb.ymin;
-    const shortSide = Math.min(bbW, bbH);
 
-    const srcCtx = img.getContext('2d');
-    const fullId = srcCtx.getImageData(0, 0, img.width, img.height);
+    const iw = img.width, ih = img.height;
+    const fullId = img.getContext('2d').getImageData(0, 0, iw, ih);
     const srcAll = fullId.data;
     const mask = mskInfo.mask, mw = mskInfo.w;
 
-    const segs = [];
+    // 准备 10 条骨段。head 段稍延伸覆盖头顶留白
+    const bones = [];
     for (const def of EXP1_SEGMENT_DEFS) {
-        const origA = Jrest[def.endA], origB = Jrest[def.endB];
-        if (!origA || !origB) continue;
-
-        // head 段把整张脸都包进去：endB 沿 neck→head 方向再延伸一截
-        let a = origA, b = origB;
-        let r = shortSide * def.rad;
+        const oa = Jrest[def.endA], ob = Jrest[def.endB];
+        if (!oa || !ob) continue;
+        let ax = oa[0], ay = oa[1], bx = ob[0], by = ob[1];
         if (def.padHeadCircle) {
-            const dx0 = b[0] - a[0], dy0 = b[1] - a[1];
+            const dx0 = bx - ax, dy0 = by - ay;
             const ln = Math.hypot(dx0, dy0) || 1;
-            const ext = ln * 0.55;
-            b = [b[0] + dx0 / ln * ext, b[1] + dy0 / ln * ext];
-            r = Math.max(r, ln * 0.85);
+            const ext = ln * 0.50;
+            bx = bx + dx0 / ln * ext;
+            by = by + dy0 / ln * ext;
         }
+        bones.push({ def, oa, ob, ax, ay, bx, by });
+    }
 
-        const minX = Math.max(0, Math.floor(Math.min(a[0], b[0]) - r) - 4);
-        const maxX = Math.min(img.width - 1,  Math.ceil(Math.max(a[0], b[0]) + r) + 4);
-        const minY = Math.max(0, Math.floor(Math.min(a[1], b[1]) - r) - 4);
-        const maxY = Math.min(img.height - 1, Math.ceil(Math.max(a[1], b[1]) + r) + 4);
+    // 点到线段平方距离
+    const dist2ToBone = (px, py, b) => {
+        const dx = b.bx - b.ax, dy = b.by - b.ay;
+        const len2 = dx * dx + dy * dy;
+        let t = len2 > 0 ? ((px - b.ax) * dx + (py - b.ay) * dy) / len2 : 0;
+        if (t < 0) t = 0; else if (t > 1) t = 1;
+        const cx = b.ax + t * dx, cy = b.ay + t * dy;
+        return (px - cx) * (px - cx) + (py - cy) * (py - cy);
+    };
+
+    // 限制扫描范围到 mask bbox + pad（避免扫整张图）
+    const padPix = 8;
+    const x0 = Math.max(0, bb.xmin - padPix);
+    const x1 = Math.min(iw - 1, bb.xmax + padPix);
+    const y0 = Math.max(0, bb.ymin - padPix);
+    const y1 = Math.min(ih - 1, bb.ymax + padPix);
+
+    // assign[y*iw+x] = -1 没分配 / 0..N-1 段索引
+    const assign = new Int8Array(iw * ih).fill(-1);
+    for (let y = y0; y <= y1; y++) {
+        for (let x = x0; x <= x1; x++) {
+            if (!mask[y * mw + x]) continue;
+            let best = -1, bestD = Infinity;
+            for (let k = 0; k < bones.length; k++) {
+                const d = dist2ToBone(x, y, bones[k]);
+                if (d < bestD) { bestD = d; best = k; }
+            }
+            assign[y * iw + x] = best;
+        }
+    }
+
+    // 为每段生成独立 sprite
+    const segs = [];
+    for (let k = 0; k < bones.length; k++) {
+        const { def, oa, ob } = bones[k];
+        // 找该段所属像素的 bbox
+        let minX = iw, minY = ih, maxX = -1, maxY = -1;
+        for (let y = y0; y <= y1; y++) {
+            for (let x = x0; x <= x1; x++) {
+                if (assign[y * iw + x] !== k) continue;
+                if (x < minX) minX = x; if (x > maxX) maxX = x;
+                if (y < minY) minY = y; if (y > maxY) maxY = y;
+            }
+        }
+        // 即便段内没分到像素，仍要确保 anchor 在范围内（避免 sprite 完全空白）
+        if (maxX < 0) {
+            minX = Math.floor(Math.min(oa[0], ob[0])) - 2;
+            maxX = Math.ceil(Math.max(oa[0], ob[0])) + 2;
+            minY = Math.floor(Math.min(oa[1], ob[1])) - 2;
+            maxY = Math.ceil(Math.max(oa[1], ob[1])) + 2;
+        } else {
+            minX = Math.min(minX, Math.floor(oa[0]) - 2, Math.floor(ob[0]) - 2);
+            maxX = Math.max(maxX, Math.ceil(oa[0])  + 2, Math.ceil(ob[0])  + 2);
+            minY = Math.min(minY, Math.floor(oa[1]) - 2, Math.floor(ob[1]) - 2);
+            maxY = Math.max(maxY, Math.ceil(oa[1])  + 2, Math.ceil(ob[1])  + 2);
+        }
+        minX = Math.max(0, minX); minY = Math.max(0, minY);
+        maxX = Math.min(iw - 1, maxX); maxY = Math.min(ih - 1, maxY);
         const sw = maxX - minX + 1, sh = maxY - minY + 1;
         if (sw < 2 || sh < 2) continue;
 
@@ -7529,48 +7858,28 @@ function exp1BuildSegments() {
         const sctx = segCanvas.getContext('2d');
         const id = sctx.createImageData(sw, sh);
         const dst = id.data;
-
-        const ax = a[0] - minX, ay = a[1] - minY;
-        const bx = b[0] - minX, by = b[1] - minY;
-        const dxAB = bx - ax, dyAB = by - ay;
-        const len2 = Math.max(1e-6, dxAB * dxAB + dyAB * dyAB);
-        const r2 = r * r;
-        const featherR = r + 1.0;
-        const featherR2 = featherR * featherR;
-
         for (let py = 0; py < sh; py++) {
             for (let px = 0; px < sw; px++) {
-                let t = ((px - ax) * dxAB + (py - ay) * dyAB) / len2;
-                t = Math.max(0, Math.min(1, t));
-                const cx = ax + t * dxAB, cy = ay + t * dyAB;
-                const dist2 = (px - cx) ** 2 + (py - cy) ** 2;
-                if (dist2 > featherR2) continue;
                 const ix = px + minX, iy = py + minY;
-                if (!mask[iy * mw + ix]) continue;
-                const sIdx = (iy * img.width + ix) * 4;
+                if (assign[iy * iw + ix] !== k) continue;
+                const sIdx = (iy * iw + ix) * 4;
                 const dIdx = (py * sw + px) * 4;
                 dst[dIdx]     = srcAll[sIdx];
                 dst[dIdx + 1] = srcAll[sIdx + 1];
                 dst[dIdx + 2] = srcAll[sIdx + 2];
-                let alpha = srcAll[sIdx + 3];
-                if (dist2 > r2) {
-                    const f = 1 - (Math.sqrt(dist2) - r) / Math.max(0.001, featherR - r);
-                    alpha = Math.max(0, Math.min(255, alpha * f));
-                }
-                dst[dIdx + 3] = alpha;
+                dst[dIdx + 3] = srcAll[sIdx + 3];
             }
         }
         sctx.putImageData(id, 0, 0);
 
-        const anchorAx = origA[0] - minX, anchorAy = origA[1] - minY;
-        const anchorBx = origB[0] - minX, anchorBy = origB[1] - minY;
+        const anchorAx = oa[0] - minX, anchorAy = oa[1] - minY;
+        const anchorBx = ob[0] - minX, anchorBy = ob[1] - minY;
         segs.push({
             name: def.name,
             endA: def.endA, endB: def.endB,
             anchorA: { x: anchorAx, y: anchorAy },
             anchorB: { x: anchorBx, y: anchorBy },
             restAngle: Math.atan2(anchorBy - anchorAy, anchorBx - anchorAx),
-            // 沿骨轴缩放需要的 rest 长度
             restLen: Math.max(1, Math.hypot(anchorBx - anchorAx, anchorBy - anchorAy)),
             canvas: segCanvas,
         });
@@ -7669,7 +7978,7 @@ function exp1RenderAnim() {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    const action = EXP1_ACTIONS[exp1State.action] || EXP1_ACTIONS.idle;
+    const action = EXP1_ACTIONS[exp1State.action] || EXP1_ACTIONS[EXP1_DEFAULT_ACTION];
     const pose = exp1EvalPose(action, exp1State.actionTime);
 
     ctx.save();
@@ -8098,7 +8407,7 @@ function exp1DrawExample(ctx, idx, w, h) {
         });
     } else if (idx === 2) {
         // 招手 / Hello —— 前视, 右臂高举弯曲招手, 左臂自然下垂, 双腿略开
-        // 不对称姿态, 适合演示 wave 动作的 rigging 效果
+        // 不对称姿态, 便于演示挥臂类动作的骨骼形变
         const headR = w * 0.082;
         const headY = h * 0.205;
         inkFill('#a3e635', () => { ctx.beginPath(); ctx.arc(cx, headY, headR, 0, Math.PI*2); ctx.fill(); });
@@ -10082,7 +10391,7 @@ function sealAwakenPlateToStatic() {
     vid.pause();
     const img = document.createElement('img');
     img.className = 'plate-awaken-static';
-    img.src = 'assets/plate-awaken-poster.jpg';
+    img.src = resolveMediaUrl('assets/plate-awaken-poster.jpg');
     img.alt = '智能觉醒';
     img.decoding = 'async';
     plate.insertBefore(img, vid);
