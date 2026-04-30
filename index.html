@@ -689,6 +689,126 @@ body {
     letter-spacing: 0.16em; text-transform: uppercase;
     color: var(--paper-faint);
 }
+
+/* ─── Experiment 01 · 工作台布局（进度条 + 画布质感） ─── */
+.lab-exp1-wb .lab-stage-head.exp1-wb-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+    padding-bottom: 28px;
+    margin-bottom: 20px;
+}
+.exp1-wb-head-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.lab-exp1-wb .lab-stage-head .lab-stage-title {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+}
+.lab-exp1-wb .lab-stage-meta {
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    color: var(--paper-soft);
+    text-align: right;
+    text-transform: none;
+    line-height: 1.45;
+    max-width: min(36em, 100%);
+}
+.exp1-wb-track {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.exp1-wb-seg {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 10px 14px;
+    border: 1px solid var(--line);
+    background: rgba(14, 13, 11, 0.75);
+    transition: border-color 0.2s, background 0.2s, opacity 0.2s;
+    min-height: 56px;
+    text-wrap: pretty;
+}
+.exp1-wb-seg-n {
+    font-family: var(--f-mono); font-size: 9.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+}
+.exp1-wb-seg-t {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 15px;
+    line-height: 1.25;
+    color: var(--paper-soft);
+}
+.exp1-wb-seg.is-done {
+    border-color: rgba(110, 150, 120, 0.4);
+    background: rgba(110, 150, 120, 0.07);
+}
+.exp1-wb-seg.is-done .exp1-wb-seg-n { color: var(--moss); }
+.exp1-wb-seg.is-done .exp1-wb-seg-t { color: var(--paper-soft); opacity: 0.85; }
+.exp1-wb-seg.is-current {
+    border-color: rgba(212, 165, 116, 0.65);
+    background: rgba(212, 165, 116, 0.09);
+    box-shadow: inset 0 0 0 1px rgba(212, 165, 116, 0.12);
+}
+.exp1-wb-seg.is-current .exp1-wb-seg-n,
+.exp1-wb-seg.is-current .exp1-wb-seg-t { color: var(--gold); }
+.exp1-wb-seg.is-upcoming { opacity: 0.38; }
+
+.lab-exp1-wb .lab-frame {
+    border-radius: 1px;
+    background: linear-gradient(168deg, #0b0a08 0%, #050403 48%, #080706 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(235, 231, 223, 0.04),
+        0 28px 64px rgba(0, 0, 0, 0.42);
+}
+.lab-exp1-wb .lab-frame-hud {
+    top: auto;
+    bottom: 16px;
+    left: 16px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 10px 22px;
+    max-width: min(520px, calc(100% - 120px));
+    padding: 10px 14px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+}
+.lab-exp1-wb .lab-frame-hud .hud-row {
+    flex-direction: column;
+    gap: 2px;
+    align-items: flex-start;
+}
+.lab-exp1-wb .lab-frame-hud .hud-key {
+    font-size: 9px;
+    opacity: 0.85;
+}
+.lab-exp1-wb .lab-frame-watermark {
+    opacity: 0.55;
+}
+
+@media (max-width: 900px) {
+    .exp1-wb-track {
+        grid-template-columns: repeat(5, minmax(68px, 1fr));
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+    }
+    .exp1-wb-seg { min-width: 68px; }
+    .lab-exp1-wb .lab-stage-meta { text-align: left; }
+}
+
 .lab-frame {
     position: relative;
     background: #050403;
@@ -896,12 +1016,18 @@ body {
     transition: width 0.06s linear;
 }
 
-.lab-steps {
+#exp1-steps.lab-steps {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0;
     margin-top: 30px;
     border: 1px solid var(--line);
+}
+@media (max-width: 1100px) {
+    #exp1-steps.lab-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+    #exp1-steps.lab-steps { grid-template-columns: 1fr; }
 }
 .lab-step {
     padding: 26px 24px;
@@ -960,17 +1086,18 @@ body {
 
 /* Upload step — 略提亮底层，避免与环境网格叠出「脏糊」感 */
 .exp1-step[data-step="upload"] {
-    background: rgba(10, 9, 8, 0.82);
+    background: rgba(8, 7, 6, 0.88);
 }
 .exp1-upload-zone {
-    width: min(680px, 92%);
-    max-height: calc(100% - 24px);
+    width: min(640px, 94%);
+    max-height: calc(100% - 32px);
     overflow-y: auto;
-    border: 1px dashed var(--line-mid);
-    padding: 28px 36px 26px;
-    background: rgba(17,16,14,0.78);
+    border: 1px solid rgba(212, 165, 116, 0.22);
+    padding: 28px 34px 26px;
+    background: linear-gradient(180deg, rgba(20, 18, 16, 0.94) 0%, rgba(12, 11, 9, 0.96) 100%);
     text-align: center;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
 }
 .exp1-upload-progress {
     display: flex; align-items: center; gap: 8px;
@@ -1431,13 +1558,13 @@ body {
 
 @media (max-width: 980px) {
     .lab-meter { grid-template-columns: 1fr; }
-    .lab-steps { grid-template-columns: repeat(2, 1fr); }
+    #exp1-steps.lab-steps { grid-template-columns: repeat(2, 1fr); }
     .lab-step:nth-child(odd) { border-right: 1px solid var(--line); }
     .lab-step:nth-child(even) { border-right: none; }
     .lab-step:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
 }
 @media (max-width: 720px) {
-    .lab-steps { grid-template-columns: 1fr; }
+    #exp1-steps.lab-steps { grid-template-columns: 1fr; }
     .lab-step { border-right: none !important; border-bottom: 1px solid var(--line); }
     .lab-step:last-child { border-bottom: none; }
     .lab-toolbar-group { border-left: none; padding-left: 0; margin-left: 0; }
@@ -3208,43 +3335,143 @@ body {
     color: var(--paper-soft);
     max-width: 720px;
 }
-.art-flow-cases-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-}
-.art-flow-case {
+/* CASES · 3D COVERFLOW REEL */
+.art-flow-reel-wrap {
     position: relative;
-    aspect-ratio: 4 / 5;
+    margin-top: 8px;
+}
+.art-flow-reel {
+    position: relative;
+    height: clamp(420px, 56vw, 580px);
+    perspective: 2000px;
+    perspective-origin: 50% 50%;
+    overflow: hidden;
+    user-select: none;
+    touch-action: pan-y;
+    outline: none;
+}
+.art-flow-reel::before,
+.art-flow-reel::after {
+    content: "";
+    position: absolute; top: 0; bottom: 0;
+    width: 14%;
+    z-index: 5; pointer-events: none;
+}
+.art-flow-reel::before {
+    left: 0;
+    background: linear-gradient(90deg, var(--ink) 0%, rgba(10,9,8,0.6) 60%, transparent 100%);
+}
+.art-flow-reel::after {
+    right: 0;
+    background: linear-gradient(270deg, var(--ink) 0%, rgba(10,9,8,0.6) 60%, transparent 100%);
+}
+.art-flow-reel-stage {
+    position: absolute; inset: 0;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: transform;
+}
+.art-flow-reel-stage.is-dragging {
+    transition: none;
+}
+.art-flow-reel-card {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: clamp(240px, 28vw, 380px);
+    aspect-ratio: 9 / 12;
+    margin: 0;
     background: var(--ink-2);
     border: 1px solid var(--line);
     overflow: hidden;
-    transition: border-color 0.3s;
+    cursor: grab;
+    transform-origin: 50% 50%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transition:
+        transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+        opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+        filter 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+        visibility 0s linear 0.35s,
+        box-shadow 0.5s,
+        border-color 0.3s;
+    will-change: transform, opacity, filter;
 }
-.art-flow-case:hover { border-color: var(--gold); }
-.art-flow-case video,
-.art-flow-case img {
+.art-flow-reel-card.is-active {
+    border-color: var(--gold);
+    cursor: pointer;
+    box-shadow:
+        0 30px 80px -20px rgba(0,0,0,0.85),
+        0 0 0 1px rgba(212,165,116,0.35) inset;
+}
+.art-flow-reel-stage.is-dragging .art-flow-reel-card {
+    transition: none;
+    cursor: grabbing;
+}
+.art-flow-reel-card video,
+.art-flow-reel-card img {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
-}
-.art-flow-case-cap {
-    position: absolute; left: 16px; right: 16px; bottom: 16px;
-    z-index: 2;
-    display: flex; flex-direction: column; gap: 4px;
+    background: #000;
     pointer-events: none;
 }
-.art-flow-case-cap .k {
+.art-flow-reel-shade {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10,9,8,0) 45%, rgba(10,9,8,0.85) 100%);
+    pointer-events: none;
+    opacity: 0; transition: opacity 0.5s;
+}
+.art-flow-reel-card.is-active .art-flow-reel-shade { opacity: 1; }
+.art-flow-reel-corner {
+    position: absolute; width: 16px; height: 16px;
+    border-color: var(--gold); border-style: solid;
+    pointer-events: none;
+    opacity: 0; transition: opacity 0.4s;
+}
+.art-flow-reel-card.is-active .art-flow-reel-corner { opacity: 1; }
+.art-flow-reel-corner.tl { top: 10px; left: 10px; border-width: 1px 0 0 1px; }
+.art-flow-reel-corner.tr { top: 10px; right: 10px; border-width: 1px 1px 0 0; }
+.art-flow-reel-corner.bl { bottom: 10px; left: 10px; border-width: 0 0 1px 1px; }
+.art-flow-reel-corner.br { bottom: 10px; right: 10px; border-width: 0 1px 1px 0; }
+.art-flow-reel-cap {
+    position: absolute; left: 18px; right: 18px; bottom: 18px;
+    display: flex; flex-direction: column; gap: 4px;
+    z-index: 2; pointer-events: none;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 0.5s, transform 0.5s;
+}
+.art-flow-reel-card.is-active .art-flow-reel-cap {
+    opacity: 1; transform: translateY(0);
+}
+.art-flow-reel-cap .k {
     font-family: var(--f-mono); font-size: 9.5px;
-    letter-spacing: 0.22em; text-transform: uppercase;
+    letter-spacing: 0.24em; text-transform: uppercase;
     color: var(--gold);
 }
-.art-flow-case-cap .v {
+.art-flow-reel-cap .v {
     font-family: var(--f-serif);
-    font-size: 18px; line-height: 1.3;
+    font-size: 19px; line-height: 1.3;
     color: var(--paper);
 }
-.art-flow-case-empty {
+.art-flow-reel-cap .s {
+    font-family: var(--f-serif);
+    font-size: 13.5px; line-height: 1.55;
+    color: var(--paper-soft);
+    margin-top: 4px;
+}
+.art-flow-reel-stamp {
+    position: absolute; top: 12px; right: 12px;
+    font-family: var(--f-mono); font-size: 9px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 4px 8px;
+    pointer-events: none;
+    opacity: 0; transition: opacity 0.4s;
+    z-index: 2;
+}
+.art-flow-reel-card.is-active .art-flow-reel-stamp { opacity: 1; }
+.art-flow-reel-empty {
     background:
         repeating-linear-gradient(
             45deg,
@@ -3254,11 +3481,77 @@ body {
         var(--ink-2);
     display: flex; align-items: center; justify-content: center;
 }
-.art-flow-case-empty::before {
+.art-flow-reel-empty::before {
     content: "案例待上传";
     font-family: var(--f-mono); font-size: 10.5px;
     letter-spacing: 0.28em; text-transform: uppercase;
     color: var(--paper-faint);
+}
+.art-flow-reel-nav {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: 1px solid var(--line-mid);
+    background: rgba(10,9,8,0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--paper);
+    font-family: var(--f-serif);
+    font-size: 22px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 12;
+    transition: border-color 0.3s, color 0.3s, background 0.3s, opacity 0.3s;
+}
+.art-flow-reel-nav:hover {
+    border-color: var(--gold); color: var(--gold);
+    background: rgba(10,9,8,0.75);
+}
+.art-flow-reel-nav:disabled {
+    opacity: 0.25; cursor: not-allowed;
+}
+.art-flow-reel-nav.prev { left: 18px; }
+.art-flow-reel-nav.next { right: 18px; }
+.art-flow-reel-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 28px;
+    padding: 0 4px;
+    gap: 24px;
+}
+.art-flow-reel-dots {
+    display: flex; flex-wrap: wrap;
+    gap: 8px;
+}
+.art-flow-reel-dot {
+    width: 22px; height: 2px;
+    background: var(--line-mid);
+    border: none; padding: 0;
+    cursor: pointer;
+    transition: background 0.3s, width 0.4s;
+}
+.art-flow-reel-dot:hover { background: var(--paper-soft); }
+.art-flow-reel-dot.is-active {
+    background: var(--gold);
+    width: 36px;
+}
+.art-flow-reel-meta {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--paper-faint);
+    white-space: nowrap;
+}
+.art-flow-reel-meta em {
+    font-style: normal;
+    color: var(--gold);
+}
+.art-flow-reel-hint {
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--paper-faint);
+    margin-top: 14px;
 }
 
 /* SHARE · 落地分享 */
@@ -3303,6 +3596,10 @@ body {
     width: 100%; height: 100%; object-fit: cover;
     position: absolute; inset: 0;
 }
+.art-flow-share-cover:has(video)::before,
+.art-flow-share-cover:has(img)::before {
+    content: none;
+}
 .art-flow-share-text { display: flex; flex-direction: column; gap: 14px; }
 .art-flow-share-tag {
     width: fit-content;
@@ -3337,12 +3634,15 @@ body {
     .art-flow-principle-grid { grid-template-columns: 1fr; }
     .art-flow-section-head { grid-template-columns: 1fr; gap: 22px; }
     .art-flow-section-head .lede { grid-column: 1; }
-    .art-flow-cases-grid { grid-template-columns: repeat(2, 1fr); }
     .art-flow-share-item { grid-template-columns: 1fr; gap: 24px; direction: ltr; }
     .art-flow-share-item > * { direction: ltr; }
+    .art-flow-reel-nav.prev { left: 8px; }
+    .art-flow-reel-nav.next { right: 8px; }
+    .art-flow-reel-foot { flex-direction: column; gap: 16px; align-items: flex-start; }
 }
 @media (max-width: 720px) {
-    .art-flow-cases-grid { grid-template-columns: 1fr; }
+    .art-flow-reel { height: clamp(360px, 90vw, 460px); }
+    .art-flow-reel-card { width: clamp(200px, 64vw, 260px); }
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -3382,6 +3682,305 @@ body {
     .stories-scroll { padding-left: 24px; padding-right: 24px; }
     .story-card { flex: 0 0 280px; }
     .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   WB2 · Redesigned Experiment 01 Workbench
+═══════════════════════════════════════════════════════ */
+
+/* ── State-driven layout via data-wb-stage ── */
+#exp1-playground[data-wb-stage="upload"] #exp1-frame   { display: none; }
+#exp1-playground[data-wb-stage="upload"] .wb2-upload   { display: grid; }
+#exp1-playground:not([data-wb-stage="upload"]) .wb2-upload { display: none; }
+#exp1-steps { display: none; } /* kept for JS compat, hidden visually */
+
+/* ── WB2 Header ── */
+.wb2-header {
+    border-top: 1px solid var(--gold);
+    padding: 20px 0 26px;
+    margin-bottom: 0;
+}
+.wb2-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.wb2-label {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--gold);
+}
+.wb2-meta {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--paper-faint);
+    text-align: right;
+}
+
+/* ── WB2 Stepper ── */
+.wb2-stepper {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+}
+.wb2-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    flex: 1;
+    min-width: 0;
+}
+.wb2-step-dot {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(235, 231, 223, 0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.10em;
+    color: rgba(235, 231, 223, 0.22);
+    background: rgba(10, 9, 8, 0.6);
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    transition: border-color 0.28s, color 0.28s, background 0.28s, box-shadow 0.28s;
+}
+.wb2-step.is-current .wb2-step-dot {
+    border-color: var(--gold);
+    color: var(--ink);
+    background: var(--gold);
+    box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.15);
+}
+.wb2-step.is-done .wb2-step-dot {
+    border-color: rgba(110, 150, 120, 0.55);
+    color: #6e9678;
+    background: rgba(110, 150, 120, 0.10);
+}
+.wb2-step.is-done .wb2-step-num { display: none; }
+.wb2-step.is-done .wb2-step-done-check { display: block; font-size: 13px; }
+.wb2-step-num { line-height: 1; }
+.wb2-step-done-check { display: none; }
+.wb2-step-name {
+    font-family: var(--f-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(235, 231, 223, 0.22);
+    text-align: center;
+    white-space: nowrap;
+    transition: color 0.28s;
+}
+.wb2-step.is-current .wb2-step-name { color: var(--gold); }
+.wb2-step.is-done .wb2-step-name    { color: rgba(235, 231, 223, 0.5); }
+
+.wb2-step-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(235, 231, 223, 0.10);
+    margin-top: 17px; /* vertically centers on the dot */
+    transition: background 0.28s;
+    flex-shrink: 1;
+}
+.wb2-step.is-done + .wb2-step-line {
+    background: rgba(110, 150, 120, 0.35);
+}
+
+/* ── WB2 Upload Panel ── */
+.wb2-upload {
+    display: none;
+    grid-template-columns: 58fr 42fr;
+    gap: 0;
+    margin-top: 2px;
+    min-height: 400px;
+    height: min(calc(100svh - 280px), 660px);
+    border: 1px solid var(--line);
+    overflow: hidden;
+}
+@media (max-width: 860px) {
+    .wb2-upload { grid-template-columns: 1fr; height: auto; }
+}
+
+.wb2-drop-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 52px;
+    background: rgba(8, 7, 6, 0.75);
+    border-right: 1px solid var(--line);
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+.wb2-drop-zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(212,165,116,0.04) 0%, transparent 70%);
+    pointer-events: none;
+}
+.wb2-drop-zone.is-over {
+    background: rgba(212, 165, 116, 0.06);
+    border-color: var(--gold);
+}
+.wb2-drop-zone.is-over .wb2-drop-cta-border { border-color: var(--gold); }
+.wb2-drop-eyebrow {
+    font-family: var(--f-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(212, 165, 116, 0.35);
+    margin-bottom: 20px;
+}
+.wb2-drop-title {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: clamp(22px, 2.5vw, 32px);
+    line-height: 1.2;
+    color: var(--paper);
+    margin-bottom: 10px;
+    text-wrap: pretty;
+}
+.wb2-drop-sub {
+    font-family: var(--f-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+    margin-bottom: 32px;
+    line-height: 1.6;
+}
+.wb2-upload-cta {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--gold);
+    border: none;
+    padding: 14px 34px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.15s;
+}
+.wb2-upload-cta:hover { background: var(--paper); transform: translateY(-2px); }
+.wb2-upload-cta input[type="file"] { display: none; }
+
+/* Right aside */
+.wb2-upload-aside {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: rgba(12, 11, 9, 0.9);
+}
+.wb2-aside-block {
+    padding: 22px 26px 20px;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+}
+.wb2-aside-block:last-child { border-bottom: none; }
+.wb2-aside-title {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(212, 165, 116, 0.25);
+    margin-bottom: 14px;
+}
+.wb2-upload .exp1-examples {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    max-width: 100%;
+    gap: 7px;
+}
+.wb2-checklist {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.wb2-checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+    color: var(--paper-soft);
+}
+.wb2-checklist li::before {
+    content: '—';
+    color: var(--gold);
+    flex-shrink: 0;
+    opacity: 0.6;
+    margin-top: 1px;
+}
+
+/* ── WB2 Canvas area (steps 2–5) ── */
+#exp1-playground:not([data-wb-stage="upload"]) #exp1-frame {
+    aspect-ratio: unset !important;
+    min-height: 480px;
+    height: min(calc(100svh - 300px), 820px);
+    margin-top: 2px;
+}
+/* Remove HUD from upload (it's empty anyway) */
+#exp1-playground[data-wb-stage="upload"] .lab-frame-hud,
+#exp1-playground[data-wb-stage="upload"] .lab-frame-watermark { display: none; }
+
+/* ── WB2 Navigation bar ── */
+.wb2-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0 6px;
+    border-top: 1px solid var(--line);
+    margin-top: 2px;
+    flex-wrap: wrap;
+}
+.wb2-nav-left { display: flex; gap: 10px; align-items: center; }
+.wb2-nav-center {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--paper-faint);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wb2-nav-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-left: auto;
+}
+@media (max-width: 680px) {
+    .wb2-nav { flex-wrap: wrap; gap: 10px; }
+    .wb2-nav-center { width: 100%; flex: none; text-align: left; order: 3; }
+    .wb2-nav-right { margin-left: 0; }
 }
 </style>
 </head>
@@ -3975,7 +4574,7 @@ body {
                     <span class="ex-plate-hint-mark">▶</span>
                     <span class="ex-plate-hint-txt">点击 · 进入互动现场</span>
                 </div>
-                <div class="ex-plate-cap"><span>图版 I · 摄像机看见我们</span><span>实时互动 · 2026</span></div>
+                <div class="ex-plate-cap"><span>图版 I ·看见我们</span><span>实时互动 · 2026</span></div>
             </div>
             <div class="ex-plate ex-plate-ambient" id="plate-interactive-wrap">
                 <video id="plate-interactive-video"
@@ -4266,64 +4865,94 @@ body {
             </aside>
         </div>
 
-        <div class="lab-stage" id="exp1-playground">
-            <div class="lab-stage-head">
-                <div class="lab-stage-title">实验工作台 · WORKBENCH</div>
-                <div class="lab-stage-meta" id="exp1-stage-meta">步骤 1/5 · 上传照片或绘画</div>
+        <div class="lab-stage lab-exp1-wb" id="exp1-playground" data-wb-stage="upload">
+
+            <!-- ── WB2 Header · Title + Stepper ── -->
+            <div class="wb2-header">
+                <div class="wb2-header-row">
+                    <div class="wb2-label">让画动起来 · 实验工作台</div>
+                    <div class="wb2-meta" id="exp1-stage-meta">步骤 1/5 · 上传照片或绘画</div>
+                </div>
+                <div class="wb2-stepper" id="exp1-wb-track" aria-label="流程进度">
+                    <div class="wb2-step exp1-wb-seg is-current" data-wb-step="0">
+                        <div class="wb2-step-dot"><span class="wb2-step-num">01</span><span class="wb2-step-done-check">✓</span></div>
+                        <div class="wb2-step-name">上传</div>
+                    </div>
+                    <div class="wb2-step-line"></div>
+                    <div class="wb2-step exp1-wb-seg" data-wb-step="1">
+                        <div class="wb2-step-dot"><span class="wb2-step-num">02</span><span class="wb2-step-done-check">✓</span></div>
+                        <div class="wb2-step-name">定位</div>
+                    </div>
+                    <div class="wb2-step-line"></div>
+                    <div class="wb2-step exp1-wb-seg" data-wb-step="2">
+                        <div class="wb2-step-dot"><span class="wb2-step-num">03</span><span class="wb2-step-done-check">✓</span></div>
+                        <div class="wb2-step-name">抠图</div>
+                    </div>
+                    <div class="wb2-step-line"></div>
+                    <div class="wb2-step exp1-wb-seg" data-wb-step="3">
+                        <div class="wb2-step-dot"><span class="wb2-step-num">04</span><span class="wb2-step-done-check">✓</span></div>
+                        <div class="wb2-step-name">关节</div>
+                    </div>
+                    <div class="wb2-step-line"></div>
+                    <div class="wb2-step exp1-wb-seg" data-wb-step="4">
+                        <div class="wb2-step-dot"><span class="wb2-step-num">05</span><span class="wb2-step-done-check">✓</span></div>
+                        <div class="wb2-step-name">动作</div>
+                    </div>
+                </div>
             </div>
 
-            <div class="lab-frame" id="exp1-frame" style="aspect-ratio: 16 / 9;">
+            <!-- ── WB2 Upload Panel (shown only at upload step) ── -->
+            <div class="wb2-upload" id="exp1-wb-upload">
+                <div class="wb2-drop-zone exp1-upload-zone" id="exp1-upload-zone">
+                    <div class="wb2-drop-eyebrow">UPLOAD A DRAWING</div>
+                    <div class="wb2-drop-title">交一张<em style="color:var(--gold);">手绘</em>、<em style="color:var(--gold);">照片</em>或<em style="color:var(--gold);">扫描件</em>。</div>
+                    <div class="wb2-drop-sub">JPG / PNG · 可从相册选择或用手机拍照 · 仅在浏览器内处理，不上传任何服务器</div>
+                    <label class="wb2-upload-cta">
+                        选择或拍摄图片
+                        <input type="file" accept="image/*" id="exp1-file-input" onchange="exp1HandleFile(event)">
+                    </label>
+                </div>
+                <div class="wb2-upload-aside">
+                    <div class="wb2-aside-block">
+                        <div class="wb2-aside-title">示例图 · 点击直接使用</div>
+                        <div class="exp1-examples" id="exp1-examples">
+                            <button type="button" class="exp1-example" data-ex="0" onclick="exp1LoadExample(0)" title="跳舞的小人"></button>
+                            <button type="button" class="exp1-example" data-ex="1" onclick="exp1LoadExample(1)" title="标准站姿"></button>
+                            <button type="button" class="exp1-example" data-ex="2" onclick="exp1LoadExample(2)" title="招手的小人"></button>
+                            <button type="button" class="exp1-example" data-ex="3" onclick="exp1LoadExample(3)" title="卡通女孩"></button>
+                            <button type="button" class="exp1-example" data-ex="4" onclick="exp1LoadExample(4)" title="卷发裙装小人"></button>
+                        </div>
+                    </div>
+                    <div class="wb2-aside-block">
+                        <div class="wb2-aside-title">CHECKLIST · 拍得越好，它跳得越自然</div>
+                        <ul class="wb2-checklist">
+                            <li>角色画/拍在白纸或纯色背景上，没有褶皱、阴影或暗角。</li>
+                            <li>四肢分开，手臂和腿不要叠在身体上，让它能被分段识别。</li>
+                            <li>整个身体落在画面里，不要让头或脚被裁掉。</li>
+                            <li>光线均匀，别让一半亮一半暗。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Lab Frame (hidden at upload, shown for crop/mask/joints/animate) ── -->
+            <div class="lab-frame" id="exp1-frame">
                 <canvas id="exp1-stage-canvas"></canvas>
                 <div class="lab-frame-hud">
-                    <div class="hud-row"><span class="hud-key">EXP</span><span>01 / 让画动起来</span></div>
-                    <div class="hud-row"><span class="hud-key">STAGE</span><span id="exp1-hud-stage">C · UPLOAD</span></div>
-                    <div class="hud-row"><span class="hud-key">NEXT</span><span id="exp1-hud-next">AWAITING IMAGE</span></div>
+                    <div class="hud-row"><span class="hud-key">实验</span><span>01 · 让画动起来</span></div>
+                    <div class="hud-row"><span class="hud-key">阶段</span><span id="exp1-hud-stage">阶段 0 · 上传</span></div>
+                    <div class="hud-row"><span class="hud-key">提示</span><span id="exp1-hud-next">请选择图片或下方示例</span></div>
                 </div>
                 <div class="lab-frame-watermark">DANCENET.LAB · LAB</div>
 
                 <div class="exp1-wizard" id="exp1-wizard">
-                    <!-- Step C-1 · Upload -->
-                    <div class="exp1-step is-active" data-step="upload">
-                        <div class="exp1-upload-zone" id="exp1-upload-zone">
-                            <div class="exp1-upload-progress">
-                                <span class="ip-num">步骤 1/5</span>
-                                <span class="ip-step is-active"></span>
-                                <span class="ip-step"></span>
-                                <span class="ip-step"></span>
-                                <span class="ip-step"></span>
-                                <span class="ip-step"></span>
-                            </div>
-                            <div class="exp1-upload-eyebrow">UPLOAD A DRAWING</div>
-                            <div class="exp1-upload-prompt">交一张<em style="color:var(--gold);">手绘</em>、<em style="color:var(--gold);">照片</em>或<em style="color:var(--gold);">扫描件</em>。</div>
-                            <div class="exp1-upload-sub">JPG / PNG · 可从相册选择或用手机拍照 · 仅在浏览器内处理</div>
-                            <label class="exp1-upload-button">
-                                📷 选择或拍摄图片
-                                <input type="file" accept="image/*" id="exp1-file-input" onchange="exp1HandleFile(event)">
-                            </label>
-                            <div class="exp1-divider">或试试这些示例</div>
-                            <div class="exp1-examples" id="exp1-examples">
-                                <button type="button" class="exp1-example" data-ex="0" onclick="exp1LoadExample(0)" title="跳舞的小人"></button>
-                                <button type="button" class="exp1-example" data-ex="1" onclick="exp1LoadExample(1)" title="标准站姿"></button>
-                                <button type="button" class="exp1-example" data-ex="2" onclick="exp1LoadExample(2)" title="招手的小人"></button>
-                                <button type="button" class="exp1-example" data-ex="3" onclick="exp1LoadExample(3)" title="卡通女孩"></button>
-                                <button type="button" class="exp1-example" data-ex="4" onclick="exp1LoadExample(4)" title="卷发裙装小人"></button>
-                            </div>
-                            <div class="exp1-checklist">
-                                <div class="exp1-checklist-title">CHECKLIST · 拍得越好, 它跳得越自然</div>
-                                <ul>
-                                    <li>角色画/拍在白纸或纯色背景上, 没有褶皱、阴影或暗角。</li>
-                                    <li>四肢分开, 手臂和腿不要叠在身体上, 让它能被分段识别。</li>
-                                    <li>整个身体落在画面里, 不要让头或脚被裁掉。</li>
-                                    <li>光线均匀, 别让一半亮一半暗。</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Upload step: empty placeholder for JS state, content moved outside -->
+                    <div class="exp1-step is-active" data-step="upload"></div>
 
                     <!-- Step C-2 · Crop -->
                     <div class="exp1-step" data-step="crop">
                         <div class="exp1-crop-topbar">
-                            <button type="button" class="lab-btn primary" onclick="exp1ToolbarUpload()">📷 上传作品</button>
+                            <button type="button" class="lab-btn primary" onclick="exp1ToolbarUpload()">↺ 换图</button>
                             <span class="exp1-crop-topbar-hint">换图会清空当前进度</span>
                         </div>
                         <div class="exp1-crop-stage" id="exp1-crop-stage">
@@ -4419,49 +5048,26 @@ body {
                 </div>
             </div>
 
-            <div class="lab-toolbar" id="exp1-toolbar">
-                <div class="lab-toolbar-group">
-                    <button type="button" class="lab-btn primary" id="exp1-upload-toolbar" onclick="exp1ToolbarUpload()">📷 上传作品</button>
+            <!-- ── WB2 Navigation ── -->
+            <div class="wb2-nav">
+                <div class="wb2-nav-left">
                     <button type="button" class="lab-btn" id="exp1-back-btn" onclick="exp1Back()" disabled>← 上一步</button>
-                    <button type="button" class="lab-btn" id="exp1-next-btn" onclick="exp1Next()" disabled>下一步 →</button>
                 </div>
-                <div class="lab-status" id="exp1-status">阶段 C · 等待上传</div>
-                <div class="lab-toolbar-group">
+                <div class="wb2-nav-center" id="exp1-status">阶段 C · 等待上传</div>
+                <div class="wb2-nav-right">
+                    <button type="button" class="lab-btn" id="exp1-upload-toolbar" onclick="exp1ToolbarUpload()">↺ 换图</button>
                     <button type="button" class="lab-btn" id="exp1-reset-btn" onclick="exp1Reset()" disabled>↺ 重置</button>
+                    <button type="button" class="lab-btn primary" id="exp1-next-btn" onclick="exp1Next()" disabled>下一步 →</button>
                 </div>
             </div>
 
-            <div class="lab-steps" id="exp1-steps">
-                <div class="lab-step is-current">
-                    <div class="lab-step-num">01 · 上传</div>
-                    <div class="lab-step-flag">当前</div>
-                    <div class="lab-step-title">交一张画。</div>
-                    <div class="lab-step-desc">支持 JPG / PNG, 单张图片包含一个完整的人或动物角色。 也可以使用我们准备的示例图。</div>
-                </div>
-                <div class="lab-step is-soon">
-                    <div class="lab-step-num">02 · 定位</div>
-                    <div class="lab-step-flag">即将</div>
-                    <div class="lab-step-title">框出主体。</div>
-                    <div class="lab-step-desc">拖一个矩形框定位角色——边缘越紧, 后面的动作越准。</div>
-                </div>
-                <div class="lab-step is-soon">
-                    <div class="lab-step-num">03 · 抠图</div>
-                    <div class="lab-step-flag">即将</div>
-                    <div class="lab-step-title">把它从纸上揭下来。</div>
-                    <div class="lab-step-desc">浏览器内自动抠图 + 画笔修正。 全程不上传服务器。</div>
-                </div>
-                <div class="lab-step is-soon">
-                    <div class="lab-step-num">04 · 关节</div>
-                    <div class="lab-step-flag">即将</div>
-                    <div class="lab-step-title">告诉它哪里是肘。</div>
-                    <div class="lab-step-desc">14 个建议关节自动落点, 你只需要微调。</div>
-                </div>
-                <div class="lab-step is-soon">
-                    <div class="lab-step-num">05 · 动作</div>
-                    <div class="lab-step-flag">即将</div>
-                    <div class="lab-step-title">让它跳起来。</div>
-                    <div class="lab-step-desc">挑一段动作——挥手 / 走路 / 蹦跳 / 待机, 调速度, 录成 WebM 或 GIF 带回家。</div>
-                </div>
+            <!-- hidden, kept for JS step-state management only -->
+            <div class="lab-steps" id="exp1-steps" aria-hidden="true">
+                <div class="lab-step is-current"><div class="lab-step-num">01 · 上传</div><div class="lab-step-flag">当前</div><div class="lab-step-title">交一张画。</div><div class="lab-step-desc">支持 JPG / PNG。</div></div>
+                <div class="lab-step is-soon"><div class="lab-step-num">02 · 定位</div><div class="lab-step-flag">即将</div><div class="lab-step-title">框出主体。</div><div class="lab-step-desc">拖矩形。</div></div>
+                <div class="lab-step is-soon"><div class="lab-step-num">03 · 抠图</div><div class="lab-step-flag">即将</div><div class="lab-step-title">把它从纸上揭下来。</div><div class="lab-step-desc">自动抠图 + 画笔修正。</div></div>
+                <div class="lab-step is-soon"><div class="lab-step-num">04 · 关节</div><div class="lab-step-flag">即将</div><div class="lab-step-title">告诉它哪里是肘。</div><div class="lab-step-desc">14 关节落点。</div></div>
+                <div class="lab-step is-soon"><div class="lab-step-num">05 · 动作</div><div class="lab-step-flag">即将</div><div class="lab-step-title">让它跳起来。</div><div class="lab-step-desc">选动作，导出。</div></div>
             </div>
 
             <p class="lab-hint">五步全部上线 · 上传 → 裁剪 → 自动抠图 → 14 关节 → 选一段动作 → 导出。 也可以去玩 <a onclick="showPage('exp2')" style="color:var(--gold);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">实验 02 · 梵高之眼</a>。</p>
@@ -4690,7 +5296,7 @@ body {
 
         <article class="about-intro-body">
             <p class="lead">
-                DanceNet.Lab 成立于 <em>2023 年</em>， 是一家专注于<em>街舞 AI 智能分析</em>的教育科技公司。 我们致力于通过人工智能与大数据， 为每一位舞蹈学习者提供个性化、 专业级的指导。
+                DanceNet.Lab 成立于 <em>2023 年</em>， 是一家专注于<em>舞蹈 AI 智能分析</em>的教育科技公司。 我们致力于通过人工智能与大数据， 为每一位舞蹈学习者提供个性化、 专业级的指导。
             </p>
 
             <h3>我们的使命</h3>
@@ -4699,7 +5305,7 @@ body {
             </p>
 
             <p>
-                我们相信， 一支舞蹈背后既是身体的语言， 也是数据的轨迹。 当算法学会"看"运动， 教育就有机会从"统一灌输"走向"被看见的因人而异"。 这是 DanceNet.Lab 一直在做的练习。
+                我们相信， 一支舞蹈背后既是身体的语言， 也是数据的轨迹。 当算法学会"看"运动， 教育就有机会从"统一灌输"走向"被看见的因人而异"。 这是 DanceNet.Lab 一直在做的事情。
             </p>
         </article>
 
@@ -4769,12 +5375,12 @@ body {
         <div class="about-contact-grid">
             <div class="about-contact-card">
                 <div class="k">合作 · 创始人</div>
-                <div class="v"><em>微信</em>13340381991</div>
+                <div class="v"><em>微信：</em>13340381991</div>
                 <p>项目共创 · 教育合作 · 学术研究。</p>
             </div>
             <div class="about-contact-card">
                 <div class="k">媒体 · Press</div>
-                <div class="v"><em>google@</em>dancenet.lab</div>
+                <div class="v"><em>Google@</em>dancenet.lab</div>
                 <p>采访、 展览预告、 媒体素材索取。</p>
             </div>
             <div class="about-contact-card">
@@ -4874,20 +5480,101 @@ body {
         </div>
     </section>
 
-    <!-- § 02 现场记录 · 视频案例 -->
+    <!-- § 02 现场记录 · 视频案例 (3D Coverflow Reel) -->
     <section class="art-flow-cases">
         <div class="art-flow-section-head">
             <div class="eyebrow">§ 02 · 现场记录</div>
             <h2>当一具身体, 被<em>翻译</em>成光。</h2>
-            <p class="lede">下方是装置在不同场地、 不同舞种、 不同 BPM 下的现场片段。 卡片陆续上线——若你正在阅读这一句, 说明库还在生长。</p>
+            <p class="lede">不同场地、 不同舞种与视觉策略下的现场试录。 拖动 / 滚轮 / 方向键 切换主卡片, 主卡片悬停自动播放, 离开主位即停。</p>
         </div>
-        <div class="art-flow-cases-grid">
-            <div class="art-flow-case art-flow-case-empty" data-empty="true"></div>
-            <div class="art-flow-case art-flow-case-empty" data-empty="true"></div>
-            <div class="art-flow-case art-flow-case-empty" data-empty="true"></div>
-            <div class="art-flow-case art-flow-case-empty" data-empty="true"></div>
-            <div class="art-flow-case art-flow-case-empty" data-empty="true"></div>
-            <div class="art-flow-case art-flow-case-empty" data-empty="true"></div>
+        <div class="art-flow-reel-wrap">
+            <div class="art-flow-reel" id="art-flow-reel" tabindex="0" aria-label="现场记录 · 案例转盘">
+                <button type="button" class="art-flow-reel-nav prev" aria-label="上一个案例">‹</button>
+                <button type="button" class="art-flow-reel-nav next" aria-label="下一个案例">›</button>
+                <div class="art-flow-reel-stage" id="art-flow-reel-stage">
+                    <article class="art-flow-reel-card" data-idx="0">
+                        <video src="assets/art-flow-case-01.mov" muted loop playsinline preload="metadata"></video>
+                        <div class="art-flow-reel-shade"></div>
+                        <span class="art-flow-reel-corner tl"></span>
+                        <span class="art-flow-reel-corner tr"></span>
+                        <span class="art-flow-reel-corner bl"></span>
+                        <span class="art-flow-reel-corner br"></span>
+                        <span class="art-flow-reel-stamp">CASE · 01</span>
+                        <div class="art-flow-reel-cap">
+                            <span class="k">CASE 01 · 工作室试录</span>
+                            <span class="v">2024.04.14 · DanceNet.Lab · 重庆</span>
+                            <span class="s">首段实时链路跑通, 人形粒子随深度起伏聚散。</span>
+                        </div>
+                    </article>
+                    <article class="art-flow-reel-card" data-idx="1">
+                        <video src="assets/art-flow-case-02.mov" muted loop playsinline preload="metadata"></video>
+                        <div class="art-flow-reel-shade"></div>
+                        <span class="art-flow-reel-corner tl"></span>
+                        <span class="art-flow-reel-corner tr"></span>
+                        <span class="art-flow-reel-corner bl"></span>
+                        <span class="art-flow-reel-corner br"></span>
+                        <span class="art-flow-reel-stamp">CASE · 02</span>
+                        <div class="art-flow-reel-cap">
+                            <span class="k">CASE 02 · 泼墨</span>
+                            <span class="v">2025.05.02 · 投影灰盒 · 重庆</span>
+                            <span class="s">墨色沿速度场晕开, 身体像被浸透的宣纸托起又滴落。</span>
+                        </div>
+                    </article>
+                    <article class="art-flow-reel-card" data-idx="2">
+                        <video src="assets/art-flow-case-03.mov" muted loop playsinline preload="metadata"></video>
+                        <div class="art-flow-reel-shade"></div>
+                        <span class="art-flow-reel-corner tl"></span>
+                        <span class="art-flow-reel-corner tr"></span>
+                        <span class="art-flow-reel-corner bl"></span>
+                        <span class="art-flow-reel-corner br"></span>
+                        <span class="art-flow-reel-stamp">CASE · 03</span>
+                        <div class="art-flow-reel-cap">
+                            <span class="k">CASE 03 · 动感</span>
+                            <span class="v">2025.08.06 · Night Rehearsal · 上海</span>
+                            <span class="s">高 BPM 下手势被光流拉长, 每一拍都像在空气里刻痕。</span>
+                        </div>
+                    </article>
+                    <article class="art-flow-reel-card" data-idx="3">
+                        <video src="assets/art-flow-case-04.mov" muted loop playsinline preload="metadata"></video>
+                        <div class="art-flow-reel-shade"></div>
+                        <span class="art-flow-reel-corner tl"></span>
+                        <span class="art-flow-reel-corner tr"></span>
+                        <span class="art-flow-reel-corner bl"></span>
+                        <span class="art-flow-reel-corner br"></span>
+                        <span class="art-flow-reel-stamp">CASE · 04</span>
+                        <div class="art-flow-reel-cap">
+                            <span class="k">CASE 04 · 子弹时刻</span>
+                            <span class="v">2025.11.08 · 环绕阵列静帧 · 成都</span>
+                            <span class="s">时间近似冻结, 身体与光束在同一道弧线上对峙。</span>
+                        </div>
+                    </article>
+                    <article class="art-flow-reel-card" data-idx="4">
+                        <video src="assets/art-flow-case-05.mov" muted loop playsinline preload="metadata"></video>
+                        <div class="art-flow-reel-shade"></div>
+                        <span class="art-flow-reel-corner tl"></span>
+                        <span class="art-flow-reel-corner tr"></span>
+                        <span class="art-flow-reel-corner bl"></span>
+                        <span class="art-flow-reel-corner br"></span>
+                        <span class="art-flow-reel-stamp">CASE · 05</span>
+                        <div class="art-flow-reel-cap">
+                            <span class="k">CASE 05 · 炫彩</span>
+                            <span class="v">2026.05.10 · 黑场高饱和 · 广州</span>
+                            <span class="s">色谱扫过幕布时, 舞者与霓虹残像叠成同一道律动。</span>
+                        </div>
+                    </article>
+                    <article class="art-flow-reel-card art-flow-reel-empty" data-idx="5" data-empty="true">
+                        <span class="art-flow-reel-corner tl"></span>
+                        <span class="art-flow-reel-corner tr"></span>
+                        <span class="art-flow-reel-corner bl"></span>
+                        <span class="art-flow-reel-corner br"></span>
+                    </article>
+                </div>
+            </div>
+            <div class="art-flow-reel-foot">
+                <div class="art-flow-reel-dots" id="art-flow-reel-dots"></div>
+                <div class="art-flow-reel-meta" id="art-flow-reel-meta"><em>01</em> / 06</div>
+            </div>
+            <div class="art-flow-reel-hint">DRAG · WHEEL · ARROW KEYS · 主卡片悬停播放</div>
         </div>
     </section>
 
@@ -4899,14 +5586,16 @@ body {
             <p class="lede">从街舞 cypher、 商业开幕、 美术馆装置到校园开放课——同一套技术骨架, 在不同语境里长出截然不同的样貌。</p>
         </div>
         <div class="art-flow-share-list">
-            <article class="art-flow-share-item" data-empty="true">
-                <div class="art-flow-share-cover"></div>
+            <article class="art-flow-share-item">
+                <div class="art-flow-share-cover">
+                    <video src="assets/exp1-hero-april30.mov" muted loop playsinline autoplay preload="auto" aria-label="Kpop 舞蹈 MV 转绘特效粒子案例 · 预览"></video>
+                </div>
                 <div class="art-flow-share-text">
-                    <div class="art-flow-share-tag">CASE 01 · 演出</div>
-                    <h3 class="art-flow-share-title">案例标题<em>占位</em>。</h3>
-                    <p class="art-flow-share-desc">演出 / cypher 现场的落地记录。 后期上传项目方、 舞者、 场地与素材后, 此处会替换为真实简介。</p>
+                    <div class="art-flow-share-tag">CASE 01 · 后期项目</div>
+                    <h3 class="art-flow-share-title">Kpop舞蹈MV转绘特效粒子案例</h3>
+                    <p class="art-flow-share-desc">以更新颖的方式进行视觉交互。</p>
                     <div class="art-flow-share-meta">
-                        <span>场地 · 待填</span><span>时间 · 待填</span><span>合作方 · 待填</span>
+                        <span>后期 · MV</span><span>转绘 · 粒子</span><span>视觉交互</span>
                     </div>
                 </div>
             </article>
@@ -4921,34 +5610,12 @@ body {
                     </div>
                 </div>
             </article>
-            <article class="art-flow-share-item" data-empty="true">
-                <div class="art-flow-share-cover"></div>
-                <div class="art-flow-share-text">
-                    <div class="art-flow-share-tag">CASE 03 · 商业</div>
-                    <h3 class="art-flow-share-title">案例标题<em>占位</em>。</h3>
-                    <p class="art-flow-share-desc">品牌活动 / 开幕仪式 / 发布会 落地。 强调的是"短时调度 + 高强度互动"下系统的稳定性。</p>
-                    <div class="art-flow-share-meta">
-                        <span>场地 · 待填</span><span>时间 · 待填</span><span>合作方 · 待填</span>
-                    </div>
-                </div>
-            </article>
-            <article class="art-flow-share-item" data-empty="true">
-                <div class="art-flow-share-cover"></div>
-                <div class="art-flow-share-text">
-                    <div class="art-flow-share-tag">CASE 04 · 教育</div>
-                    <h3 class="art-flow-share-title">案例标题<em>占位</em>。</h3>
-                    <p class="art-flow-share-desc">学校开放课 / 工作坊 / 公共教育案例。 关注当青少年第一次"看见自己"时的反应。</p>
-                    <div class="art-flow-share-meta">
-                        <span>场地 · 待填</span><span>时间 · 待填</span><span>合作方 · 待填</span>
-                    </div>
-                </div>
-            </article>
         </div>
     </section>
 
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
-            <span>展览 II · 子项 · 摄像机看见我们 · DanceNet.Lab</span>
+            <span>展览 II · 子项 · 代码看见我们 · DanceNet.Lab</span>
             <span><a onclick="showPage('art')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到 光影为媒</a></span>
         </div>
     </footer>
@@ -5802,9 +6469,224 @@ let artFlowInit = false;
 function initArtFlowPage() {
     if (artFlowInit) return; artFlowInit = true;
     const c = document.getElementById('art-flow-hero-canvas');
-    if (!c) return;
-    const { ctx, getW, getH } = setupCanvas(c);
-    drawPlateFlow(ctx, getW, getH, c);
+    if (c) {
+        const { ctx, getW, getH } = setupCanvas(c);
+        drawPlateFlow(ctx, getW, getH, c);
+    }
+    initArtFlowReel();
+}
+
+/* ─────────── ART · FLOW · 现场记录 3D Coverflow Reel (CIRCULAR) ───────────
+   - 环形无缝: 6 之后回到 1, 1 之前回到 6, 永远走最短路径动画
+   - 主卡片居中, 鼠标悬停才播放; 旋出主位立刻停
+   - 拖动 / 滚轮 / 方向键 / 点击侧卡 / 指示条 切换
+   - 拖动期间用浮点 active 平滑跟手, 松手吸附到最近整数
+*/
+let artFlowReelState = null;
+function initArtFlowReel() {
+    const reel = document.getElementById('art-flow-reel');
+    if (!reel || artFlowReelState) return;
+    const stage = document.getElementById('art-flow-reel-stage');
+    const cards = Array.from(stage.querySelectorAll('.art-flow-reel-card'));
+    if (!cards.length) return;
+    const dotsWrap = document.getElementById('art-flow-reel-dots');
+    const metaEl = document.getElementById('art-flow-reel-meta');
+    const prevBtn = reel.querySelector('.art-flow-reel-nav.prev');
+    const nextBtn = reel.querySelector('.art-flow-reel-nav.next');
+
+    const N = cards.length;
+    // active 用无界整数 (可正可负). 显示用模 N 取索引.
+    // 这样从 5 → 6 会平滑地把当前主卡 (idx=5) 推开, 把 idx=0 滑入主位,
+    // 而不是反向回滚 5 步.
+    const state = { active: 0, count: N, hovered: false };
+    artFlowReelState = state;
+
+    const mod = (n) => ((n % N) + N) % N;
+    // 把任意整数差映射到 (-N/2, N/2] 的最短偏移
+    function shortestOff(diff) {
+        const half = N / 2;
+        let d = diff - Math.round(diff / N) * N;
+        // 边界情形: 当 N 是偶数且 d == -N/2 时, 让它走正方向
+        if (d === -half) d = half;
+        return d;
+    }
+
+    dotsWrap.innerHTML = '';
+    cards.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.type = 'button';
+        d.className = 'art-flow-reel-dot';
+        d.setAttribute('aria-label', `跳到第 ${i + 1} 个案例`);
+        d.addEventListener('click', () => goTo(i));
+        dotsWrap.appendChild(d);
+    });
+    const dots = Array.from(dotsWrap.children);
+
+    // 圆柱式参数 — 调这两个就能改"开合度"与"半径"
+    // 每张卡相对相邻卡的角度差 (°). 6 张卡 × 36° = 216°, 余下 144° 在背面 (绕回侧).
+    const ANGLE_STEP = 36;
+    // 圆柱半径 = 卡片宽度 × 这个倍率. 越大 → 卡片间隔越宽, 弧线越平.
+    const RADIUS_FACTOR = 1.32;
+
+    function cylinderRadius() {
+        const w = cards[0].getBoundingClientRect().width;
+        return Math.max(280, w * RADIUS_FACTOR);
+    }
+
+    function applyTransforms(activeFloat) {
+        const R = cylinderRadius();
+        // 整个 stage 绕 Y 轴反向旋转, 把目标卡片带到正前方
+        stage.style.transform = `translateZ(${-R * 0.4}px) rotateY(${-activeFloat * ANGLE_STEP}deg)`;
+        cards.forEach((c, i) => {
+            // 圆柱位置: 先按自身角度旋转, 再沿局部 Z 轴推到圆柱表面
+            const angle = i * ANGLE_STEP;
+            // 主卡向前再"探出"一点, 强调聚焦感 (越接近主位 fwd 越大)
+            const off = shortestOff(i - activeFloat);
+            const abs = Math.abs(off);
+            const fwd = Math.max(0, 1 - abs) * 56;
+            c.style.transform =
+                `translate(-50%, -50%) ` +
+                `rotateY(${angle}deg) translateZ(${R + fwd}px)`;
+            const hidden = abs > 2.4;
+            const opacity = hidden ? 0 : Math.max(0.18, 1 - abs * 0.18);
+            c.style.opacity = String(opacity);
+            // visibility:hidden delays on CSS transition so it waits for opacity fade,
+            // but when becoming visible we remove it immediately (no delay).
+            if (hidden) {
+                c.style.visibility = 'hidden';
+            } else {
+                c.style.visibility = '';
+            }
+            c.style.filter = abs < 0.5
+                ? 'none'
+                : `brightness(${Math.max(0.30, 0.75 - abs * 0.10)}) blur(${Math.min(abs * 0.6, 2.0)}px)`;
+            c.style.zIndex = String(hidden ? 0 : 200 - Math.round(abs * 10));
+        });
+    }
+
+    function applyActiveSideEffects() {
+        const a = mod(state.active);
+        cards.forEach((c, i) => {
+            const isActive = i === a;
+            c.classList.toggle('is-active', isActive);
+            c.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+            const v = c.querySelector('video');
+            if (v) {
+                if (!isActive) {
+                    v.pause();
+                } else if (state.hovered) {
+                    v.play().catch(() => {});
+                }
+            }
+            if (dots[i]) dots[i].classList.toggle('is-active', isActive);
+        });
+        if (metaEl) {
+            metaEl.innerHTML = `<em>${String(a + 1).padStart(2, '0')}</em> / ${String(N).padStart(2, '0')}`;
+        }
+    }
+
+    // 步进: 永远以"最短路径"调整 active 的无界值
+    function step(by) {
+        state.active = state.active + by;
+        stage.classList.remove('is-dragging');
+        applyTransforms(state.active);
+        applyActiveSideEffects();
+    }
+
+    // 跳到具体索引 i (0..N-1) — 走最短路径
+    function goTo(i) {
+        const cur = state.active;
+        const diff = shortestOff(i - mod(cur));
+        step(diff);
+    }
+
+    function layout() { applyTransforms(state.active); applyActiveSideEffects(); }
+
+    cards.forEach((c, i) => {
+        c.addEventListener('mouseenter', () => {
+            if (i !== mod(state.active)) return;
+            state.hovered = true;
+            const v = c.querySelector('video');
+            if (v) v.play().catch(() => {});
+        });
+        c.addEventListener('mouseleave', () => {
+            if (i !== mod(state.active)) return;
+            state.hovered = false;
+            const v = c.querySelector('video');
+            if (v) v.pause();
+        });
+        c.addEventListener('click', () => {
+            if (i !== mod(state.active)) goTo(i);
+        });
+    });
+
+    prevBtn?.addEventListener('click', () => step(-1));
+    nextBtn?.addEventListener('click', () => step(1));
+
+    let wheelLock = 0;
+    reel.addEventListener('wheel', (e) => {
+        const dx = e.deltaX, dy = e.deltaY;
+        const horizontal = Math.abs(dx) > Math.abs(dy);
+        const dom = horizontal ? dx : dy;
+        if (Math.abs(dom) < 14) return;
+        if (!horizontal && !reel.matches(':hover')) return;
+        const now = performance.now();
+        if (now - wheelLock < 380) { e.preventDefault(); return; }
+        wheelLock = now;
+        step(dom > 0 ? 1 : -1);
+        e.preventDefault();
+    }, { passive: false });
+
+    let drag = null;
+    stage.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        drag = {
+            startX: e.clientX,
+            base: state.active,
+            step: cardStep(),
+            id: e.pointerId,
+        };
+        stage.classList.add('is-dragging');
+        try { stage.setPointerCapture(e.pointerId); } catch (_) {}
+        cards.forEach(c => { const v = c.querySelector('video'); if (v) v.pause(); });
+    });
+    stage.addEventListener('pointermove', (e) => {
+        if (!drag || drag.id !== e.pointerId) return;
+        const dx = e.clientX - drag.startX;
+        // 拖动时 active 是浮点; 因为环形, 不再 clamp
+        const aF = drag.base - dx / drag.step;
+        applyTransforms(aF);
+    });
+    function endDrag(e) {
+        if (!drag || (e && drag.id !== e.pointerId)) return;
+        const dx = (e ? e.clientX : drag.startX) - drag.startX;
+        const aF = drag.base - dx / drag.step;
+        const target = Math.round(aF);
+        const diff = target - state.active;
+        drag = null;
+        stage.classList.remove('is-dragging');
+        step(diff);
+    }
+    stage.addEventListener('pointerup', endDrag);
+    stage.addEventListener('pointercancel', endDrag);
+
+    reel.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+        else if (e.key === 'ArrowLeft')  { e.preventDefault(); step(-1); }
+        else if (e.key === 'Home')        { e.preventDefault(); goTo(0); }
+        else if (e.key === 'End')         { e.preventDefault(); goTo(N - 1); }
+    });
+
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(layout, 80);
+    });
+
+    requestAnimationFrame(() => {
+        layout();
+        requestAnimationFrame(layout);
+    });
 }
 
 /* ─────────── helpers · rgb<->hsl ─────────── */
@@ -6594,21 +7476,21 @@ function exp1ToolbarUpload() {
 /* ── Top-level render dispatch ── */
 const EXP1_STAGE_INDEX = { upload: 0, crop: 1, mask: 2, joints: 3, animate: 4 };
 const EXP1_STAGE_HUD = {
-    upload:  { stage: 'C · UPLOAD',  next: 'AWAITING IMAGE',      meta: '步骤 1/5 · 上传照片或绘画'  },
-    crop:    { stage: 'C · CROP',    next: 'CROP & CONFIRM',      meta: '步骤 2/5 · 框选角色主体'    },
-    mask:    { stage: 'D · MASK',    next: 'AUTO + BRUSH',        meta: '步骤 3/5 · 抠图与画笔修正' },
-    joints:  { stage: 'D · JOINTS',  next: '14 KEYPOINTS · DRAG', meta: '步骤 4/5 · 14 关节微调' },
-    animate: { stage: 'E · ANIMATE', next: 'PICK ACTION · EXPORT',meta: '步骤 5/5 · 动作与导出' },
+    upload:  { stage: '阶段 0 · 上传', next: '请选择图片或下方示例',           meta: '步骤 1/5 · 上传手绘、照片或扫描件' },
+    crop:    { stage: '阶段 1 · 裁切', next: '拖框对齐身体后点「下一步」',      meta: '步骤 2/5 · 框选角色主体' },
+    mask:    { stage: '阶段 2 · 抠图', next: '可拖阈值或画笔修边',             meta: '步骤 3/5 · 抠图与画笔修正' },
+    joints:  { stage: '阶段 3 · 关节', next: '对齐金色圆点后进入动作',          meta: '步骤 4/5 · 14 关节微调' },
+    animate: { stage: '阶段 4 · 动作', next: '选动作、调速、导出 WebM / GIF', meta: '步骤 5/5 · 动作与导出' },
 };
 const EXP1_NEXT_LABEL = {
     upload:  '下一步 →',
-    crop:    '确认裁剪 · 进入阶段 D →',
-    mask:    '蒙版完成 · 标定关节 →',
-    joints:  '关节就位 · 进入阶段 E →',
-    animate: '完成 · 全部就位',
+    crop:    '确认裁剪 · 继续 →',
+    mask:    '蒙版就绪 · 标定关节 →',
+    joints:  '关节就绪 · 进入动作 →',
+    animate: '完成',
 };
 const EXP1_STATUS = {
-    upload:  '阶段 C · 等待上传',
+    upload:  '阶段 0 · 等待上传',
     crop:    '阶段 C · 拖动矩形或角点调整裁切',
     mask:    '阶段 D · 调阈值或画笔修正蒙版',
     joints:  '阶段 D · 拖动金色圆点对齐关节',
@@ -6616,6 +7498,10 @@ const EXP1_STATUS = {
 };
 
 function exp1RenderStage() {
+    // Sync data-wb-stage for CSS-driven layout switching
+    const wbRoot = document.getElementById('exp1-playground');
+    if (wbRoot) wbRoot.setAttribute('data-wb-stage', exp1State.stage);
+
     document.querySelectorAll('#exp1-wizard .exp1-step').forEach(s => {
         s.classList.toggle('is-active', s.dataset.step === exp1State.stage);
     });
@@ -6638,6 +7524,15 @@ function exp1RenderStage() {
         else              { s.classList.add('is-soon');    if (flag) flag.textContent = '即将'; }
     });
 
+    const wbTrack = document.getElementById('exp1-wb-track');
+    if (wbTrack) {
+        wbTrack.querySelectorAll('.exp1-wb-seg').forEach((seg, i) => {
+            seg.classList.toggle('is-done', i < cur);
+            seg.classList.toggle('is-current', i === cur);
+            seg.classList.toggle('is-upcoming', i > cur);
+        });
+    }
+
     const back  = document.getElementById('exp1-back-btn');
     const next  = document.getElementById('exp1-next-btn');
     const reset = document.getElementById('exp1-reset-btn');
@@ -6656,7 +7551,16 @@ function exp1RenderStage() {
         exp1HideHandoff();
     }
 
-    if (exp1State.stage === 'crop')    exp1RenderCrop();
+    if (exp1State.stage === 'crop') {
+        exp1RenderCrop();
+        if (exp1State.image && exp1State.fit) {
+            const iw = exp1State.image.naturalWidth, ih = exp1State.image.naturalHeight;
+            const f = exp1State.fit;
+            const native = f.scale >= 0.997 && f.scale <= 1.001;
+            const hint = native ? ' · 原图像素显示，不放大' : '';
+            exp1SetStatus(`阶段 C · 拖动矩形或角点调整裁切${hint} · ${iw}×${ih}px`);
+        }
+    }
     if (exp1State.stage === 'mask')    exp1RenderMask();
     if (exp1State.stage === 'joints')  exp1RenderJoints();
     if (exp1State.stage === 'animate') exp1RenderAnim();
@@ -6695,13 +7599,12 @@ function exp1RenderCrop() {
 
     const ctx = canvas.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
     ctx.clearRect(0, 0, cw, ch);
 
     const img = exp1State.image;
     const fit = exp1ComputeFit(img.naturalWidth, img.naturalHeight, cw, ch);
     exp1State.fit = fit;
+    exp1SetRasterSmoothing(ctx, fit);
 
     // 1. dim full bg
     ctx.fillStyle = 'rgba(10,9,8,0.55)';
@@ -6768,11 +7671,24 @@ function exp1ComputeFit(iw, ih, cw, ch) {
     let dw, dh;
     if (ar > fr) { dw = aw; dh = aw / ar; }
     else         { dh = ah; dw = ah * ar; }
+    let scale = dw / iw;
+    if (scale > 1) {
+        scale = 1;
+        dw = iw;
+        dh = ih;
+    }
     return {
         dx: (cw - dw) / 2, dy: (ch - dh) / 2,
         dw, dh,
-        scale: dw / iw,
+        scale,
     };
+}
+
+/** 小图不再强行放大：scale=1 时关闭平滑，避免手绘被抹糊 */
+function exp1SetRasterSmoothing(ctx, fit) {
+    if (!fit) return;
+    ctx.imageSmoothingEnabled = fit.scale < 0.999;
+    if (ctx.imageSmoothingEnabled) ctx.imageSmoothingQuality = 'high';
 }
 
 function exp1CropToScreen(c, fit) {
@@ -7067,6 +7983,7 @@ function exp1RenderMask() {
     const img = exp1State.croppedCanvas;
     const fit = exp1ComputeFit(img.width, img.height, cw, ch);
     exp1State.maskFit = fit;
+    exp1SetRasterSmoothing(ctx, fit);
 
     ctx.fillStyle = 'rgba(10,9,8,0.55)';
     ctx.fillRect(0, 0, cw, ch);
@@ -7430,6 +8347,7 @@ function exp1RenderJoints() {
     const img = exp1State.croppedCanvas;
     const fit = exp1ComputeFit(img.width, img.height, cw, ch);
     exp1State.jointsFit = fit;
+    exp1SetRasterSmoothing(ctx, fit);
 
     ctx.fillStyle = 'rgba(10,9,8,0.55)';
     ctx.fillRect(0, 0, cw, ch);
@@ -8051,7 +8969,12 @@ function exp1FitAnim() {
         let dw, dh;
         if (ar > fr) { dw = aw; dh = aw / ar; }
         else         { dh = ah; dw = ah * ar; }
-        const scale = dw / img.width;
+        let scale = dw / img.width;
+        if (scale > 1) {
+            scale = 1;
+            dw = img.width;
+            dh = img.height;
+        }
         const ox = (cw - dw) / 2;
         const oy = (ch - dh) / 2;
         exp1State.animSize = { cw, ch, dpr, scale, ox, oy };
@@ -8066,6 +8989,8 @@ function exp1RenderAnim() {
     if (!sz) return;
     const ctx = canvas.getContext('2d');
     ctx.setTransform(sz.dpr, 0, 0, sz.dpr, 0, 0);
+    ctx.imageSmoothingEnabled = sz.scale < 0.999;
+    if (ctx.imageSmoothingEnabled) ctx.imageSmoothingQuality = 'high';
     ctx.clearRect(0, 0, sz.cw, sz.ch);
 
     const grad = ctx.createRadialGradient(sz.cw / 2, sz.ch / 2, 0, sz.cw / 2, sz.ch / 2, Math.max(sz.cw, sz.ch) / 2);
