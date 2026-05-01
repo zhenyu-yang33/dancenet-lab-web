@@ -50,7 +50,10 @@
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-html { background: var(--ink); }
+html {
+    background: var(--ink);
+    scroll-behavior: smooth;
+}
 body {
     font-family: var(--f-sans);
     font-weight: 300;
@@ -666,6 +669,9 @@ body {
 .lab-stage {
     padding: 0 var(--gutter) 100px;
 }
+#exp1-playground {
+    scroll-margin-top: calc(var(--nav-h) + 28px);
+}
 .lab-stage-head {
     display: flex; justify-content: space-between; align-items: baseline;
     border-top: 1px solid var(--gold);
@@ -683,6 +689,126 @@ body {
     letter-spacing: 0.16em; text-transform: uppercase;
     color: var(--paper-faint);
 }
+
+/* ─── Experiment 01 · 工作台布局（进度条 + 画布质感） ─── */
+.lab-exp1-wb .lab-stage-head.exp1-wb-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+    padding-bottom: 28px;
+    margin-bottom: 20px;
+}
+.exp1-wb-head-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.lab-exp1-wb .lab-stage-head .lab-stage-title {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+}
+.lab-exp1-wb .lab-stage-meta {
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    color: var(--paper-soft);
+    text-align: right;
+    text-transform: none;
+    line-height: 1.45;
+    max-width: min(36em, 100%);
+}
+.exp1-wb-track {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.exp1-wb-seg {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 10px 14px;
+    border: 1px solid var(--line);
+    background: rgba(14, 13, 11, 0.75);
+    transition: border-color 0.2s, background 0.2s, opacity 0.2s;
+    min-height: 56px;
+    text-wrap: pretty;
+}
+.exp1-wb-seg-n {
+    font-family: var(--f-mono); font-size: 9.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+}
+.exp1-wb-seg-t {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 15px;
+    line-height: 1.25;
+    color: var(--paper-soft);
+}
+.exp1-wb-seg.is-done {
+    border-color: rgba(110, 150, 120, 0.4);
+    background: rgba(110, 150, 120, 0.07);
+}
+.exp1-wb-seg.is-done .exp1-wb-seg-n { color: var(--moss); }
+.exp1-wb-seg.is-done .exp1-wb-seg-t { color: var(--paper-soft); opacity: 0.85; }
+.exp1-wb-seg.is-current {
+    border-color: rgba(212, 165, 116, 0.65);
+    background: rgba(212, 165, 116, 0.09);
+    box-shadow: inset 0 0 0 1px rgba(212, 165, 116, 0.12);
+}
+.exp1-wb-seg.is-current .exp1-wb-seg-n,
+.exp1-wb-seg.is-current .exp1-wb-seg-t { color: var(--gold); }
+.exp1-wb-seg.is-upcoming { opacity: 0.38; }
+
+.lab-exp1-wb .lab-frame {
+    border-radius: 1px;
+    background: linear-gradient(168deg, #0b0a08 0%, #050403 48%, #080706 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(235, 231, 223, 0.04),
+        0 28px 64px rgba(0, 0, 0, 0.42);
+}
+.lab-exp1-wb .lab-frame-hud {
+    top: auto;
+    bottom: 16px;
+    left: 16px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 10px 22px;
+    max-width: min(520px, calc(100% - 120px));
+    padding: 10px 14px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+}
+.lab-exp1-wb .lab-frame-hud .hud-row {
+    flex-direction: column;
+    gap: 2px;
+    align-items: flex-start;
+}
+.lab-exp1-wb .lab-frame-hud .hud-key {
+    font-size: 9px;
+    opacity: 0.85;
+}
+.lab-exp1-wb .lab-frame-watermark {
+    opacity: 0.55;
+}
+
+@media (max-width: 900px) {
+    .exp1-wb-track {
+        grid-template-columns: repeat(5, minmax(68px, 1fr));
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+    }
+    .exp1-wb-seg { min-width: 68px; }
+    .lab-exp1-wb .lab-stage-meta { text-align: left; }
+}
+
 .lab-frame {
     position: relative;
     background: #050403;
@@ -699,12 +825,18 @@ body {
     width: 1px; height: 1px;
 }
 .lab-frame-hud {
-    position: absolute; left: 22px; top: 20px;
+    position: absolute; left: 18px; top: 16px;
     font-family: var(--f-mono); font-size: 10.5px;
     letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--paper-faint);
+    color: var(--paper-soft);
     pointer-events: none;
-    display: flex; flex-direction: column; gap: 6px;
+    display: flex; flex-direction: column; gap: 8px;
+    padding: 12px 14px;
+    background: rgba(10, 9, 8, 0.72);
+    border: 1px solid rgba(212, 165, 116, 0.22);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    max-width: min(340px, calc(100% - 36px));
 }
 .lab-frame-hud .hud-row { display: flex; gap: 14px; align-items: baseline; }
 .lab-frame-hud .hud-key { color: var(--gold); }
@@ -884,12 +1016,18 @@ body {
     transition: width 0.06s linear;
 }
 
-.lab-steps {
+#exp1-steps.lab-steps {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0;
     margin-top: 30px;
     border: 1px solid var(--line);
+}
+@media (max-width: 1100px) {
+    #exp1-steps.lab-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+    #exp1-steps.lab-steps { grid-template-columns: 1fr; }
 }
 .lab-step {
     padding: 26px 24px;
@@ -930,10 +1068,12 @@ body {
 .lab-step.is-done .lab-step-desc  { color: var(--paper-faint); }
 
 /* ─── Experiment 01 · Wizard (upload + crop) ─── */
-.lab-frame-hud, .lab-frame-watermark { z-index: 5; }
+/* 工作台交互层必须在环境 canvas 之上, 否则会"看得见图点不到上传" */
+.lab-frame-hud, .lab-frame-watermark { z-index: 6; }
 
 .exp1-wizard {
     position: absolute; inset: 0;
+    z-index: 4;
     display: block;
     pointer-events: auto;
 }
@@ -944,17 +1084,64 @@ body {
 }
 .exp1-step.is-active { display: flex; }
 
-/* Upload step — let ambient bg breathe through; upload card carries its own surface */
+/* Upload step — 略提亮底层，避免与环境网格叠出「脏糊」感 */
 .exp1-step[data-step="upload"] {
-    background: rgba(10,9,8,0.32);
+    background: rgba(8, 7, 6, 0.88);
 }
 .exp1-upload-zone {
-    width: min(560px, 78%);
-    border: 1px dashed var(--line-mid);
-    padding: 36px 40px 32px;
-    background: rgba(17,16,14,0.72);
+    width: min(640px, 94%);
+    max-height: calc(100% - 32px);
+    overflow-y: auto;
+    border: 1px solid rgba(212, 165, 116, 0.22);
+    padding: 28px 34px 26px;
+    background: linear-gradient(180deg, rgba(20, 18, 16, 0.94) 0%, rgba(12, 11, 9, 0.96) 100%);
     text-align: center;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+.exp1-upload-progress {
+    display: flex; align-items: center; gap: 8px;
+    justify-content: center;
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--paper-faint);
+    margin-bottom: 14px;
+}
+.exp1-upload-progress .ip-step {
+    width: 28px; height: 2px;
+    background: var(--line-mid);
+}
+.exp1-upload-progress .ip-step.is-active { background: var(--gold); }
+.exp1-upload-progress .ip-num { color: var(--gold); font-weight: 600; }
+
+.exp1-checklist {
+    text-align: left;
+    margin: 22px auto 4px;
+    max-width: 460px;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+}
+.exp1-checklist-title {
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+}
+.exp1-checklist ul {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 7px;
+}
+.exp1-checklist li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.06em; line-height: 1.55;
+    color: var(--paper-soft);
+}
+.exp1-checklist li::before {
+    content: '✓';
+    color: var(--gold); font-weight: 700;
+    flex-shrink: 0;
+    font-size: 12px;
 }
 .exp1-upload-zone.is-over {
     border-color: var(--gold);
@@ -1009,8 +1196,12 @@ body {
     content: ''; flex: 1; height: 1px; background: var(--line);
 }
 .exp1-examples {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
-    max-width: 320px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    gap: 10px;
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto;
 }
 .exp1-example {
     background: var(--ink-2);
@@ -1027,13 +1218,33 @@ body {
 }
 .exp1-example canvas { width: 100%; height: 100%; display: block; }
 
-/* Crop step */
+/* Crop step — 实心底，避免透视底层 canvas 叠出双重影像 */
 .exp1-step[data-step="crop"] {
-    background: rgba(10,9,8,0.78);
+    background: var(--ink-2);
+}
+.exp1-crop-topbar {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    z-index: 10;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    justify-content: center; max-width: calc(100% - 40px);
+    pointer-events: auto;
+}
+.exp1-crop-topbar-hint {
+    font-family: var(--f-mono); font-size: 9px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--paper-faint);
 }
 .exp1-crop-stage {
-    position: absolute; inset: 0;
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    top: 58px;
+    bottom: 54px;
+    z-index: 1;
     cursor: move;
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid rgba(235, 231, 223, 0.08);
 }
 .exp1-crop-stage canvas {
     position: absolute; inset: 0;
@@ -1041,7 +1252,7 @@ body {
     display: block;
 }
 .exp1-crop-tip {
-    position: absolute; left: 22px; bottom: 22px;
+    position: absolute; left: 22px; bottom: 14px;
     font-family: var(--f-mono); font-size: 10.5px;
     letter-spacing: 0.18em; text-transform: uppercase;
     color: var(--paper-soft);
@@ -1049,6 +1260,7 @@ body {
     background: rgba(10,9,8,0.45);
     padding: 10px 14px;
     border-left: 1px solid var(--gold);
+    z-index: 11;
 }
 
 /* Stage D · Mask + Joints — shared work-stage layout */
@@ -1058,7 +1270,7 @@ body {
     flex-direction: row;
     align-items: stretch;
     justify-content: flex-start;
-    background: rgba(10,9,8,0.78);
+    background: var(--ink-2);
 }
 .exp1-work-stage {
     flex: 1; min-width: 0;
@@ -1175,7 +1387,7 @@ body {
     flex-direction: row;
     align-items: stretch;
     justify-content: flex-start;
-    background: rgba(10,9,8,0.78);
+    background: var(--ink-2);
 }
 .exp1-anim-status {
     position: absolute; left: 22px; bottom: 22px;
@@ -1194,17 +1406,20 @@ body {
 .exp1-action-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 6px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 2px;
 }
 .exp1-action-btn {
     background: transparent;
     border: 1px solid var(--line-mid);
-    padding: 14px 10px;
+    padding: 11px 6px 9px;
     cursor: pointer;
     text-align: center;
     color: var(--paper-soft);
     transition: border-color 0.2s, color 0.2s, background 0.2s;
-    display: flex; flex-direction: column; gap: 6px;
+    display: flex; flex-direction: column; gap: 4px;
 }
 .exp1-action-btn:hover {
     border-color: var(--gold);
@@ -1218,13 +1433,13 @@ body {
 .exp1-action-btn-glyph {
     font-family: var(--f-serif);
     font-style: italic;
-    font-size: 22px;
+    font-size: 19px;
     line-height: 1;
 }
 .exp1-action-btn-name {
     font-family: var(--f-mono);
-    font-size: 9.5px;
-    letter-spacing: 0.18em;
+    font-size: 9px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
 }
 
@@ -1247,6 +1462,16 @@ body {
 
 /* Tablet/mobile: stack tool panel below stage */
 @media (max-width: 760px) {
+    .exp1-examples {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: 100%;
+    }
+    .exp1-crop-stage {
+        left: 10px;
+        right: 10px;
+        top: 52px;
+        bottom: 48px;
+    }
     .exp1-step[data-step="mask"],
     .exp1-step[data-step="joints"],
     .exp1-step[data-step="animate"] {
@@ -1262,9 +1487,10 @@ body {
     .exp1-tool-section { flex: 1; padding-bottom: 0; border-bottom: none; }
 }
 
-/* Crop preview thumb (after confirm) */
+/* Crop preview thumb（mask/joints 阶段参考缩略图） */
 .exp1-handoff {
     position: absolute; right: 22px; bottom: 22px;
+    z-index: 12;
     width: 88px;
     background: var(--ink-2);
     border: 1px solid var(--gold);
@@ -1332,13 +1558,13 @@ body {
 
 @media (max-width: 980px) {
     .lab-meter { grid-template-columns: 1fr; }
-    .lab-steps { grid-template-columns: repeat(2, 1fr); }
+    #exp1-steps.lab-steps { grid-template-columns: repeat(2, 1fr); }
     .lab-step:nth-child(odd) { border-right: 1px solid var(--line); }
     .lab-step:nth-child(even) { border-right: none; }
     .lab-step:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
 }
 @media (max-width: 720px) {
-    .lab-steps { grid-template-columns: 1fr; }
+    #exp1-steps.lab-steps { grid-template-columns: 1fr; }
     .lab-step { border-right: none !important; border-bottom: 1px solid var(--line); }
     .lab-step:last-child { border-bottom: none; }
     .lab-toolbar-group { border-left: none; padding-left: 0; margin-left: 0; }
@@ -1935,10 +2161,51 @@ body {
     border-bottom: 1px solid var(--line);
 }
 .ex-cover canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* 实验 01 · 封面背景视频（单段循环、低速） */
+.exp1-cover #exp1-cover-video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+    z-index: 1;
+}
+.exp1-cover-hit {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    text-decoration: none;
+    outline: none;
+}
+.exp1-cover-hit:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: -6px;
+}
+.exp1-cover .ex-cover-content {
+    pointer-events: none;
+}
+.exp1-cover-chorus {
+    margin-top: 28px;
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(17px, 2vw, 21px);
+    letter-spacing: 0.38em;
+    color: rgba(235,231,223,0.36);
+    text-shadow: 0 1px 3px rgba(10,9,8,0.75);
+}
+
 .ex-cover-vignette {
     position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(10,9,8,0.4) 0%, transparent 30%, transparent 50%, rgba(10,9,8,0.95) 100%);
     pointer-events: none;
+    z-index: 2;
 }
 
 /* ── 光影为媒 hero 专属 ── */
@@ -1974,6 +2241,7 @@ body {
 .ex-cover-content {
     position: absolute; left: var(--gutter); right: var(--gutter); bottom: 60px;
     display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: end;
+    z-index: 4;
 }
 .ex-cover-meta {
     display: flex; gap: 30px; align-items: baseline;
@@ -3067,43 +3335,143 @@ body {
     color: var(--paper-soft);
     max-width: 720px;
 }
-.art-flow-cases-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-}
-.art-flow-case {
+/* CASES · 3D COVERFLOW REEL */
+.art-flow-reel-wrap {
     position: relative;
-    aspect-ratio: 4 / 5;
+    margin-top: 8px;
+}
+.art-flow-reel {
+    position: relative;
+    height: clamp(420px, 56vw, 580px);
+    perspective: 2000px;
+    perspective-origin: 50% 50%;
+    overflow: hidden;
+    user-select: none;
+    touch-action: pan-y;
+    outline: none;
+}
+.art-flow-reel::before,
+.art-flow-reel::after {
+    content: "";
+    position: absolute; top: 0; bottom: 0;
+    width: 14%;
+    z-index: 5; pointer-events: none;
+}
+.art-flow-reel::before {
+    left: 0;
+    background: linear-gradient(90deg, var(--ink) 0%, rgba(10,9,8,0.6) 60%, transparent 100%);
+}
+.art-flow-reel::after {
+    right: 0;
+    background: linear-gradient(270deg, var(--ink) 0%, rgba(10,9,8,0.6) 60%, transparent 100%);
+}
+.art-flow-reel-stage {
+    position: absolute; inset: 0;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: transform;
+}
+.art-flow-reel-stage.is-dragging {
+    transition: none;
+}
+.art-flow-reel-card {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: clamp(240px, 28vw, 380px);
+    aspect-ratio: 9 / 12;
+    margin: 0;
     background: var(--ink-2);
     border: 1px solid var(--line);
     overflow: hidden;
-    transition: border-color 0.3s;
+    cursor: grab;
+    transform-origin: 50% 50%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transition:
+        transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+        opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+        filter 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+        visibility 0s linear 0.35s,
+        box-shadow 0.5s,
+        border-color 0.3s;
+    will-change: transform, opacity, filter;
 }
-.art-flow-case:hover { border-color: var(--gold); }
-.art-flow-case video,
-.art-flow-case img {
+.art-flow-reel-card.is-active {
+    border-color: var(--gold);
+    cursor: pointer;
+    box-shadow:
+        0 30px 80px -20px rgba(0,0,0,0.85),
+        0 0 0 1px rgba(212,165,116,0.35) inset;
+}
+.art-flow-reel-stage.is-dragging .art-flow-reel-card {
+    transition: none;
+    cursor: grabbing;
+}
+.art-flow-reel-card video,
+.art-flow-reel-card img {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
-}
-.art-flow-case-cap {
-    position: absolute; left: 16px; right: 16px; bottom: 16px;
-    z-index: 2;
-    display: flex; flex-direction: column; gap: 4px;
+    background: #000;
     pointer-events: none;
 }
-.art-flow-case-cap .k {
+.art-flow-reel-shade {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10,9,8,0) 45%, rgba(10,9,8,0.85) 100%);
+    pointer-events: none;
+    opacity: 0; transition: opacity 0.5s;
+}
+.art-flow-reel-card.is-active .art-flow-reel-shade { opacity: 1; }
+.art-flow-reel-corner {
+    position: absolute; width: 16px; height: 16px;
+    border-color: var(--gold); border-style: solid;
+    pointer-events: none;
+    opacity: 0; transition: opacity 0.4s;
+}
+.art-flow-reel-card.is-active .art-flow-reel-corner { opacity: 1; }
+.art-flow-reel-corner.tl { top: 10px; left: 10px; border-width: 1px 0 0 1px; }
+.art-flow-reel-corner.tr { top: 10px; right: 10px; border-width: 1px 1px 0 0; }
+.art-flow-reel-corner.bl { bottom: 10px; left: 10px; border-width: 0 0 1px 1px; }
+.art-flow-reel-corner.br { bottom: 10px; right: 10px; border-width: 0 1px 1px 0; }
+.art-flow-reel-cap {
+    position: absolute; left: 18px; right: 18px; bottom: 18px;
+    display: flex; flex-direction: column; gap: 4px;
+    z-index: 2; pointer-events: none;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 0.5s, transform 0.5s;
+}
+.art-flow-reel-card.is-active .art-flow-reel-cap {
+    opacity: 1; transform: translateY(0);
+}
+.art-flow-reel-cap .k {
     font-family: var(--f-mono); font-size: 9.5px;
-    letter-spacing: 0.22em; text-transform: uppercase;
+    letter-spacing: 0.24em; text-transform: uppercase;
     color: var(--gold);
 }
-.art-flow-case-cap .v {
+.art-flow-reel-cap .v {
     font-family: var(--f-serif);
-    font-size: 18px; line-height: 1.3;
+    font-size: 19px; line-height: 1.3;
     color: var(--paper);
 }
-.art-flow-case-empty {
+.art-flow-reel-cap .s {
+    font-family: var(--f-serif);
+    font-size: 13.5px; line-height: 1.55;
+    color: var(--paper-soft);
+    margin-top: 4px;
+}
+.art-flow-reel-stamp {
+    position: absolute; top: 12px; right: 12px;
+    font-family: var(--f-mono); font-size: 9px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 4px 8px;
+    pointer-events: none;
+    opacity: 0; transition: opacity 0.4s;
+    z-index: 2;
+}
+.art-flow-reel-card.is-active .art-flow-reel-stamp { opacity: 1; }
+.art-flow-reel-empty {
     background:
         repeating-linear-gradient(
             45deg,
@@ -3113,11 +3481,77 @@ body {
         var(--ink-2);
     display: flex; align-items: center; justify-content: center;
 }
-.art-flow-case-empty::before {
+.art-flow-reel-empty::before {
     content: "案例待上传";
     font-family: var(--f-mono); font-size: 10.5px;
     letter-spacing: 0.28em; text-transform: uppercase;
     color: var(--paper-faint);
+}
+.art-flow-reel-nav {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: 1px solid var(--line-mid);
+    background: rgba(10,9,8,0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--paper);
+    font-family: var(--f-serif);
+    font-size: 22px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 12;
+    transition: border-color 0.3s, color 0.3s, background 0.3s, opacity 0.3s;
+}
+.art-flow-reel-nav:hover {
+    border-color: var(--gold); color: var(--gold);
+    background: rgba(10,9,8,0.75);
+}
+.art-flow-reel-nav:disabled {
+    opacity: 0.25; cursor: not-allowed;
+}
+.art-flow-reel-nav.prev { left: 18px; }
+.art-flow-reel-nav.next { right: 18px; }
+.art-flow-reel-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 28px;
+    padding: 0 4px;
+    gap: 24px;
+}
+.art-flow-reel-dots {
+    display: flex; flex-wrap: wrap;
+    gap: 8px;
+}
+.art-flow-reel-dot {
+    width: 22px; height: 2px;
+    background: var(--line-mid);
+    border: none; padding: 0;
+    cursor: pointer;
+    transition: background 0.3s, width 0.4s;
+}
+.art-flow-reel-dot:hover { background: var(--paper-soft); }
+.art-flow-reel-dot.is-active {
+    background: var(--gold);
+    width: 36px;
+}
+.art-flow-reel-meta {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--paper-faint);
+    white-space: nowrap;
+}
+.art-flow-reel-meta em {
+    font-style: normal;
+    color: var(--gold);
+}
+.art-flow-reel-hint {
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--paper-faint);
+    margin-top: 14px;
 }
 
 /* SHARE · 落地分享 */
@@ -3162,6 +3596,10 @@ body {
     width: 100%; height: 100%; object-fit: cover;
     position: absolute; inset: 0;
 }
+.art-flow-share-cover:has(video)::before,
+.art-flow-share-cover:has(img)::before {
+    content: none;
+}
 .art-flow-share-text { display: flex; flex-direction: column; gap: 14px; }
 .art-flow-share-tag {
     width: fit-content;
@@ -3196,12 +3634,15 @@ body {
     .art-flow-principle-grid { grid-template-columns: 1fr; }
     .art-flow-section-head { grid-template-columns: 1fr; gap: 22px; }
     .art-flow-section-head .lede { grid-column: 1; }
-    .art-flow-cases-grid { grid-template-columns: repeat(2, 1fr); }
     .art-flow-share-item { grid-template-columns: 1fr; gap: 24px; direction: ltr; }
     .art-flow-share-item > * { direction: ltr; }
+    .art-flow-reel-nav.prev { left: 8px; }
+    .art-flow-reel-nav.next { right: 8px; }
+    .art-flow-reel-foot { flex-direction: column; gap: 16px; align-items: flex-start; }
 }
 @media (max-width: 720px) {
-    .art-flow-cases-grid { grid-template-columns: 1fr; }
+    .art-flow-reel { height: clamp(360px, 90vw, 460px); }
+    .art-flow-reel-card { width: clamp(200px, 64vw, 260px); }
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -3241,6 +3682,305 @@ body {
     .stories-scroll { padding-left: 24px; padding-right: 24px; }
     .story-card { flex: 0 0 280px; }
     .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   WB2 · Redesigned Experiment 01 Workbench
+═══════════════════════════════════════════════════════ */
+
+/* ── State-driven layout via data-wb-stage ── */
+#exp1-playground[data-wb-stage="upload"] #exp1-frame   { display: none; }
+#exp1-playground[data-wb-stage="upload"] .wb2-upload   { display: grid; }
+#exp1-playground:not([data-wb-stage="upload"]) .wb2-upload { display: none; }
+#exp1-steps { display: none; } /* kept for JS compat, hidden visually */
+
+/* ── WB2 Header ── */
+.wb2-header {
+    border-top: 1px solid var(--gold);
+    padding: 20px 0 26px;
+    margin-bottom: 0;
+}
+.wb2-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.wb2-label {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--gold);
+}
+.wb2-meta {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--paper-faint);
+    text-align: right;
+}
+
+/* ── WB2 Stepper ── */
+.wb2-stepper {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+}
+.wb2-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    flex: 1;
+    min-width: 0;
+}
+.wb2-step-dot {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(235, 231, 223, 0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.10em;
+    color: rgba(235, 231, 223, 0.22);
+    background: rgba(10, 9, 8, 0.6);
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    transition: border-color 0.28s, color 0.28s, background 0.28s, box-shadow 0.28s;
+}
+.wb2-step.is-current .wb2-step-dot {
+    border-color: var(--gold);
+    color: var(--ink);
+    background: var(--gold);
+    box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.15);
+}
+.wb2-step.is-done .wb2-step-dot {
+    border-color: rgba(110, 150, 120, 0.55);
+    color: #6e9678;
+    background: rgba(110, 150, 120, 0.10);
+}
+.wb2-step.is-done .wb2-step-num { display: none; }
+.wb2-step.is-done .wb2-step-done-check { display: block; font-size: 13px; }
+.wb2-step-num { line-height: 1; }
+.wb2-step-done-check { display: none; }
+.wb2-step-name {
+    font-family: var(--f-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(235, 231, 223, 0.22);
+    text-align: center;
+    white-space: nowrap;
+    transition: color 0.28s;
+}
+.wb2-step.is-current .wb2-step-name { color: var(--gold); }
+.wb2-step.is-done .wb2-step-name    { color: rgba(235, 231, 223, 0.5); }
+
+.wb2-step-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(235, 231, 223, 0.10);
+    margin-top: 17px; /* vertically centers on the dot */
+    transition: background 0.28s;
+    flex-shrink: 1;
+}
+.wb2-step.is-done + .wb2-step-line {
+    background: rgba(110, 150, 120, 0.35);
+}
+
+/* ── WB2 Upload Panel ── */
+.wb2-upload {
+    display: none;
+    grid-template-columns: 58fr 42fr;
+    gap: 0;
+    margin-top: 2px;
+    min-height: 400px;
+    height: min(calc(100svh - 280px), 660px);
+    border: 1px solid var(--line);
+    overflow: hidden;
+}
+@media (max-width: 860px) {
+    .wb2-upload { grid-template-columns: 1fr; height: auto; }
+}
+
+.wb2-drop-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 52px;
+    background: rgba(8, 7, 6, 0.75);
+    border-right: 1px solid var(--line);
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+.wb2-drop-zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(212,165,116,0.04) 0%, transparent 70%);
+    pointer-events: none;
+}
+.wb2-drop-zone.is-over {
+    background: rgba(212, 165, 116, 0.06);
+    border-color: var(--gold);
+}
+.wb2-drop-zone.is-over .wb2-drop-cta-border { border-color: var(--gold); }
+.wb2-drop-eyebrow {
+    font-family: var(--f-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(212, 165, 116, 0.35);
+    margin-bottom: 20px;
+}
+.wb2-drop-title {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: clamp(22px, 2.5vw, 32px);
+    line-height: 1.2;
+    color: var(--paper);
+    margin-bottom: 10px;
+    text-wrap: pretty;
+}
+.wb2-drop-sub {
+    font-family: var(--f-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+    margin-bottom: 32px;
+    line-height: 1.6;
+}
+.wb2-upload-cta {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--gold);
+    border: none;
+    padding: 14px 34px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.15s;
+}
+.wb2-upload-cta:hover { background: var(--paper); transform: translateY(-2px); }
+.wb2-upload-cta input[type="file"] { display: none; }
+
+/* Right aside */
+.wb2-upload-aside {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: rgba(12, 11, 9, 0.9);
+}
+.wb2-aside-block {
+    padding: 22px 26px 20px;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+}
+.wb2-aside-block:last-child { border-bottom: none; }
+.wb2-aside-title {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(212, 165, 116, 0.25);
+    margin-bottom: 14px;
+}
+.wb2-upload .exp1-examples {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    max-width: 100%;
+    gap: 7px;
+}
+.wb2-checklist {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.wb2-checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+    color: var(--paper-soft);
+}
+.wb2-checklist li::before {
+    content: '—';
+    color: var(--gold);
+    flex-shrink: 0;
+    opacity: 0.6;
+    margin-top: 1px;
+}
+
+/* ── WB2 Canvas area (steps 2–5) ── */
+#exp1-playground:not([data-wb-stage="upload"]) #exp1-frame {
+    aspect-ratio: unset !important;
+    min-height: 480px;
+    height: min(calc(100svh - 300px), 820px);
+    margin-top: 2px;
+}
+/* Remove HUD from upload (it's empty anyway) */
+#exp1-playground[data-wb-stage="upload"] .lab-frame-hud,
+#exp1-playground[data-wb-stage="upload"] .lab-frame-watermark { display: none; }
+
+/* ── WB2 Navigation bar ── */
+.wb2-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0 6px;
+    border-top: 1px solid var(--line);
+    margin-top: 2px;
+    flex-wrap: wrap;
+}
+.wb2-nav-left { display: flex; gap: 10px; align-items: center; }
+.wb2-nav-center {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--paper-faint);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wb2-nav-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-left: auto;
+}
+@media (max-width: 680px) {
+    .wb2-nav { flex-wrap: wrap; gap: 10px; }
+    .wb2-nav-center { width: 100%; flex: none; text-align: left; order: 3; }
+    .wb2-nav-right { margin-left: 0; }
 }
 </style>
 </head>
@@ -3834,7 +4574,7 @@ body {
                     <span class="ex-plate-hint-mark">▶</span>
                     <span class="ex-plate-hint-txt">点击 · 进入互动现场</span>
                 </div>
-                <div class="ex-plate-cap"><span>图版 I · 摄像机看见我们</span><span>实时互动 · 2026</span></div>
+                <div class="ex-plate-cap"><span>图版 I ·看见我们</span><span>实时互动 · 2026</span></div>
             </div>
             <div class="ex-plate ex-plate-ambient" id="plate-interactive-wrap">
                 <video id="plate-interactive-video"
@@ -4010,7 +4750,7 @@ body {
 
                 <h3>关于"创造"的一个保留意见</h3>
 
-                <p>我们不相信 AI 能替代编舞家, 也不打算尝试。 The Synthesis 的设计原点是: 一个真正的编舞家面对空白排练厅时, 最先需要的不是答案, 是<em>启发</em>。 AI 在这个阶段最值钱的不是它生成得多准, 而是它能否在凌晨三点给你一个让你想骂"妈的还行"的版本。</p>
+                <p>我们不相信 AI 能替代编舞家, 也不打算尝试。 The Synthesis 的设计原点是: 一个真正的编舞家面对空白排练厅时, 最先需要的不是答案, 是<em>启发</em>。 AI 在这个阶段最值钱的不是它生成得多准, 而是它能否基于你的创意给你一个"超级懂你"的版本。</p>
             </article>
 
             <aside class="ex-aux">
@@ -4070,9 +4810,13 @@ body {
 ════════════════════════════════════════ -->
 <div id="page-exp1" class="page">
     <section class="ex-page">
-        <div class="ex-cover">
-            <canvas id="exp1-cover-canvas"></canvas>
+        <div class="ex-cover exp1-cover">
+            <video id="exp1-cover-video"
+                src="file:///Users/Zhuanz1/Desktop/4%E6%9C%8830%E6%97%A5%281%29.mov"
+                muted loop playsinline autoplay
+                preload="auto"></video>
             <div class="ex-cover-vignette"></div>
+            <a href="#exp1-playground" class="exp1-cover-hit" aria-label="前往工作台 · 上传作品并试玩"></a>
             <div class="ex-cover-content">
                 <div>
                     <div class="ex-cover-meta"><span class="num">01</span><span>实验 · 绘画 + 舞蹈</span></div>
@@ -4080,6 +4824,7 @@ body {
                 </div>
                 <div class="ex-cover-pull">
                     <p class="ex-cover-pull-text">"上传一张你随手画的纸人——给它找到关节，<em style="color:var(--gold);">挑一段动作</em>，让它在屏幕上替你跳。"</p>
+                    <p class="exp1-cover-chorus">与画舞动</p>
                 </div>
             </div>
         </div>
@@ -4096,7 +4841,7 @@ body {
             </aside>
 
             <article class="ex-content">
-                <p>这是一面实验：当一个孩子在白纸上画了一个手脚分得开的小人，我们能不能让它<em>跳起来</em>？这不是一个新问题——Meta FAIR 的 Animated Drawings 已经验证它可行。我们把同样的体验搬到这个实验室里，沿用四步流程：上传、定位、抠图、关节标定，然后选一段我们自己写的舞蹈动作让它播放。</p>
+                <p>这是一面实验：当一个孩子在白纸上画了一个手脚分得开的小人，我们能不能让它<em>跳起来</em>？这不是一个新问题——Meta的 Animated Drawings 已经验证它可行。我们把同样的体验搬到这个实验室里，沿用四步流程：上传、定位、抠图、关节标定，然后选一段我们自己写的舞蹈动作让它播放。</p>
 
                 <h3>四步，缺一不可</h3>
 
@@ -4120,44 +4865,96 @@ body {
             </aside>
         </div>
 
-        <div class="lab-stage">
-            <div class="lab-stage-head">
-                <div class="lab-stage-title">实验工作台 · WORKBENCH</div>
-                <div class="lab-stage-meta" id="exp1-stage-meta">阶段 C · 上传你的画</div>
+        <div class="lab-stage lab-exp1-wb" id="exp1-playground" data-wb-stage="upload">
+
+            <!-- ── WB2 Header · Title + Stepper ── -->
+            <div class="wb2-header">
+                <div class="wb2-header-row">
+                    <div class="wb2-label">让画动起来 · 实验工作台</div>
+                    <div class="wb2-meta" id="exp1-stage-meta">步骤 1/5 · 上传照片或绘画</div>
+                </div>
+                <div class="wb2-stepper" id="exp1-wb-track" aria-label="流程进度">
+                    <div class="wb2-step exp1-wb-seg is-current" data-wb-step="0">
+                        <div class="wb2-step-dot"><span class="wb2-step-num">01</span><span class="wb2-step-done-check">✓</span></div>
+                        <div class="wb2-step-name">上传</div>
+                    </div>
+                    <div class="wb2-step-line"></div>
+                    <div class="wb2-step exp1-wb-seg" data-wb-step="1">
+                        <div class="wb2-step-dot"><span class="wb2-step-num">02</span><span class="wb2-step-done-check">✓</span></div>
+                        <div class="wb2-step-name">定位</div>
+                    </div>
+                    <div class="wb2-step-line"></div>
+                    <div class="wb2-step exp1-wb-seg" data-wb-step="2">
+                        <div class="wb2-step-dot"><span class="wb2-step-num">03</span><span class="wb2-step-done-check">✓</span></div>
+                        <div class="wb2-step-name">抠图</div>
+                    </div>
+                    <div class="wb2-step-line"></div>
+                    <div class="wb2-step exp1-wb-seg" data-wb-step="3">
+                        <div class="wb2-step-dot"><span class="wb2-step-num">04</span><span class="wb2-step-done-check">✓</span></div>
+                        <div class="wb2-step-name">关节</div>
+                    </div>
+                    <div class="wb2-step-line"></div>
+                    <div class="wb2-step exp1-wb-seg" data-wb-step="4">
+                        <div class="wb2-step-dot"><span class="wb2-step-num">05</span><span class="wb2-step-done-check">✓</span></div>
+                        <div class="wb2-step-name">动作</div>
+                    </div>
+                </div>
             </div>
 
-            <div class="lab-frame" id="exp1-frame" style="aspect-ratio: 16 / 9;">
+            <!-- ── WB2 Upload Panel (shown only at upload step) ── -->
+            <div class="wb2-upload" id="exp1-wb-upload">
+                <div class="wb2-drop-zone exp1-upload-zone" id="exp1-upload-zone">
+                    <div class="wb2-drop-eyebrow">UPLOAD A DRAWING</div>
+                    <div class="wb2-drop-title">交一张<em style="color:var(--gold);">手绘</em>、<em style="color:var(--gold);">照片</em>或<em style="color:var(--gold);">扫描件</em>。</div>
+                    <div class="wb2-drop-sub">JPG / PNG · 可从相册选择或用手机拍照 · 仅在浏览器内处理，不上传任何服务器</div>
+                    <label class="wb2-upload-cta">
+                        选择或拍摄图片
+                        <input type="file" accept="image/*" id="exp1-file-input" onchange="exp1HandleFile(event)">
+                    </label>
+                </div>
+                <div class="wb2-upload-aside">
+                    <div class="wb2-aside-block">
+                        <div class="wb2-aside-title">示例图 · 点击直接使用</div>
+                        <div class="exp1-examples" id="exp1-examples">
+                            <button type="button" class="exp1-example" data-ex="0" onclick="exp1LoadExample(0)" title="跳舞的小人"></button>
+                            <button type="button" class="exp1-example" data-ex="1" onclick="exp1LoadExample(1)" title="标准站姿"></button>
+                            <button type="button" class="exp1-example" data-ex="2" onclick="exp1LoadExample(2)" title="招手的小人"></button>
+                            <button type="button" class="exp1-example" data-ex="3" onclick="exp1LoadExample(3)" title="卡通女孩"></button>
+                            <button type="button" class="exp1-example" data-ex="4" onclick="exp1LoadExample(4)" title="卷发裙装小人"></button>
+                        </div>
+                    </div>
+                    <div class="wb2-aside-block">
+                        <div class="wb2-aside-title">CHECKLIST · 拍得越好，它跳得越自然</div>
+                        <ul class="wb2-checklist">
+                            <li>角色画/拍在白纸或纯色背景上，没有褶皱、阴影或暗角。</li>
+                            <li>四肢分开，手臂和腿不要叠在身体上，让它能被分段识别。</li>
+                            <li>整个身体落在画面里，不要让头或脚被裁掉。</li>
+                            <li>光线均匀，别让一半亮一半暗。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Lab Frame (hidden at upload, shown for crop/mask/joints/animate) ── -->
+            <div class="lab-frame" id="exp1-frame">
                 <canvas id="exp1-stage-canvas"></canvas>
                 <div class="lab-frame-hud">
-                    <div class="hud-row"><span class="hud-key">EXP</span><span>01 / 让画动起来</span></div>
-                    <div class="hud-row"><span class="hud-key">STAGE</span><span id="exp1-hud-stage">C · UPLOAD</span></div>
-                    <div class="hud-row"><span class="hud-key">NEXT</span><span id="exp1-hud-next">AWAITING IMAGE</span></div>
+                    <div class="hud-row"><span class="hud-key">实验</span><span>01 · 让画动起来</span></div>
+                    <div class="hud-row"><span class="hud-key">阶段</span><span id="exp1-hud-stage">阶段 0 · 上传</span></div>
+                    <div class="hud-row"><span class="hud-key">提示</span><span id="exp1-hud-next">请选择图片或下方示例</span></div>
                 </div>
                 <div class="lab-frame-watermark">DANCENET.LAB · LAB</div>
 
                 <div class="exp1-wizard" id="exp1-wizard">
-                    <!-- Step C-1 · Upload -->
-                    <div class="exp1-step is-active" data-step="upload">
-                        <div class="exp1-upload-zone" id="exp1-upload-zone">
-                            <div class="exp1-upload-eyebrow">阶段 C · 让它进来</div>
-                            <div class="exp1-upload-prompt">交一张你画的<em style="color:var(--gold);">纸人</em>或<em style="color:var(--gold);">动物</em>。</div>
-                            <div class="exp1-upload-sub">JPG / PNG · 全程不上传到任何服务器</div>
-                            <label class="exp1-upload-button">
-                                ▲ 选择图片
-                                <input type="file" accept="image/*" id="exp1-file-input" onchange="exp1HandleFile(event)">
-                            </label>
-                            <div class="exp1-divider">或试试这些示例</div>
-                            <div class="exp1-examples" id="exp1-examples">
-                                <button type="button" class="exp1-example" data-ex="0" onclick="exp1LoadExample(0)" title="跳舞的小人"></button>
-                                <button type="button" class="exp1-example" data-ex="1" onclick="exp1LoadExample(1)" title="标准站姿"></button>
-                                <button type="button" class="exp1-example" data-ex="2" onclick="exp1LoadExample(2)" title="招手的小人"></button>
-                                <button type="button" class="exp1-example" data-ex="3" onclick="exp1LoadExample(3)" title="卡通女孩"></button>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Upload step: empty placeholder for JS state, content moved outside -->
+                    <div class="exp1-step is-active" data-step="upload"></div>
 
                     <!-- Step C-2 · Crop -->
                     <div class="exp1-step" data-step="crop">
+                        <div class="exp1-crop-topbar">
+                            <button type="button" class="lab-btn primary" onclick="exp1ToolbarUpload()">↺ 换图</button>
+                            <span class="exp1-crop-topbar-hint">换图会清空当前进度</span>
+                        </div>
                         <div class="exp1-crop-stage" id="exp1-crop-stage">
                             <canvas id="exp1-crop-canvas"></canvas>
                         </div>
@@ -4251,48 +5048,26 @@ body {
                 </div>
             </div>
 
-            <div class="lab-toolbar" id="exp1-toolbar">
-                <div class="lab-toolbar-group">
+            <!-- ── WB2 Navigation ── -->
+            <div class="wb2-nav">
+                <div class="wb2-nav-left">
                     <button type="button" class="lab-btn" id="exp1-back-btn" onclick="exp1Back()" disabled>← 上一步</button>
-                    <button type="button" class="lab-btn primary" id="exp1-next-btn" onclick="exp1Next()" disabled>下一步 →</button>
                 </div>
-                <div class="lab-status" id="exp1-status">阶段 C · 等待上传</div>
-                <div class="lab-toolbar-group">
+                <div class="wb2-nav-center" id="exp1-status">阶段 C · 等待上传</div>
+                <div class="wb2-nav-right">
+                    <button type="button" class="lab-btn" id="exp1-upload-toolbar" onclick="exp1ToolbarUpload()">↺ 换图</button>
                     <button type="button" class="lab-btn" id="exp1-reset-btn" onclick="exp1Reset()" disabled>↺ 重置</button>
+                    <button type="button" class="lab-btn primary" id="exp1-next-btn" onclick="exp1Next()" disabled>下一步 →</button>
                 </div>
             </div>
 
-            <div class="lab-steps" id="exp1-steps">
-                <div class="lab-step is-current">
-                    <div class="lab-step-num">01 · 上传</div>
-                    <div class="lab-step-flag">当前</div>
-                    <div class="lab-step-title">交一张画。</div>
-                    <div class="lab-step-desc">支持 JPG / PNG, 单张图片包含一个完整的人或动物角色。 也可以使用我们准备的示例图。</div>
-                </div>
-                <div class="lab-step is-soon">
-                    <div class="lab-step-num">02 · 定位</div>
-                    <div class="lab-step-flag">即将</div>
-                    <div class="lab-step-title">框出主体。</div>
-                    <div class="lab-step-desc">拖一个矩形框定位角色——边缘越紧, 后面的动作越准。</div>
-                </div>
-                <div class="lab-step is-soon">
-                    <div class="lab-step-num">03 · 抠图</div>
-                    <div class="lab-step-flag">即将</div>
-                    <div class="lab-step-title">把它从纸上揭下来。</div>
-                    <div class="lab-step-desc">浏览器内自动抠图 + 画笔修正。 全程不上传服务器。</div>
-                </div>
-                <div class="lab-step is-soon">
-                    <div class="lab-step-num">04 · 关节</div>
-                    <div class="lab-step-flag">即将</div>
-                    <div class="lab-step-title">告诉它哪里是肘。</div>
-                    <div class="lab-step-desc">14 个建议关节自动落点, 你只需要微调。</div>
-                </div>
-                <div class="lab-step is-soon">
-                    <div class="lab-step-num">05 · 动作</div>
-                    <div class="lab-step-flag">即将</div>
-                    <div class="lab-step-title">让它跳起来。</div>
-                    <div class="lab-step-desc">挑一段动作——挥手 / 走路 / 蹦跳 / 待机, 调速度, 录成 WebM 或 GIF 带回家。</div>
-                </div>
+            <!-- hidden, kept for JS step-state management only -->
+            <div class="lab-steps" id="exp1-steps" aria-hidden="true">
+                <div class="lab-step is-current"><div class="lab-step-num">01 · 上传</div><div class="lab-step-flag">当前</div><div class="lab-step-title">交一张画。</div><div class="lab-step-desc">支持 JPG / PNG。</div></div>
+                <div class="lab-step is-soon"><div class="lab-step-num">02 · 定位</div><div class="lab-step-flag">即将</div><div class="lab-step-title">框出主体。</div><div class="lab-step-desc">拖矩形。</div></div>
+                <div class="lab-step is-soon"><div class="lab-step-num">03 · 抠图</div><div class="lab-step-flag">即将</div><div class="lab-step-title">把它从纸上揭下来。</div><div class="lab-step-desc">自动抠图 + 画笔修正。</div></div>
+                <div class="lab-step is-soon"><div class="lab-step-num">04 · 关节</div><div class="lab-step-flag">即将</div><div class="lab-step-title">告诉它哪里是肘。</div><div class="lab-step-desc">14 关节落点。</div></div>
+                <div class="lab-step is-soon"><div class="lab-step-num">05 · 动作</div><div class="lab-step-flag">即将</div><div class="lab-step-title">让它跳起来。</div><div class="lab-step-desc">选动作，导出。</div></div>
             </div>
 
             <p class="lab-hint">五步全部上线 · 上传 → 裁剪 → 自动抠图 → 14 关节 → 选一段动作 → 导出。 也可以去玩 <a onclick="showPage('exp2')" style="color:var(--gold);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">实验 02 · 梵高之眼</a>。</p>
@@ -4321,7 +5096,7 @@ body {
                     <h1 class="ex-cover-title">梵高<br><em>之眼</em>。</h1>
                 </div>
                 <div class="ex-cover-pull">
-                    <p class="ex-cover-pull-text">"打开摄像头， 把你的舞动转成<em style="color:var(--gold);">梵高式的笔触</em>。 拖入一段音乐——低音推动速度， 高音点亮新笔触。"</p>
+                    <p class="ex-cover-pull-text">"打开摄像头， 把你的舞动转成<em style="color:var(--gold);">梵高式的笔触</em>。 拖入一段音乐——让绘画与音乐一起舞蹈。"</p>
                 </div>
             </div>
             <div class="lab-scroll-hint" onclick="exp2ScrollToLab(event)">
@@ -4521,7 +5296,7 @@ body {
 
         <article class="about-intro-body">
             <p class="lead">
-                DanceNet.Lab 成立于 <em>2023 年</em>， 是一家专注于<em>街舞 AI 智能分析</em>的教育科技公司。 我们致力于通过人工智能与大数据， 为每一位舞蹈学习者提供个性化、 专业级的指导。
+                DanceNet.Lab 成立于 <em>2023 年</em>， 是一家专注于<em>舞蹈 AI 智能分析</em>的教育科技公司。 我们致力于通过人工智能与大数据， 为每一位舞蹈学习者提供个性化、 专业级的指导。
             </p>
 
             <h3>我们的使命</h3>
@@ -4530,7 +5305,7 @@ body {
             </p>
 
             <p>
-                我们相信， 一支舞蹈背后既是身体的语言， 也是数据的轨迹。 当算法学会"看"运动， 教育就有机会从"统一灌输"走向"被看见的因人而异"。 这是 DanceNet.Lab 一直在做的练习。
+                我们相信， 一支舞蹈背后既是身体的语言， 也是数据的轨迹。 当算法学会"看"运动， 教育就有机会从"统一灌输"走向"被看见的因人而异"。 这是 DanceNet.Lab 一直在做的事情。
             </p>
         </article>
 
@@ -4600,12 +5375,12 @@ body {
         <div class="about-contact-grid">
             <div class="about-contact-card">
                 <div class="k">合作 · 创始人</div>
-                <div class="v"><em>微信</em>13340381991</div>
+                <div class="v"><em>微信：</em>13340381991</div>
                 <p>项目共创 · 教育合作 · 学术研究。</p>
             </div>
             <div class="about-contact-card">
                 <div class="k">媒体 · Press</div>
-                <div class="v"><em>google@</em>dancenet.lab</div>
+                <div class="v"><em>Google@</em>dancenet.lab</div>
                 <p>采访、 展览预告、 媒体素材索取。</p>
             </div>
             <div class="about-contact-card">
@@ -4705,20 +5480,101 @@ body {
         </div>
     </section>
 
-    <!-- § 02 现场记录 · 视频案例 -->
+    <!-- § 02 现场记录 · 视频案例 (3D Coverflow Reel) -->
     <section class="art-flow-cases">
         <div class="art-flow-section-head">
             <div class="eyebrow">§ 02 · 现场记录</div>
             <h2>当一具身体, 被<em>翻译</em>成光。</h2>
-            <p class="lede">下方是装置在不同场地、 不同舞种、 不同 BPM 下的现场片段。 卡片陆续上线——若你正在阅读这一句, 说明库还在生长。</p>
+            <p class="lede">不同场地、 不同舞种与视觉策略下的现场试录。 拖动 / 滚轮 / 方向键 切换主卡片, 主卡片悬停自动播放, 离开主位即停。</p>
         </div>
-        <div class="art-flow-cases-grid">
-            <div class="art-flow-case art-flow-case-empty" data-empty="true"></div>
-            <div class="art-flow-case art-flow-case-empty" data-empty="true"></div>
-            <div class="art-flow-case art-flow-case-empty" data-empty="true"></div>
-            <div class="art-flow-case art-flow-case-empty" data-empty="true"></div>
-            <div class="art-flow-case art-flow-case-empty" data-empty="true"></div>
-            <div class="art-flow-case art-flow-case-empty" data-empty="true"></div>
+        <div class="art-flow-reel-wrap">
+            <div class="art-flow-reel" id="art-flow-reel" tabindex="0" aria-label="现场记录 · 案例转盘">
+                <button type="button" class="art-flow-reel-nav prev" aria-label="上一个案例">‹</button>
+                <button type="button" class="art-flow-reel-nav next" aria-label="下一个案例">›</button>
+                <div class="art-flow-reel-stage" id="art-flow-reel-stage">
+                    <article class="art-flow-reel-card" data-idx="0">
+                        <video src="assets/art-flow-case-01.mov" muted loop playsinline preload="metadata"></video>
+                        <div class="art-flow-reel-shade"></div>
+                        <span class="art-flow-reel-corner tl"></span>
+                        <span class="art-flow-reel-corner tr"></span>
+                        <span class="art-flow-reel-corner bl"></span>
+                        <span class="art-flow-reel-corner br"></span>
+                        <span class="art-flow-reel-stamp">CASE · 01</span>
+                        <div class="art-flow-reel-cap">
+                            <span class="k">CASE 01 · 工作室试录</span>
+                            <span class="v">2024.04.14 · DanceNet.Lab · 重庆</span>
+                            <span class="s">首段实时链路跑通, 人形粒子随深度起伏聚散。</span>
+                        </div>
+                    </article>
+                    <article class="art-flow-reel-card" data-idx="1">
+                        <video src="assets/art-flow-case-02.mov" muted loop playsinline preload="metadata"></video>
+                        <div class="art-flow-reel-shade"></div>
+                        <span class="art-flow-reel-corner tl"></span>
+                        <span class="art-flow-reel-corner tr"></span>
+                        <span class="art-flow-reel-corner bl"></span>
+                        <span class="art-flow-reel-corner br"></span>
+                        <span class="art-flow-reel-stamp">CASE · 02</span>
+                        <div class="art-flow-reel-cap">
+                            <span class="k">CASE 02 · 泼墨</span>
+                            <span class="v">2025.05.02 · 投影灰盒 · 重庆</span>
+                            <span class="s">墨色沿速度场晕开, 身体像被浸透的宣纸托起又滴落。</span>
+                        </div>
+                    </article>
+                    <article class="art-flow-reel-card" data-idx="2">
+                        <video src="assets/art-flow-case-03.mov" muted loop playsinline preload="metadata"></video>
+                        <div class="art-flow-reel-shade"></div>
+                        <span class="art-flow-reel-corner tl"></span>
+                        <span class="art-flow-reel-corner tr"></span>
+                        <span class="art-flow-reel-corner bl"></span>
+                        <span class="art-flow-reel-corner br"></span>
+                        <span class="art-flow-reel-stamp">CASE · 03</span>
+                        <div class="art-flow-reel-cap">
+                            <span class="k">CASE 03 · 动感</span>
+                            <span class="v">2025.08.06 · Night Rehearsal · 上海</span>
+                            <span class="s">高 BPM 下手势被光流拉长, 每一拍都像在空气里刻痕。</span>
+                        </div>
+                    </article>
+                    <article class="art-flow-reel-card" data-idx="3">
+                        <video src="assets/art-flow-case-04.mov" muted loop playsinline preload="metadata"></video>
+                        <div class="art-flow-reel-shade"></div>
+                        <span class="art-flow-reel-corner tl"></span>
+                        <span class="art-flow-reel-corner tr"></span>
+                        <span class="art-flow-reel-corner bl"></span>
+                        <span class="art-flow-reel-corner br"></span>
+                        <span class="art-flow-reel-stamp">CASE · 04</span>
+                        <div class="art-flow-reel-cap">
+                            <span class="k">CASE 04 · 子弹时刻</span>
+                            <span class="v">2025.11.08 · 环绕阵列静帧 · 成都</span>
+                            <span class="s">时间近似冻结, 身体与光束在同一道弧线上对峙。</span>
+                        </div>
+                    </article>
+                    <article class="art-flow-reel-card" data-idx="4">
+                        <video src="assets/art-flow-case-05.mov" muted loop playsinline preload="metadata"></video>
+                        <div class="art-flow-reel-shade"></div>
+                        <span class="art-flow-reel-corner tl"></span>
+                        <span class="art-flow-reel-corner tr"></span>
+                        <span class="art-flow-reel-corner bl"></span>
+                        <span class="art-flow-reel-corner br"></span>
+                        <span class="art-flow-reel-stamp">CASE · 05</span>
+                        <div class="art-flow-reel-cap">
+                            <span class="k">CASE 05 · 炫彩</span>
+                            <span class="v">2026.05.10 · 黑场高饱和 · 广州</span>
+                            <span class="s">色谱扫过幕布时, 舞者与霓虹残像叠成同一道律动。</span>
+                        </div>
+                    </article>
+                    <article class="art-flow-reel-card art-flow-reel-empty" data-idx="5" data-empty="true">
+                        <span class="art-flow-reel-corner tl"></span>
+                        <span class="art-flow-reel-corner tr"></span>
+                        <span class="art-flow-reel-corner bl"></span>
+                        <span class="art-flow-reel-corner br"></span>
+                    </article>
+                </div>
+            </div>
+            <div class="art-flow-reel-foot">
+                <div class="art-flow-reel-dots" id="art-flow-reel-dots"></div>
+                <div class="art-flow-reel-meta" id="art-flow-reel-meta"><em>01</em> / 06</div>
+            </div>
+            <div class="art-flow-reel-hint">DRAG · WHEEL · ARROW KEYS · 主卡片悬停播放</div>
         </div>
     </section>
 
@@ -4730,14 +5586,16 @@ body {
             <p class="lede">从街舞 cypher、 商业开幕、 美术馆装置到校园开放课——同一套技术骨架, 在不同语境里长出截然不同的样貌。</p>
         </div>
         <div class="art-flow-share-list">
-            <article class="art-flow-share-item" data-empty="true">
-                <div class="art-flow-share-cover"></div>
+            <article class="art-flow-share-item">
+                <div class="art-flow-share-cover">
+                    <video src="assets/exp1-hero-april30.mov" muted loop playsinline autoplay preload="auto" aria-label="Kpop 舞蹈 MV 转绘特效粒子案例 · 预览"></video>
+                </div>
                 <div class="art-flow-share-text">
-                    <div class="art-flow-share-tag">CASE 01 · 演出</div>
-                    <h3 class="art-flow-share-title">案例标题<em>占位</em>。</h3>
-                    <p class="art-flow-share-desc">演出 / cypher 现场的落地记录。 后期上传项目方、 舞者、 场地与素材后, 此处会替换为真实简介。</p>
+                    <div class="art-flow-share-tag">CASE 01 · 后期项目</div>
+                    <h3 class="art-flow-share-title">Kpop舞蹈MV转绘特效粒子案例</h3>
+                    <p class="art-flow-share-desc">以更新颖的方式进行视觉交互。</p>
                     <div class="art-flow-share-meta">
-                        <span>场地 · 待填</span><span>时间 · 待填</span><span>合作方 · 待填</span>
+                        <span>后期 · MV</span><span>转绘 · 粒子</span><span>视觉交互</span>
                     </div>
                 </div>
             </article>
@@ -4752,34 +5610,12 @@ body {
                     </div>
                 </div>
             </article>
-            <article class="art-flow-share-item" data-empty="true">
-                <div class="art-flow-share-cover"></div>
-                <div class="art-flow-share-text">
-                    <div class="art-flow-share-tag">CASE 03 · 商业</div>
-                    <h3 class="art-flow-share-title">案例标题<em>占位</em>。</h3>
-                    <p class="art-flow-share-desc">品牌活动 / 开幕仪式 / 发布会 落地。 强调的是"短时调度 + 高强度互动"下系统的稳定性。</p>
-                    <div class="art-flow-share-meta">
-                        <span>场地 · 待填</span><span>时间 · 待填</span><span>合作方 · 待填</span>
-                    </div>
-                </div>
-            </article>
-            <article class="art-flow-share-item" data-empty="true">
-                <div class="art-flow-share-cover"></div>
-                <div class="art-flow-share-text">
-                    <div class="art-flow-share-tag">CASE 04 · 教育</div>
-                    <h3 class="art-flow-share-title">案例标题<em>占位</em>。</h3>
-                    <p class="art-flow-share-desc">学校开放课 / 工作坊 / 公共教育案例。 关注当青少年第一次"看见自己"时的反应。</p>
-                    <div class="art-flow-share-meta">
-                        <span>场地 · 待填</span><span>时间 · 待填</span><span>合作方 · 待填</span>
-                    </div>
-                </div>
-            </article>
         </div>
     </section>
 
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
-            <span>展览 II · 子项 · 摄像机看见我们 · DanceNet.Lab</span>
+            <span>展览 II · 子项 · 代码看见我们 · DanceNet.Lab</span>
             <span><a onclick="showPage('art')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到 光影为媒</a></span>
         </div>
     </footer>
@@ -4791,44 +5627,173 @@ body {
 <script>
 'use strict';
 
+/* ─────────── Lazy init registry ───────────
+   Page/canvas init functions used to each hold their own boolean guard
+   (heroInit, exp1Init, ...). Centralised here so the global namespace stays
+   tidy and we have a single place to reset (e.g. for hot-reload). */
+const _initialized = new Set();
+function alreadyInited(name) {
+    if (_initialized.has(name)) return true;
+    _initialized.add(name);
+    return false;
+}
+
+/** Static hosts (e.g. GitHub Pages) may serve the app at /repo with no trailing slash; relative "assets/…" would wrongly resolve to /assets/…. */
+function resolveMediaUrl(relPath) {
+    const u = new URL(window.location.href);
+    // file:// 页面 origin 在浏览器里常为 "null"，不能拼 u.origin + pathname
+    if (u.protocol === 'file:') {
+        return new URL(relPath.replace(/^\//, ''), window.location.href).href;
+    }
+    let path = u.pathname;
+    if (!path.endsWith('/') && path !== '') {
+        const last = path.split('/').pop() || '';
+        if (/\.[a-z0-9]+$/i.test(last)) path = path.replace(/\/[^/]+$/, '/');
+        else path = path + '/';
+    }
+    if (path !== '' && !path.endsWith('/')) path += '/';
+    return new URL(relPath.replace(/^\//, ''), u.origin + path).href;
+}
+
+/** 当前 SPA 路由（与 `showPage('…')` / `#page-…` 一致）。 */
+let __dncActivePage = 'home';
+
+/**
+ * 装饰性 canvas 循环：离页时不再链式 requestAnimationFrame，回页时统一 kick。
+ * （实验台 exp1AnimateLoop / exp1 导出 / 模态动画等仍自行管理 rAF。）
+ */
+const __dncDecorLoops = new Map();
+function dncRegisterDecorLoop(id, pageId, tick) {
+    const st = { raf: 0, pageId, tick };
+    function step() {
+        st.raf = 0;
+        if (__dncActivePage !== st.pageId) return;
+        st.tick();
+        st.raf = requestAnimationFrame(step);
+    }
+    function kick() {
+        if (st.raf) return;
+        if (__dncActivePage !== st.pageId) return;
+        st.raf = requestAnimationFrame(step);
+    }
+    __dncDecorLoops.set(id, kick);
+    kick();
+}
+function dncNotifyDecorLoops() {
+    for (const kick of __dncDecorLoops.values()) kick();
+}
+
+/**
+ * 将静态 HTML 里 `src` / `poster` 指向的 `assets/…` 改写成与 resolveMediaUrl 一致的绝对 URL，
+ * 修复 GitHub Pages 子路径、无尾斜杠等场景下 video/img 与 JS 加载不一致的问题。
+ */
+function hydrateStaticAssetUrls(root) {
+    const R = root || document;
+    R.querySelectorAll('[src], [poster]').forEach((el) => {
+        ['src', 'poster'].forEach((attr) => {
+            if (!el.hasAttribute(attr)) return;
+            const raw = el.getAttribute(attr);
+            if (!raw || /^(data:|https?:|blob:|#)/i.test(raw)) return;
+            const rel = raw.replace(/^\.\//, '');
+            if (rel.startsWith('assets/')) el.setAttribute(attr, resolveMediaUrl(rel));
+        });
+    });
+}
+
+/** 实验 01 封面视频播放速率（1 = 原速，越小越慢） */
+const EXP1_COVER_PLAYBACK_RATE = 0.75;
+
+function exp1PauseCoverVideo() {
+    const v = document.getElementById('exp1-cover-video');
+    if (v) v.pause();
+}
+function exp1ResumeCoverVideo() {
+    const pg = document.getElementById('page-exp1');
+    if (!pg || !pg.classList.contains('active')) return;
+    const v = document.getElementById('exp1-cover-video');
+    if (!v) return;
+    v.playbackRate = EXP1_COVER_PLAYBACK_RATE;
+    v.play().catch(() => {});
+}
+
 /* ─────────── Page router ─────────── */
+const PAGE_HOOKS = {
+    home: {
+        lazyInit: () => initHomeCanvases(),
+    },
+    agent: {
+        lazyInit: () => initAgentHero(),
+    },
+    art: {
+        lazyInit: () => initArtCanvases(),
+        onEnter() {
+            document.getElementById('art-cover-video')?.play().catch(() => {});
+            const awakenPlate = document.getElementById('plate-awaken');
+            const plateVid = document.getElementById('plate-awaken-video');
+            if (plateVid) {
+                if (awakenPlate && awakenPlate.classList.contains('ex-plate-sealed')) plateVid.pause();
+                else schedulePlateAwakenVideoPlay();
+            }
+        },
+        onLeave() {
+            document.getElementById('art-cover-video')?.pause();
+            document.getElementById('plate-awaken-video')?.pause();
+            document.getElementById('plate-interactive-video')?.pause();
+        },
+    },
+    'art-flow': {
+        lazyInit: () => initArtFlowPage(),
+    },
+    mr: {
+        lazyInit: () => initMRCanvas(),
+    },
+    aigc: {
+        lazyInit: () => initAIGCCanvas(),
+    },
+    exp1: {
+        lazyInit: () => initExp1Page(),
+        onEnter() {
+            if (_initialized.has('exp1')) {
+                requestAnimationFrame(() => requestAnimationFrame(() => exp1ResumeCoverVideo()));
+            }
+        },
+        onLeave() {
+            if (typeof exp1Pause === 'function') exp1Pause();
+            exp1PauseCoverVideo();
+        },
+    },
+    exp2: {
+        lazyInit: () => initExp2Page(),
+        onLeave() {
+            if (typeof exp2Pause === 'function') exp2Pause();
+        },
+    },
+};
+
 function showPage(name) {
+    const pageEl = document.getElementById('page-' + name);
+    if (!pageEl) return;
+
+    const prev = __dncActivePage;
+    PAGE_HOOKS[prev]?.onLeave?.(prev, name);
+
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-    document.getElementById('page-' + name).classList.add('active');
+    pageEl.classList.add('active');
     const navEl = document.getElementById('nav-' + name);
     if (navEl) navEl.classList.add('active');
-    // art-flow 子页：让顶栏「光影为媒」继续高亮
     if (name === 'art-flow') document.getElementById('nav-art')?.classList.add('active');
+
+    __dncActivePage = name;
+
     window.scrollTo({ top: 0 });
-    // Lazy init canvases on demand
+
     requestAnimationFrame(() => {
-        if (name === 'home') initHomeCanvases();
-        if (name === 'agent') initAgentHero();
-        if (name === 'art') initArtCanvases();
-        if (name === 'art-flow') initArtFlowPage();
-        if (name === 'mr') initMRCanvas();
-        if (name === 'aigc') initAIGCCanvas();
-        if (name === 'exp1') initExp1Page();
-        if (name === 'exp2') initExp2Page();
+        PAGE_HOOKS[name]?.lazyInit?.();
     });
-    // art hero 视频：进入时播放，离开时暂停节省资源
-    const artVid = document.getElementById('art-cover-video');
-    if (artVid) { name === 'art' ? artVid.play().catch(()=>{}) : artVid.pause(); }
-    // 图版 III · 智能觉醒（未「否」封印前为动态视频）：进入光影为媒播放，离开暂停；已封印则仅静止图
-    const awakenPlate = document.getElementById('plate-awaken');
-    const plateVid = document.getElementById('plate-awaken-video');
-    if (plateVid) {
-        if (awakenPlate && awakenPlate.classList.contains('ex-plate-sealed')) plateVid.pause();
-        else if (name === 'art') schedulePlateAwakenVideoPlay();
-        else plateVid.pause();
-    }
-    const plateIntVid = document.getElementById('plate-interactive-video');
-    if (plateIntVid) plateIntVid.pause();
-    // exp2: 切走时若摄像头/音乐还开着，先暂停以省资源
-    if (name !== 'exp2' && typeof exp2Pause === 'function') exp2Pause();
-    // exp1: 切走时停掉动画播放与录制
-    if (name !== 'exp1' && typeof exp1Pause === 'function') exp1Pause();
+
+    PAGE_HOOKS[name]?.onEnter?.(name, prev);
+    dncNotifyDecorLoops();
 }
 
 /* 图版 III：从 display:none 切到可见时单次 play() 常被忽略，需延迟重试 + 视口内再播 */
@@ -5030,19 +5995,15 @@ function lerpFrames(t) {
 /* ═════════════════════════════════════════════════════════════
    HERO CANVAS · long-exposure golden dancer
 ═════════════════════════════════════════════════════════════ */
-let heroInit = false;
 function initHeroCanvas() {
-    if (heroInit) return; heroInit = true;
+    if (alreadyInited('hero')) return;
     const canvas = document.getElementById('hero-canvas');
     const { ctx, getW, getH } = setupCanvas(canvas);
     let t = 0;
     const trails = [];
     const maxTrails = 65;
 
-    function frame() {
-        if (!document.getElementById('page-home').classList.contains('active')) {
-            requestAnimationFrame(frame); return;
-        }
+    dncRegisterDecorLoop('hero', 'home', () => {
         const w = getW(), h = getH();
         // Soft fade — long exposure feel
         ctx.fillStyle = 'rgba(10,9,8,0.04)';
@@ -5088,27 +6049,20 @@ function initHeroCanvas() {
             ctx.fillStyle = `rgba(212,165,116,${Math.random()*0.55})`;
             ctx.fill();
         }
-
-        requestAnimationFrame(frame);
-    }
-    frame();
+    });
 }
 
 /* ═════════════════════════════════════════════════════════════
    TODAY CANVAS · larger version of dancer painting
 ═════════════════════════════════════════════════════════════ */
-let todayInit = false;
 function initTodayCanvas() {
-    if (todayInit) return; todayInit = true;
+    if (alreadyInited('today')) return;
     const canvas = document.getElementById('today-canvas');
     const { ctx, getW, getH } = setupCanvas(canvas);
     let t = 0;
     const trails = [];
 
-    function frame() {
-        if (!document.getElementById('page-home').classList.contains('active')) {
-            requestAnimationFrame(frame); return;
-        }
+    dncRegisterDecorLoop('today', 'home', () => {
         const w = getW(), h = getH();
         ctx.fillStyle = 'rgba(10,9,8,0.06)';
         ctx.fillRect(0, 0, w, h);
@@ -5139,10 +6093,7 @@ function initTodayCanvas() {
             jr: 2.5,
             jc: '#ebe7df',
         });
-
-        requestAnimationFrame(frame);
-    }
-    frame();
+    });
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -5288,26 +6239,23 @@ const THUMB_PAINTERS = {
     },
 };
 
-let homeCanvasesInit = false;
 function initHomeCanvases() {
     initHeroCanvas();
     initTodayCanvas();
-    if (homeCanvasesInit) return; homeCanvasesInit = true;
+    if (alreadyInited('homeCanvases')) return;
 
     const all = document.querySelectorAll('[data-thumb]');
-    all.forEach(c => {
+    all.forEach((c, thumbIdx) => {
         const style = c.dataset.thumb;
         const { ctx, getW, getH } = setupCanvas(c);
         let t = Math.random() * 10;
-        function loop() {
+        dncRegisterDecorLoop('home-thumb-' + thumbIdx + '-' + style, 'home', () => {
             const w = getW(), h = getH();
             ctx.fillStyle = '#11100e';
             ctx.fillRect(0,0,w,h);
             t += 0.012;
             (THUMB_PAINTERS[style] || THUMB_PAINTERS.studio)(ctx, t, w, h);
-            requestAnimationFrame(loop);
-        }
-        loop();
+        });
     });
 
     // Experiments — exp1: paper rig（纸上的舞者，骨架带"纸"质感）
@@ -5321,7 +6269,7 @@ function initHomeCanvases() {
             r: 0.3 + Math.random()*1.0,
             a: 0.04 + Math.random()*0.06,
         }));
-        function loop() {
+        dncRegisterDecorLoop('home-paper-rig', 'home', () => {
             const w = getW(), h = getH();
             ctx.fillStyle = '#11100e';
             ctx.fillRect(0,0,w,h);
@@ -5378,10 +6326,7 @@ function initHomeCanvases() {
             ctx.arc(wrist[0], wrist[1], 5 + Math.sin(t*3)*2, 0, Math.PI*2);
             ctx.strokeStyle = 'rgba(212,165,116,0.55)';
             ctx.lineWidth = 0.8; ctx.stroke();
-
-            requestAnimationFrame(loop);
-        }
-        loop();
+        });
     }
 
     // Experiments — exp2: van gogh particle preview
@@ -5391,7 +6336,7 @@ function initHomeCanvases() {
         const VG_PALETTE = ['#1c2c5b', '#3a4d8f', '#f7d774', '#cfa83a', '#c2af69', '#cfd5e0', '#7a4f1d'];
         const particles = [];
         let t = 0;
-        function loop() {
+        dncRegisterDecorLoop('home-vangogh', 'home', () => {
             const w = getW(), h = getH();
             // 缓慢长曝光
             ctx.fillStyle = 'rgba(10,9,8,0.07)';
@@ -5442,10 +6387,7 @@ function initHomeCanvases() {
 
             // 限制粒子上限
             if (particles.length > 600) particles.splice(0, particles.length - 600);
-
-            requestAnimationFrame(loop);
-        }
-        loop();
+        });
     }
 
     // legacy painter（保留以防其它地方使用）
@@ -5460,7 +6402,7 @@ function initHomeCanvases() {
             trails.push({ x: mx, y: my, life: 1, hue: Math.random() < 0.5 ? '212,165,116' : '235,231,223' });
         });
         painter.addEventListener('mouseleave', () => { mx = -1; my = -1; });
-        function loop() {
+        dncRegisterDecorLoop('home-painter', 'home', () => {
             const w = getW(), h = getH();
             ctx.fillStyle = 'rgba(17,16,14,0.04)';
             ctx.fillRect(0,0,w,h);
@@ -5483,26 +6425,20 @@ function initHomeCanvases() {
             recent.forEach((tr, i) => i === 0 ? ctx.moveTo(tr.x, tr.y) : ctx.lineTo(tr.x, tr.y));
             ctx.strokeStyle = 'rgba(212,165,116,0.4)';
             ctx.lineWidth = 1; ctx.stroke();
-            requestAnimationFrame(loop);
-        }
-        loop();
+        });
     }
 }
 
 /* ═════════════════════════════════════════════════════════════
    AGENT HERO CANVAS
 ═════════════════════════════════════════════════════════════ */
-let agentHeroInit = false;
 function initAgentHero() {
-    if (agentHeroInit) return; agentHeroInit = true;
+    if (alreadyInited('agentHero')) return;
     const canvas = document.getElementById('agent-hero-canvas');
     const { ctx, getW, getH } = setupCanvas(canvas);
     let t = 0;
     const trails = [];
-    function frame() {
-        if (!document.getElementById('page-agent').classList.contains('active')) {
-            requestAnimationFrame(frame); return;
-        }
+    dncRegisterDecorLoop('agent-hero', 'agent', () => {
         const w = getW(), h = getH();
         ctx.fillStyle = 'rgba(10,9,8,0.05)';
         ctx.fillRect(0,0,w,h);
@@ -5529,24 +6465,21 @@ function initAgentHero() {
             jr: 2.0,
             jc: '#ebe7df',
         });
-        requestAnimationFrame(frame);
-    }
-    frame();
+    });
 }
 
 /* ═════════════════════════════════════════════════════════════
    ART · cover & plates
 ═════════════════════════════════════════════════════════════ */
-let artInit = false;
 function initArtCanvases() {
-    if (artInit) return; artInit = true;
+    if (alreadyInited('art')) return;
 
     // Cover — combined ink & energy
     const cover = document.getElementById('art-cover-canvas');
     if (cover) {
         const { ctx, getW, getH } = setupCanvas(cover);
         let t = 0;
-        function frame() {
+        dncRegisterDecorLoop('art-cover', 'art', () => {
             const w = getW(), h = getH();
             ctx.fillStyle = 'rgba(10,9,8,0.025)';
             ctx.fillRect(0,0,w,h);
@@ -5572,9 +6505,7 @@ function initArtCanvases() {
                 ctx.strokeStyle = `rgba(212,165,116,${0.2 + Math.sin(t+i)*0.15})`;
                 ctx.lineWidth = 1; ctx.stroke();
             }
-            requestAnimationFrame(frame);
-        }
-        frame();
+        });
     }
 
     // Plates
@@ -5585,20 +6516,235 @@ function initArtCanvases() {
     };
     document.querySelectorAll('[data-plate]').forEach(c => {
         const fn = plates[c.dataset.plate];
-        if (fn) {
-            const { ctx, getW, getH } = setupCanvas(c);
-            fn(ctx, getW, getH, c);
-        }
+        if (!fn) return;
+        const { ctx, getW, getH } = setupCanvas(c);
+        const kind = c.dataset.plate;
+        if (kind === 'plate-flow') drawPlateFlow(ctx, getW, getH, c, 'art-plate-flow', 'art');
+        else fn(ctx, getW, getH, 'art-' + kind, 'art');
     });
 }
 /* ─────────── ART · FLOW (子页) hero canvas 懒初始化 ─────────── */
-let artFlowInit = false;
 function initArtFlowPage() {
-    if (artFlowInit) return; artFlowInit = true;
+    if (alreadyInited('artFlow')) return;
     const c = document.getElementById('art-flow-hero-canvas');
-    if (!c) return;
-    const { ctx, getW, getH } = setupCanvas(c);
-    drawPlateFlow(ctx, getW, getH, c);
+    if (c) {
+        const { ctx, getW, getH } = setupCanvas(c);
+        drawPlateFlow(ctx, getW, getH, c, 'art-flow-hero', 'art-flow');
+    }
+    initArtFlowReel();
+}
+
+/* ─────────── ART · FLOW · 现场记录 3D Coverflow Reel (CIRCULAR) ───────────
+   - 环形无缝: 6 之后回到 1, 1 之前回到 6, 永远走最短路径动画
+   - 主卡片居中, 鼠标悬停才播放; 旋出主位立刻停
+   - 拖动 / 滚轮 / 方向键 / 点击侧卡 / 指示条 切换
+   - 拖动期间用浮点 active 平滑跟手, 松手吸附到最近整数
+*/
+let artFlowReelState = null;
+function initArtFlowReel() {
+    const reel = document.getElementById('art-flow-reel');
+    if (!reel || artFlowReelState) return;
+    const stage = document.getElementById('art-flow-reel-stage');
+    const cards = Array.from(stage.querySelectorAll('.art-flow-reel-card'));
+    if (!cards.length) return;
+    const dotsWrap = document.getElementById('art-flow-reel-dots');
+    const metaEl = document.getElementById('art-flow-reel-meta');
+    const prevBtn = reel.querySelector('.art-flow-reel-nav.prev');
+    const nextBtn = reel.querySelector('.art-flow-reel-nav.next');
+
+    const N = cards.length;
+    // active 用无界整数 (可正可负). 显示用模 N 取索引.
+    // 这样从 5 → 6 会平滑地把当前主卡 (idx=5) 推开, 把 idx=0 滑入主位,
+    // 而不是反向回滚 5 步.
+    const state = { active: 0, count: N, hovered: false };
+    artFlowReelState = state;
+
+    const mod = (n) => ((n % N) + N) % N;
+    // 把任意整数差映射到 (-N/2, N/2] 的最短偏移
+    function shortestOff(diff) {
+        const half = N / 2;
+        let d = diff - Math.round(diff / N) * N;
+        // 边界情形: 当 N 是偶数且 d == -N/2 时, 让它走正方向
+        if (d === -half) d = half;
+        return d;
+    }
+
+    dotsWrap.innerHTML = '';
+    cards.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.type = 'button';
+        d.className = 'art-flow-reel-dot';
+        d.setAttribute('aria-label', `跳到第 ${i + 1} 个案例`);
+        d.addEventListener('click', () => goTo(i));
+        dotsWrap.appendChild(d);
+    });
+    const dots = Array.from(dotsWrap.children);
+
+    // 圆柱式参数 — 调这两个就能改"开合度"与"半径"
+    // 每张卡相对相邻卡的角度差 (°). 6 张卡 × 36° = 216°, 余下 144° 在背面 (绕回侧).
+    const ANGLE_STEP = 36;
+    // 圆柱半径 = 卡片宽度 × 这个倍率. 越大 → 卡片间隔越宽, 弧线越平.
+    const RADIUS_FACTOR = 1.32;
+
+    function cylinderRadius() {
+        const w = cards[0].getBoundingClientRect().width;
+        return Math.max(280, w * RADIUS_FACTOR);
+    }
+
+    function applyTransforms(activeFloat) {
+        const R = cylinderRadius();
+        // 整个 stage 绕 Y 轴反向旋转, 把目标卡片带到正前方
+        stage.style.transform = `translateZ(${-R * 0.4}px) rotateY(${-activeFloat * ANGLE_STEP}deg)`;
+        cards.forEach((c, i) => {
+            // 圆柱位置: 先按自身角度旋转, 再沿局部 Z 轴推到圆柱表面
+            const angle = i * ANGLE_STEP;
+            // 主卡向前再"探出"一点, 强调聚焦感 (越接近主位 fwd 越大)
+            const off = shortestOff(i - activeFloat);
+            const abs = Math.abs(off);
+            const fwd = Math.max(0, 1 - abs) * 56;
+            c.style.transform =
+                `translate(-50%, -50%) ` +
+                `rotateY(${angle}deg) translateZ(${R + fwd}px)`;
+            const hidden = abs > 2.4;
+            const opacity = hidden ? 0 : Math.max(0.18, 1 - abs * 0.18);
+            c.style.opacity = String(opacity);
+            // visibility:hidden delays on CSS transition so it waits for opacity fade,
+            // but when becoming visible we remove it immediately (no delay).
+            if (hidden) {
+                c.style.visibility = 'hidden';
+            } else {
+                c.style.visibility = '';
+            }
+            c.style.filter = abs < 0.5
+                ? 'none'
+                : `brightness(${Math.max(0.30, 0.75 - abs * 0.10)}) blur(${Math.min(abs * 0.6, 2.0)}px)`;
+            c.style.zIndex = String(hidden ? 0 : 200 - Math.round(abs * 10));
+        });
+    }
+
+    function applyActiveSideEffects() {
+        const a = mod(state.active);
+        cards.forEach((c, i) => {
+            const isActive = i === a;
+            c.classList.toggle('is-active', isActive);
+            c.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+            const v = c.querySelector('video');
+            if (v) {
+                if (!isActive) {
+                    v.pause();
+                } else if (state.hovered) {
+                    v.play().catch(() => {});
+                }
+            }
+            if (dots[i]) dots[i].classList.toggle('is-active', isActive);
+        });
+        if (metaEl) {
+            metaEl.innerHTML = `<em>${String(a + 1).padStart(2, '0')}</em> / ${String(N).padStart(2, '0')}`;
+        }
+    }
+
+    // 步进: 永远以"最短路径"调整 active 的无界值
+    function step(by) {
+        state.active = state.active + by;
+        stage.classList.remove('is-dragging');
+        applyTransforms(state.active);
+        applyActiveSideEffects();
+    }
+
+    // 跳到具体索引 i (0..N-1) — 走最短路径
+    function goTo(i) {
+        const cur = state.active;
+        const diff = shortestOff(i - mod(cur));
+        step(diff);
+    }
+
+    function layout() { applyTransforms(state.active); applyActiveSideEffects(); }
+
+    cards.forEach((c, i) => {
+        c.addEventListener('mouseenter', () => {
+            if (i !== mod(state.active)) return;
+            state.hovered = true;
+            const v = c.querySelector('video');
+            if (v) v.play().catch(() => {});
+        });
+        c.addEventListener('mouseleave', () => {
+            if (i !== mod(state.active)) return;
+            state.hovered = false;
+            const v = c.querySelector('video');
+            if (v) v.pause();
+        });
+        c.addEventListener('click', () => {
+            if (i !== mod(state.active)) goTo(i);
+        });
+    });
+
+    prevBtn?.addEventListener('click', () => step(-1));
+    nextBtn?.addEventListener('click', () => step(1));
+
+    let wheelLock = 0;
+    reel.addEventListener('wheel', (e) => {
+        const dx = e.deltaX, dy = e.deltaY;
+        const horizontal = Math.abs(dx) > Math.abs(dy);
+        const dom = horizontal ? dx : dy;
+        if (Math.abs(dom) < 14) return;
+        if (!horizontal && !reel.matches(':hover')) return;
+        const now = performance.now();
+        if (now - wheelLock < 380) { e.preventDefault(); return; }
+        wheelLock = now;
+        step(dom > 0 ? 1 : -1);
+        e.preventDefault();
+    }, { passive: false });
+
+    let drag = null;
+    stage.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        drag = {
+            startX: e.clientX,
+            base: state.active,
+            step: cardStep(),
+            id: e.pointerId,
+        };
+        stage.classList.add('is-dragging');
+        try { stage.setPointerCapture(e.pointerId); } catch (_) {}
+        cards.forEach(c => { const v = c.querySelector('video'); if (v) v.pause(); });
+    });
+    stage.addEventListener('pointermove', (e) => {
+        if (!drag || drag.id !== e.pointerId) return;
+        const dx = e.clientX - drag.startX;
+        // 拖动时 active 是浮点; 因为环形, 不再 clamp
+        const aF = drag.base - dx / drag.step;
+        applyTransforms(aF);
+    });
+    function endDrag(e) {
+        if (!drag || (e && drag.id !== e.pointerId)) return;
+        const dx = (e ? e.clientX : drag.startX) - drag.startX;
+        const aF = drag.base - dx / drag.step;
+        const target = Math.round(aF);
+        const diff = target - state.active;
+        drag = null;
+        stage.classList.remove('is-dragging');
+        step(diff);
+    }
+    stage.addEventListener('pointerup', endDrag);
+    stage.addEventListener('pointercancel', endDrag);
+
+    reel.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+        else if (e.key === 'ArrowLeft')  { e.preventDefault(); step(-1); }
+        else if (e.key === 'Home')        { e.preventDefault(); goTo(0); }
+        else if (e.key === 'End')         { e.preventDefault(); goTo(N - 1); }
+    });
+
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(layout, 80);
+    });
+
+    requestAnimationFrame(() => {
+        layout();
+        requestAnimationFrame(layout);
+    });
 }
 
 /* ─────────── helpers · rgb<->hsl ─────────── */
@@ -5621,17 +6767,13 @@ function rgbToHsl(r, g, b) {
 }
 
 /* ─────────── 图版 I · 摄像机看见我们 ───────────
-   image-seeded particle figure + cursor force field
-   - 仅采样图中亮度 ≥ 0.62 / 饱和度 ≤ 0.35 的白光人形像素 → 粒子原点
-   - 从图中彩色粒子云区域采样 96 色 → 鼠标激发后的目标色
-   - 鼠标推开 (径向斥力) + 弹簧回归 + 缓慢呼吸 + 闲置自动 demo
+   程序化生成发光人形 → 像素采样 → 粒子云
+   - 不依赖外部图像; 与 --gold / --paper 主题统一
+   - 鼠标推开 (径向斥力) + 弹簧回归 + 缓慢呼吸
+   旧实现从 plate1-figure.png 取样, 但 file:// 下 Chrome 会污染 canvas,
+   所以历史上把 PNG 内嵌成 ~180KB 的 base64. 现在改为内部绘制, 不再依赖资源.
 */
-function drawPlateFlow(ctx, getW, getH, canvasEl) {
-    let particles = [];
-    let palette = [];
-    let imgW = 0, imgH = 0;
-    let imgLoaded = false;
-
+function drawPlateFlow(ctx, getW, getH, canvasEl, loopId, pageId) {
     const mouse = { x: -9999, y: -9999, lastMove: 0 };
     canvasEl.addEventListener('mousemove', e => {
         const r = canvasEl.getBoundingClientRect();
@@ -5643,141 +6785,150 @@ function drawPlateFlow(ctx, getW, getH, canvasEl) {
         mouse.x = -9999; mouse.y = -9999;
     });
 
-    const img = new Image();
-    img.src = 'assets/plate1-figure.png';
-    img.onload = () => {
-        imgW = 220;
-        imgH = Math.round(imgW * img.height / img.width);
+    // —— 自家剪影: 在离屏 canvas 上画一个金色调舞者, 然后取每个有色像素当粒子种子 ——
+    const imgW = 260, imgH = 340;
+    const particles = (() => {
         const off = document.createElement('canvas');
         off.width = imgW; off.height = imgH;
         const oc = off.getContext('2d');
-        oc.drawImage(img, 0, 0, imgW, imgH);
-        const d = oc.getImageData(0, 0, imgW, imgH).data;
+        oc.fillStyle = '#000';
+        oc.fillRect(0, 0, imgW, imgH);
 
-        const palPool = [];
+        // 静态姿态用于剪影 (POSE_FRAMES 0 = 起手中位)
+        const pts = POSE_FRAMES[0];
+        const fw = imgW * 0.62, fh = imgH * 0.84;
+        const mapped = pts.map(p => [imgW * 0.5 - fw / 2 + p[0] * fw, imgH * 0.08 + p[1] * fh]);
+
+        const grad = oc.createLinearGradient(0, 0, 0, imgH);
+        grad.addColorStop(0,    'rgba(245, 240, 230, 1)');
+        grad.addColorStop(0.45, 'rgba(212, 165, 116, 1)');
+        grad.addColorStop(1,    'rgba(170, 120,  78, 1)');
+
+        oc.lineCap = 'round';
+        oc.lineJoin = 'round';
+        oc.strokeStyle = grad;
+        const drawEdges = (edges, lw) => {
+            oc.lineWidth = lw;
+            edges.forEach(([i, j]) => {
+                oc.beginPath();
+                oc.moveTo(mapped[i][0], mapped[i][1]);
+                oc.lineTo(mapped[j][0], mapped[j][1]);
+                oc.stroke();
+            });
+        };
+        drawEdges([[5, 6], [5, 11], [6, 12], [11, 12]], 18);
+        drawEdges([[5, 7], [7, 9], [6, 8], [8, 10]], 10);
+        drawEdges([[11, 13], [13, 15], [12, 14], [14, 16]], 12);
+
+        const hx = mapped[0][0], hy = mapped[0][1] + 18;
+        oc.fillStyle = grad;
+        oc.beginPath(); oc.arc(hx, hy, 22, 0, Math.PI * 2); oc.fill();
+        oc.lineWidth = 6;
+        oc.beginPath();
+        oc.moveTo(hx, hy + 22);
+        oc.lineTo((mapped[5][0] + mapped[6][0]) / 2, (mapped[5][1] + mapped[6][1]) / 2);
+        oc.stroke();
+
+        oc.fillStyle = 'rgba(245, 240, 230, 1)';
+        [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].forEach(i => {
+            oc.beginPath();
+            oc.arc(mapped[i][0], mapped[i][1], 3.6, 0, Math.PI * 2);
+            oc.fill();
+        });
+
+        const d = oc.getImageData(0, 0, imgW, imgH).data;
         const seeds = [];
-        for (let py = 0; py < imgH; py++) {
-            for (let px = 0; px < imgW; px++) {
+        const STEP = 2;
+        for (let py = 0; py < imgH; py += STEP) {
+            for (let px = 0; px < imgW; px += STEP) {
                 const idx = (py * imgW + px) * 4;
                 const r = d[idx], g = d[idx + 1], b = d[idx + 2], a = d[idx + 3];
                 if (a < 30) continue;
-                const [, s, l] = rgbToHsl(r, g, b);
-                if (l >= 0.62 && s <= 0.35) {
-                    if ((px + py * 31) % 2 === 0) seeds.push([px, py]);
-                } else if (s > 0.35 && l > 0.30 && l < 0.78) {
-                    palPool.push([r, g, b]);
-                }
+                if (r + g + b < 60) continue;
+                seeds.push([px, py, r, g, b]);
             }
         }
-        if (palPool.length > 0) {
-            for (let i = 0; i < 96; i++) {
-                palette.push(palPool[Math.floor(Math.random() * palPool.length)]);
-            }
-        } else {
-            palette = [[230,90,140],[210,80,200],[140,120,220],[230,60,90]];
-        }
-
-        particles = seeds.map(([ix, iy]) => ({
+        return seeds.map(([ix, iy, r, g, b]) => ({
             ix, iy,
             x: 0, y: 0, vx: 0, vy: 0,
-            c: palette[Math.floor(Math.random() * palette.length)],
+            r, g, b,
             excite: 0,
             ph: Math.random() * Math.PI * 2,
             inited: false
         }));
-        imgLoaded = true;
-    };
-    img.onerror = () => { imgLoaded = false; };
+    })();
 
     let t = 0;
-    let demoT = 0;
-    function frame() {
+    dncRegisterDecorLoop(loopId, pageId, () => {
         const w = getW(), h = getH();
-        ctx.fillStyle = 'rgba(10,9,8,0.18)';
+        const dpr = window.devicePixelRatio || 1;
+        const targetW = Math.max(1, Math.round(w * dpr));
+        const targetH = Math.max(1, Math.round(h * dpr));
+        if (Math.abs(canvasEl.width - targetW) > 1 || Math.abs(canvasEl.height - targetH) > 1) {
+            canvasEl.width = targetW;
+            canvasEl.height = targetH;
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.scale(dpr, dpr);
+        }
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = 'rgba(10,9,8,1)';
         ctx.fillRect(0, 0, w, h);
         t += 0.012;
 
-        if (imgLoaded && particles.length > 0) {
-            const scale = Math.min(w / imgW, h / imgH) * 0.78;
-            const offX = w * 0.5 - imgW * scale * 0.5;
-            const offY = h * 0.5 - imgH * scale * 0.5;
+        const scale = Math.min(w / imgW, h / imgH) * 0.82;
+        const offX = w * 0.5 - imgW * scale * 0.5;
+        const offY = h * 0.5 - imgH * scale * 0.5;
 
-            const idle = (performance.now() - mouse.lastMove) > 1600;
-            let mx = mouse.x, my = mouse.y;
-            if (idle) {
-                demoT += 0.018;
-                const cx = w * 0.55, cy = h * 0.5;
-                const a = w * 0.26, b = h * 0.20;
-                const denom = 1 + Math.cos(demoT) * Math.cos(demoT);
-                mx = cx + a * Math.cos(demoT) / denom;
-                my = cy + b * Math.sin(demoT) * Math.cos(demoT) / denom;
+        const mx = mouse.x, my = mouse.y;
+        const repelR = 75;
+        const repelR2 = repelR * repelR;
+        const maxF = 4.5;
+
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+            const ox = offX + p.ix * scale;
+            const oy = offY + p.iy * scale;
+            if (!p.inited) { p.x = ox; p.y = oy; p.inited = true; }
+
+            let fx = (ox - p.x) * 0.06;
+            let fy = (oy - p.y) * 0.06 + Math.sin(t * 1.4 + p.ph) * 0.16;
+
+            const dx = p.x - mx, dy = p.y - my;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < repelR2 && d2 > 1) {
+                const d = Math.sqrt(d2);
+                const f = (1 - d / repelR) * maxF;
+                fx += (dx / d) * f;
+                fy += (dy / d) * f;
+                p.excite = Math.min(1, p.excite + 0.18);
+            } else {
+                p.excite *= 0.96;
             }
+            p.vx = (p.vx + fx) * 0.82;
+            p.vy = (p.vy + fy) * 0.82;
+            p.x += p.vx;
+            p.y += p.vy;
 
-            const repelR = 80;
-            const repelR2 = repelR * repelR;
-            const maxF = 4.5;
-
-            for (let i = 0; i < particles.length; i++) {
-                const p = particles[i];
-                const ox = offX + p.ix * scale;
-                const oy = offY + p.iy * scale;
-                if (!p.inited) { p.x = ox; p.y = oy; p.inited = true; }
-
-                let fx = (ox - p.x) * 0.06;
-                let fy = (oy - p.y) * 0.06 + Math.sin(t * 1.4 + p.ph) * 0.18;
-
-                const dx = p.x - mx, dy = p.y - my;
-                const d2 = dx * dx + dy * dy;
-                if (d2 < repelR2 && d2 > 1) {
-                    const d = Math.sqrt(d2);
-                    const f = (1 - d / repelR) * maxF;
-                    fx += (dx / d) * f;
-                    fy += (dy / d) * f;
-                    p.excite = Math.min(1, p.excite + 0.18);
-                } else {
-                    p.excite *= 0.97;
-                }
-                p.vx = (p.vx + fx) * 0.82;
-                p.vy = (p.vy + fy) * 0.82;
-                p.x += p.vx;
-                p.y += p.vy;
-
-                const e = p.excite;
-                const px = p.x | 0, py = p.y | 0;
-                if (e < 0.05) {
-                    const a = 0.55 + Math.sin(t * 2 + p.ph) * 0.14;
-                    ctx.fillStyle = `rgba(245,240,230,${a})`;
-                    ctx.fillRect(px, py, 1.3, 1.3);
-                } else {
-                    const c = p.c;
-                    const a = 0.55 + e * 0.4;
-                    ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${a})`;
-                    const sz = 1.3 + e * 0.7;
-                    ctx.fillRect(px - sz * 0.5, py - sz * 0.5, sz, sz);
-                }
-            }
-        } else {
-            const pts = lerpFrames(t * 0.7);
-            const fw = Math.min(w * .62, h * .56), fh = h * .76;
-            const mapped = pts.map(p => [w * .5 - fw / 2 + p[0] * fw, h * .08 + p[1] * fh]);
-            BODY_EDGES.forEach(([i, j]) => {
-                ctx.beginPath();
-                ctx.moveTo(mapped[i][0], mapped[i][1]);
-                ctx.lineTo(mapped[j][0], mapped[j][1]);
-                ctx.strokeStyle = 'rgba(212,165,116,0.55)';
-                ctx.lineWidth = 1; ctx.stroke();
-            });
+            const e = p.excite;
+            const px = p.x, py = p.y;
+            const k = 1 + e * 0.4;
+            const r = Math.min(255, p.r * k) | 0;
+            const g = Math.min(255, p.g * k) | 0;
+            const b = Math.min(255, p.b * k) | 0;
+            const a = 0.72 + e * 0.25 + Math.sin(t * 2 + p.ph) * 0.05;
+            const sz = 1.8 + e * 1.0;
+            ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+            ctx.fillRect(px - sz * 0.5, py - sz * 0.5, sz, sz);
         }
-
-        requestAnimationFrame(frame);
-    }
-    frame();
+        ctx.globalCompositeOperation = 'source-over';
+    });
 }
 
-function drawPlateTrails(ctx, getW, getH) {
+function drawPlateTrails(ctx, getW, getH, loopId, pageId) {
     let t = 0;
     const trails = [];
-    function frame() {
+    dncRegisterDecorLoop(loopId, pageId, () => {
         const w = getW(), h = getH();
         ctx.fillStyle = 'rgba(17,16,14,0.06)';
         ctx.fillRect(0,0,w,h);
@@ -5806,9 +6957,7 @@ function drawPlateTrails(ctx, getW, getH) {
             headGlow: false,
             jointGlow: false,
         });
-        requestAnimationFrame(frame);
-    }
-    frame();
+    });
 }
 function drawPlateEnergy(ctx, getW, getH) {
     let t = 0;
@@ -5840,9 +6989,9 @@ function drawPlateEnergy(ctx, getW, getH) {
     }
     frame();
 }
-function drawPlateWave(ctx, getW, getH) {
+function drawPlateWave(ctx, getW, getH, loopId, pageId) {
     let t = 0;
-    function frame() {
+    dncRegisterDecorLoop(loopId, pageId, () => {
         const w = getW(), h = getH();
         ctx.fillStyle = '#11100e';
         ctx.fillRect(0,0,w,h);
@@ -5861,22 +7010,19 @@ function drawPlateWave(ctx, getW, getH) {
             ctx.strokeStyle = `rgba(212,165,116,${a})`;
             ctx.lineWidth = 0.7; ctx.stroke();
         }
-        requestAnimationFrame(frame);
-    }
-    frame();
+    });
 }
 
 /* ═════════════════════════════════════════════════════════════
    MR cover canvas
 ═════════════════════════════════════════════════════════════ */
-let mrInit = false;
 function initMRCanvas() {
-    if (mrInit) return; mrInit = true;
+    if (alreadyInited('mr')) return;
     const canvas = document.getElementById('mr-cover-canvas');
     if (!canvas) return;
     const { ctx, getW, getH } = setupCanvas(canvas);
     let t = 0;
-    function frame() {
+    dncRegisterDecorLoop('mr-cover', 'mr', () => {
         const w = getW(), h = getH();
         ctx.fillStyle = 'rgba(10,9,8,0.05)';
         ctx.fillRect(0,0,w,h);
@@ -5914,17 +7060,14 @@ function initMRCanvas() {
         ctx.font = '11px "JetBrains Mono", monospace';
         ctx.fillText('MR · 深度 · 4 层', 24, 30);
         ctx.fillText(`视差 ${(Math.sin(t)*80).toFixed(0)}px`, 24, 50);
-        requestAnimationFrame(frame);
-    }
-    frame();
+    });
 }
 
 /* ═════════════════════════════════════════════════════════════
    AIGC cover canvas
 ═════════════════════════════════════════════════════════════ */
-let aigcInit = false;
 function initAIGCCanvas() {
-    if (aigcInit) return; aigcInit = true;
+    if (alreadyInited('aigc')) return;
     const canvas = document.getElementById('aigc-cover-canvas');
     if (!canvas) return;
     const { ctx, getW, getH } = setupCanvas(canvas);
@@ -5947,7 +7090,7 @@ function initAIGCCanvas() {
             ctx.fillStyle = `rgba(235,231,223,${alpha})`; ctx.fill();
         });
     }
-    function frame() {
+    dncRegisterDecorLoop('aigc-cover', 'aigc', () => {
         const w = getW(), h = getH();
         ctx.fillStyle = 'rgba(10,9,8,0.04)';
         ctx.fillRect(0,0,w,h);
@@ -5978,10 +7121,7 @@ function initAIGCCanvas() {
         ctx.fillStyle = 'rgba(212,165,116,0.5)';
         ctx.font = '11px "JetBrains Mono", monospace';
         ctx.fillText(`生成中 · 帧 ${fi+1}/${total}`, w*0.1, h*0.9);
-
-        requestAnimationFrame(frame);
-    }
-    frame();
+    });
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -5990,7 +7130,6 @@ function initAIGCCanvas() {
    阶段 D：色差自动抠图 + 画笔修正 + 14 关节几何落点 + 拖拽微调   ✓
    阶段 E：9 段 rigging + 动作播放 + GIF/WebM 导出                — 下一轮
 ═════════════════════════════════════════════════════════════ */
-let exp1Init = false;
 let exp1State = null;
 let exp1ResizeRaf = 0;
 
@@ -6018,11 +7157,12 @@ const EXP1_BONES = [
     ['R_hip','R_knee'],['R_knee','R_ankle'],
 ];
 
-function initExp1Page() {
-    if (exp1Init) return; exp1Init = true;
-
-    exp1State = {
-        stage: 'upload',  // 'upload' | 'crop' | 'mask' | 'joints'
+/* ─── exp1State factory + derived-clearer ───
+   单一来源, init / accept / reset 都用. 历史上三处各写一份, 字段
+   增删时常忘记同步, 是上一轮"鬼影 / 旋转"bug 的根因 (见 exp1AcceptImage 注释). */
+function createExp1DefaultState() {
+    return {
+        stage: 'upload',  // 'upload' | 'crop' | 'mask' | 'joints' | 'animate'
         image: null,
         crop: null,
         fit: null,
@@ -6047,7 +7187,7 @@ function initExp1Page() {
         segments: null,       // 10 segments: head/torso/4 arms/4 legs
         restJoints: null,     // copy of joints at segment-build time (image coords)
         bboxH: 0, bboxW: 0,   // bbox in image coords (for delta scaling)
-        action: 'idle',
+        action: EXP1_DEFAULT_ACTION,
         actionTime: 0,
         lastFrameMs: 0,
         playing: false,
@@ -6058,6 +7198,38 @@ function initExp1Page() {
         recordChunks: null,
         gifEncoder: null,
     };
+}
+
+/* Wipe everything *derived* from the current image (mask / joints / segments
+   / anim cache). Keep user prefs (threshold, brush, speed) and engine state
+   (playing, recorder — owned by exp1Pause). Used by acceptImage on a fresh
+   upload to prevent old-image data from bleeding into the new one. */
+function exp1ClearDerived() {
+    exp1State.croppedCanvas    = null;
+    exp1State.mask             = null;
+    exp1State.maskCanvas       = null;
+    exp1State.maskCacheDirty   = false;
+    exp1State.maskFit          = null;
+    exp1State.brushPos         = null;
+    exp1State.brushDrag        = null;
+    exp1State.joints           = null;
+    exp1State.jointsFit        = null;
+    exp1State.jointDrag        = null;
+    exp1State.hoverJoint       = null;
+    exp1State.segments         = null;
+    exp1State.restJoints       = null;
+    exp1State.bboxH = 0;
+    exp1State.bboxW = 0;
+    exp1State.action           = EXP1_DEFAULT_ACTION;
+    exp1State.actionTime       = 0;
+    exp1State.animSize         = null;
+    exp1HideHandoff();
+}
+
+function initExp1Page() {
+    if (alreadyInited('exp1')) return;
+
+    exp1State = createExp1DefaultState();
 
     exp1SetupCover();
     exp1SetupAmbient();
@@ -6073,56 +7245,13 @@ function initExp1Page() {
     window.addEventListener('resize', exp1ScheduleResize);
 }
 
-/* ── Cover canvas (unchanged: paper + dancing skeleton) ── */
+/* ── Cover · 单段背景视频：循环播放 + 较慢速度（HTML loop，速度用 playbackRate） ── */
 function exp1SetupCover() {
-    const cover = document.getElementById('exp1-cover-canvas');
-    if (!cover) return;
-    const { ctx, getW, getH } = setupCanvas(cover);
-    let t = 0;
-    function frame() {
-        if (!document.getElementById('page-exp1').classList.contains('active')) {
-            requestAnimationFrame(frame); return;
-        }
-        const w = getW(), h = getH();
-        ctx.fillStyle = 'rgba(10,9,8,0.06)';
-        ctx.fillRect(0,0,w,h);
-        t += 0.0035;
-
-        ctx.strokeStyle = 'rgba(212,165,116,0.04)';
-        ctx.lineWidth = 0.5;
-        for (let i = 0; i < 50; i++) {
-            ctx.beginPath();
-            ctx.moveTo(0, i * 26 - 30);
-            ctx.lineTo(w, i * 26 + 30);
-            ctx.stroke();
-        }
-
-        const pts = lerpFrames(t);
-        const fw = Math.min(w*0.30, h*0.50), fh = h*0.74;
-        const mapped = pts.map(p => [w*0.5 - fw/2 + p[0]*fw, h*0.10 + p[1]*fh]);
-        drawSkeleton(ctx, mapped, fh, {
-            lw: 1.5,
-            bc: 'rgba(235,231,223,0.85)',
-            bc2: 'rgba(212,165,116,0.55)',
-            jr: 2.2,
-            jc: '#ebe7df',
-        });
-
-        BODY_EDGES.forEach(([i, j]) => {
-            const a = mapped[i], b = mapped[j];
-            for (let k = 0; k < 2; k++) {
-                const u = Math.random();
-                const x = a[0] + (b[0]-a[0])*u + (Math.random()-.5)*1.5;
-                const y = a[1] + (b[1]-a[1])*u + (Math.random()-.5)*1.5;
-                ctx.beginPath();
-                ctx.arc(x, y, 0.5 + Math.random()*0.7, 0, Math.PI*2);
-                ctx.fillStyle = `rgba(212,165,116,${0.10 + Math.random()*0.25})`;
-                ctx.fill();
-            }
-        });
-        requestAnimationFrame(frame);
-    }
-    frame();
+    const v = document.getElementById('exp1-cover-video');
+    if (!v) return;
+    const applyRate = () => { v.playbackRate = EXP1_COVER_PLAYBACK_RATE; };
+    v.addEventListener('loadedmetadata', applyRate);
+    if (v.readyState >= 1) applyRate();
 }
 
 /* ── Ambient bg behind wizard
@@ -6154,12 +7283,49 @@ function exp1SetupAmbient() {
 }
 
 /* ── Example thumbnail buttons ── */
+/** data-ex 索引 → PNG 示例（其余索引仍走程序化 exp1DrawExample） */
+const EXP1_EXAMPLE_ASSETS = {
+    4: 'assets/canva-MAFg6ay4I2Y.png',
+};
+
+function exp1FitExampleThumb(img, ctx, tw, th) {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.fillStyle = '#11100e';
+    ctx.fillRect(0, 0, tw, th);
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    if (!iw || !ih) return;
+    const scale = Math.min(tw / iw, th / ih);
+    const dw = iw * scale, dh = ih * scale;
+    const dx = (tw - dw) / 2, dy = (th - dh) / 2;
+    ctx.drawImage(img, dx, dy, dw, dh);
+}
+
 function exp1SetupExamples() {
     const buttons = document.querySelectorAll('#exp1-examples .exp1-example');
-    buttons.forEach(btn => {
+    buttons.forEach((btn) => {
+        btn.replaceChildren();
         const idx = parseInt(btn.dataset.ex || '0', 10);
+        const path = EXP1_EXAMPLE_ASSETS[idx];
+        if (path) {
+            const img = new Image();
+            img.onload = () => {
+                const tc = document.createElement('canvas');
+                tc.width = 120;
+                tc.height = 160;
+                exp1FitExampleThumb(img, tc.getContext('2d'), 120, 160);
+                btn.appendChild(tc);
+            };
+            img.onerror = () => {
+                btn.textContent = '!';
+                btn.title = '示例加载失败';
+            };
+            img.src = resolveMediaUrl(path);
+            return;
+        }
         const tc = document.createElement('canvas');
-        tc.width = 120; tc.height = 160;
+        tc.width = 120;
+        tc.height = 160;
         exp1DrawExample(tc.getContext('2d'), idx, 120, 160);
         btn.appendChild(tc);
     });
@@ -6207,9 +7373,18 @@ function exp1ReadFile(file) {
 
 /* ── Example loader ── */
 function exp1LoadExample(idx) {
+    const assetPath = EXP1_EXAMPLE_ASSETS[idx];
+    if (assetPath) {
+        const img = new Image();
+        img.onload = () => exp1AcceptImage(img);
+        img.onerror = () => exp1SetStatus('示例图加载失败 · 请确认 assets/canva-MAFg6ay4I2Y.png 存在');
+        img.src = resolveMediaUrl(assetPath);
+        return;
+    }
     const c = document.createElement('canvas');
-    c.width = 480; c.height = 640;
-    exp1DrawExample(c.getContext('2d'), idx, 480, 640);
+    c.width = 720;
+    c.height = 960;
+    exp1DrawExample(c.getContext('2d'), idx, 720, 960);
     const img = new Image();
     img.onload = () => exp1AcceptImage(img);
     img.src = c.toDataURL('image/png');
@@ -6232,25 +7407,7 @@ function exp1AcceptImage(img) {
     };
     exp1State.drag = null;
 
-    // 清空所有下游派生数据
-    exp1State.croppedCanvas    = null;
-    exp1State.mask             = null;
-    exp1State.maskCanvas       = null;
-    exp1State.maskCacheDirty   = false;
-    exp1State.maskFit          = null;
-    exp1State.brushPos         = null;
-    exp1State.brushDrag        = null;
-    exp1State.joints           = null;
-    exp1State.jointsFit        = null;
-    exp1State.jointDrag        = null;
-    exp1State.hoverJoint       = null;
-    exp1State.segments         = null;
-    exp1State.restJoints       = null;
-    exp1State.bboxH = 0; exp1State.bboxW = 0;
-    exp1State.action           = 'idle';
-    exp1State.actionTime       = 0;
-    exp1State.animSize         = null;
-    exp1HideHandoff();
+    exp1ClearDerived();
 
     exp1State.stage = 'crop';
     exp1RenderStage();
@@ -6278,7 +7435,7 @@ function exp1Next() {
     if (exp1State.stage === 'joints') {
         exp1State.stage = 'animate';
         exp1BuildSegments();
-        exp1SetAction('idle', { silent: true });
+        exp1SetAction(EXP1_DEFAULT_ACTION, { silent: true });
         exp1State.playing = true;
         exp1RenderStage();
         exp1AnimateLoop();
@@ -6299,6 +7456,7 @@ function exp1Back() {
         exp1State.maskCanvas = null;
         exp1State.brushDrag = null;
         exp1State.brushPos = null;
+        exp1HideHandoff();
     } else if (exp1State.stage === 'joints') {
         exp1State.stage = 'mask';
         exp1State.joints = null;
@@ -6312,37 +7470,54 @@ function exp1Back() {
 }
 function exp1Reset() {
     exp1Pause();
-    exp1State.stage = 'upload';
-    exp1State.image = null;
-    exp1State.crop = null;
-    exp1State.croppedCanvas = null;
-    exp1State.mask = null;
-    exp1State.maskCanvas = null;
-    exp1State.joints = null;
-    exp1State.brushPos = null;
-    exp1State.segments = null;
+    Object.assign(exp1State, createExp1DefaultState());
     exp1HideHandoff();
+    const th = document.getElementById('exp1-threshold');
+    const thLab = document.getElementById('exp1-threshold-val');
+    if (th) th.value = '80';
+    if (thLab) thLab.textContent = '80';
+    const bs = document.getElementById('exp1-brush-size');
+    const bsLab = document.getElementById('exp1-brush-size-val');
+    if (bs) bs.value = '20';
+    if (bsLab) bsLab.textContent = '20';
+    if (typeof exp1SetBrush === 'function') exp1SetBrush('add');
+    const sp = document.getElementById('exp1-speed');
+    const spLab = document.getElementById('exp1-speed-val');
+    if (sp) sp.value = '1.0';
+    if (spLab) spLab.textContent = '1.0';
     exp1RenderStage();
+}
+
+/** 工具栏「上传作品」：在任意步骤均可重新选图；非上传步会先完整重置工作台 */
+function exp1ToolbarUpload() {
+    if (!exp1State) return;
+    if (exp1State.stage !== 'upload') {
+        exp1Reset();
+    }
+    requestAnimationFrame(() => {
+        const inp = document.getElementById('exp1-file-input');
+        if (inp) inp.click();
+    });
 }
 
 /* ── Top-level render dispatch ── */
 const EXP1_STAGE_INDEX = { upload: 0, crop: 1, mask: 2, joints: 3, animate: 4 };
 const EXP1_STAGE_HUD = {
-    upload:  { stage: 'C · UPLOAD',  next: 'AWAITING IMAGE',      meta: '阶段 C · 上传你的画'  },
-    crop:    { stage: 'C · CROP',    next: 'CROP & CONFIRM',      meta: '阶段 C · 裁剪主体'    },
-    mask:    { stage: 'D · MASK',    next: 'AUTO + BRUSH',        meta: '阶段 D · 自动抠图 + 画笔修正' },
-    joints:  { stage: 'D · JOINTS',  next: '14 KEYPOINTS · DRAG', meta: '阶段 D · 14 关节标定' },
-    animate: { stage: 'E · ANIMATE', next: 'PICK ACTION · EXPORT',meta: '阶段 E · 选一段动作' },
+    upload:  { stage: '阶段 0 · 上传', next: '请选择图片或下方示例',           meta: '步骤 1/5 · 上传手绘、照片或扫描件' },
+    crop:    { stage: '阶段 1 · 裁切', next: '拖框对齐身体后点「下一步」',      meta: '步骤 2/5 · 框选角色主体' },
+    mask:    { stage: '阶段 2 · 抠图', next: '可拖阈值或画笔修边',             meta: '步骤 3/5 · 抠图与画笔修正' },
+    joints:  { stage: '阶段 3 · 关节', next: '对齐金色圆点后进入动作',          meta: '步骤 4/5 · 14 关节微调' },
+    animate: { stage: '阶段 4 · 动作', next: '选动作、调速、导出 WebM / GIF', meta: '步骤 5/5 · 动作与导出' },
 };
 const EXP1_NEXT_LABEL = {
     upload:  '下一步 →',
-    crop:    '确认裁剪 · 进入阶段 D →',
-    mask:    '蒙版完成 · 标定关节 →',
-    joints:  '关节就位 · 进入阶段 E →',
-    animate: '完成 · 全部就位',
+    crop:    '确认裁剪 · 继续 →',
+    mask:    '蒙版就绪 · 标定关节 →',
+    joints:  '关节就绪 · 进入动作 →',
+    animate: '完成',
 };
 const EXP1_STATUS = {
-    upload:  '阶段 C · 等待上传',
+    upload:  '阶段 0 · 等待上传',
     crop:    '阶段 C · 拖动矩形或角点调整裁切',
     mask:    '阶段 D · 调阈值或画笔修正蒙版',
     joints:  '阶段 D · 拖动金色圆点对齐关节',
@@ -6350,6 +7525,10 @@ const EXP1_STATUS = {
 };
 
 function exp1RenderStage() {
+    // Sync data-wb-stage for CSS-driven layout switching
+    const wbRoot = document.getElementById('exp1-playground');
+    if (wbRoot) wbRoot.setAttribute('data-wb-stage', exp1State.stage);
+
     document.querySelectorAll('#exp1-wizard .exp1-step').forEach(s => {
         s.classList.toggle('is-active', s.dataset.step === exp1State.stage);
     });
@@ -6372,6 +7551,15 @@ function exp1RenderStage() {
         else              { s.classList.add('is-soon');    if (flag) flag.textContent = '即将'; }
     });
 
+    const wbTrack = document.getElementById('exp1-wb-track');
+    if (wbTrack) {
+        wbTrack.querySelectorAll('.exp1-wb-seg').forEach((seg, i) => {
+            seg.classList.toggle('is-done', i < cur);
+            seg.classList.toggle('is-current', i === cur);
+            seg.classList.toggle('is-upcoming', i > cur);
+        });
+    }
+
     const back  = document.getElementById('exp1-back-btn');
     const next  = document.getElementById('exp1-next-btn');
     const reset = document.getElementById('exp1-reset-btn');
@@ -6385,7 +7573,21 @@ function exp1RenderStage() {
 
     exp1SetStatus(EXP1_STATUS[exp1State.stage] || '');
 
-    if (exp1State.stage === 'crop')    exp1RenderCrop();
+    // handoff thumbnail 只在 mask/joints 阶段有效；其他阶段一律隐藏防残影
+    if (exp1State.stage !== 'mask' && exp1State.stage !== 'joints') {
+        exp1HideHandoff();
+    }
+
+    if (exp1State.stage === 'crop') {
+        exp1RenderCrop();
+        if (exp1State.image && exp1State.fit) {
+            const iw = exp1State.image.naturalWidth, ih = exp1State.image.naturalHeight;
+            const f = exp1State.fit;
+            const native = f.scale >= 0.997 && f.scale <= 1.001;
+            const hint = native ? ' · 原图像素显示，不放大' : '';
+            exp1SetStatus(`阶段 C · 拖动矩形或角点调整裁切${hint} · ${iw}×${ih}px`);
+        }
+    }
     if (exp1State.stage === 'mask')    exp1RenderMask();
     if (exp1State.stage === 'joints')  exp1RenderJoints();
     if (exp1State.stage === 'animate') exp1RenderAnim();
@@ -6429,6 +7631,7 @@ function exp1RenderCrop() {
     const img = exp1State.image;
     const fit = exp1ComputeFit(img.naturalWidth, img.naturalHeight, cw, ch);
     exp1State.fit = fit;
+    exp1SetRasterSmoothing(ctx, fit);
 
     // 1. dim full bg
     ctx.fillStyle = 'rgba(10,9,8,0.55)';
@@ -6495,11 +7698,24 @@ function exp1ComputeFit(iw, ih, cw, ch) {
     let dw, dh;
     if (ar > fr) { dw = aw; dh = aw / ar; }
     else         { dh = ah; dw = ah * ar; }
+    let scale = dw / iw;
+    if (scale > 1) {
+        scale = 1;
+        dw = iw;
+        dh = ih;
+    }
     return {
         dx: (cw - dw) / 2, dy: (ch - dh) / 2,
         dw, dh,
-        scale: dw / iw,
+        scale,
     };
+}
+
+/** 小图不再强行放大：scale=1 时关闭平滑，避免手绘被抹糊 */
+function exp1SetRasterSmoothing(ctx, fit) {
+    if (!fit) return;
+    ctx.imageSmoothingEnabled = fit.scale < 0.999;
+    if (ctx.imageSmoothingEnabled) ctx.imageSmoothingQuality = 'high';
 }
 
 function exp1CropToScreen(c, fit) {
@@ -6794,6 +8010,7 @@ function exp1RenderMask() {
     const img = exp1State.croppedCanvas;
     const fit = exp1ComputeFit(img.width, img.height, cw, ch);
     exp1State.maskFit = fit;
+    exp1SetRasterSmoothing(ctx, fit);
 
     ctx.fillStyle = 'rgba(10,9,8,0.55)';
     ctx.fillRect(0, 0, cw, ch);
@@ -7157,6 +8374,7 @@ function exp1RenderJoints() {
     const img = exp1State.croppedCanvas;
     const fit = exp1ComputeFit(img.width, img.height, cw, ch);
     exp1State.jointsFit = fit;
+    exp1SetRasterSmoothing(ctx, fit);
 
     ctx.fillStyle = 'rgba(10,9,8,0.55)';
     ctx.fillRect(0, 0, cw, ch);
@@ -7310,51 +8528,11 @@ const EXP1_DRAW_ORDER = [
     'L_upper_arm', 'L_lower_arm',
 ];
 
+// 默认动作（必须是 EXP1_ACTIONS 里存在的 key）
+const EXP1_DEFAULT_ACTION = 'walk';
+
 // 动作 keyframes —— deltas 是相对 rest pose 的偏移，单位 = bboxH 的比例
 const EXP1_ACTIONS = {
-    idle: {
-        name: '待机', glyph: '◌', duration: 3.2, loop: true,
-        keyframes: [
-            { t: 0.0, deltas: {} },
-            { t: 0.8, deltas: {
-                head: [0, -0.008], neck: [0, -0.005],
-                L_wrist: [-0.012, 0.008], R_wrist: [0.012, 0.008],
-            } },
-            { t: 1.6, deltas: {} },
-            { t: 2.4, deltas: {
-                head: [0, 0.005], neck: [0, 0.003],
-                L_wrist: [0.012, -0.008], R_wrist: [-0.012, -0.008],
-            } },
-            { t: 3.2, deltas: {} },
-        ],
-    },
-    wave: {
-        name: '挥手', glyph: '✺', duration: 2.0, loop: true,
-        keyframes: [
-            { t: 0.0, deltas: {} },
-            { t: 0.4, deltas: {
-                R_shoulder: [0, -0.02],
-                R_elbow: [0.06, -0.18], R_wrist: [0.18, -0.32],
-                head: [0, -0.005],
-            } },
-            { t: 0.8, deltas: {
-                R_shoulder: [0, -0.02],
-                R_elbow: [0.10, -0.18], R_wrist: [0.30, -0.30],
-                head: [0.005, -0.005],
-            } },
-            { t: 1.2, deltas: {
-                R_shoulder: [0, -0.02],
-                R_elbow: [0.06, -0.18], R_wrist: [0.10, -0.36],
-                head: [-0.005, -0.005],
-            } },
-            { t: 1.6, deltas: {
-                R_shoulder: [0, -0.02],
-                R_elbow: [0.10, -0.18], R_wrist: [0.30, -0.30],
-                head: [0.005, -0.005],
-            } },
-            { t: 2.0, deltas: {} },
-        ],
-    },
     walk: {
         name: '走路', glyph: '↬', duration: 1.4, loop: true,
         keyframes: [
@@ -7465,6 +8643,154 @@ const EXP1_ACTIONS = {
             { t: 1.60, deltas: {} },
         ],
     },
+    /* ─── 新增舞蹈动作 ─── */
+    twist: {
+        name: '扭腰', glyph: '◐', duration: 1.6, loop: true,
+        keyframes: [
+            { t: 0.00, deltas: {} },
+            { t: 0.40, deltas: {
+                neck: [-0.02, 0],
+                L_shoulder: [-0.05, 0], R_shoulder: [-0.05, 0],
+                L_elbow: [-0.07, -0.02], R_elbow: [-0.07, -0.02],
+                L_wrist: [-0.10, -0.04], R_wrist: [-0.10, -0.04],
+                L_hip: [0.04, 0], R_hip: [0.04, 0],
+                L_knee: [0.04, 0], R_knee: [0.04, 0],
+                L_ankle: [0.04, 0], R_ankle: [0.04, 0],
+            } },
+            { t: 0.80, deltas: {} },
+            { t: 1.20, deltas: {
+                neck: [0.02, 0],
+                L_shoulder: [0.05, 0], R_shoulder: [0.05, 0],
+                L_elbow: [0.07, -0.02], R_elbow: [0.07, -0.02],
+                L_wrist: [0.10, -0.04], R_wrist: [0.10, -0.04],
+                L_hip: [-0.04, 0], R_hip: [-0.04, 0],
+                L_knee: [-0.04, 0], R_knee: [-0.04, 0],
+                L_ankle: [-0.04, 0], R_ankle: [-0.04, 0],
+            } },
+            { t: 1.60, deltas: {} },
+        ],
+    },
+    sway: {
+        name: '摇摆', glyph: '∿', duration: 2.4, loop: true,
+        keyframes: [
+            { t: 0.00, deltas: {} },
+            { t: 0.60, deltas: {
+                head: [0.04, -0.02], neck: [0.03, -0.015],
+                L_shoulder: [0.025, -0.015], R_shoulder: [0.025, -0.015],
+                L_elbow: [0.04, 0.04], R_elbow: [0.06, -0.10], R_wrist: [0.10, -0.20],
+                L_wrist: [0.06, 0.10],
+                L_hip: [-0.025, 0], R_hip: [-0.025, 0],
+                L_knee: [-0.02, 0.02], R_knee: [-0.04, 0],
+                L_ankle: [-0.02, 0.02], R_ankle: [-0.06, 0],
+            } },
+            { t: 1.20, deltas: {} },
+            { t: 1.80, deltas: {
+                head: [-0.04, -0.02], neck: [-0.03, -0.015],
+                L_shoulder: [-0.025, -0.015], R_shoulder: [-0.025, -0.015],
+                L_elbow: [-0.06, -0.10], R_elbow: [-0.04, 0.04],
+                L_wrist: [-0.10, -0.20], R_wrist: [-0.06, 0.10],
+                L_hip: [0.025, 0], R_hip: [0.025, 0],
+                L_knee: [0.04, 0], R_knee: [0.02, 0.02],
+                L_ankle: [0.06, 0], R_ankle: [0.02, 0.02],
+            } },
+            { t: 2.40, deltas: {} },
+        ],
+    },
+    spin: {
+        name: '旋转', glyph: '↻', duration: 2.0, loop: true,
+        keyframes: [
+            // 用躯干上下 + 双臂大幅左右挥, 模拟旋转的视觉错觉
+            { t: 0.00, deltas: {} },
+            { t: 0.50, deltas: {
+                head: [0, -0.04], neck: [0, -0.03],
+                L_shoulder: [0.04, -0.03], R_shoulder: [-0.04, -0.03],
+                L_elbow: [0.16, -0.12], R_elbow: [-0.16, -0.12],
+                L_wrist: [0.28, -0.18], R_wrist: [-0.28, -0.18],
+                L_hip: [-0.02, 0], R_hip: [0.02, 0],
+                L_knee: [-0.02, 0], R_knee: [0.02, 0],
+                L_ankle: [-0.02, 0.01], R_ankle: [0.02, 0.01],
+            } },
+            { t: 1.00, deltas: {
+                head: [0, -0.06], neck: [0, -0.04],
+                L_shoulder: [0, -0.05], R_shoulder: [0, -0.05],
+                L_elbow: [0, -0.22], R_elbow: [0, -0.22],
+                L_wrist: [0, -0.36], R_wrist: [0, -0.36],
+            } },
+            { t: 1.50, deltas: {
+                head: [0, -0.04], neck: [0, -0.03],
+                L_shoulder: [-0.04, -0.03], R_shoulder: [0.04, -0.03],
+                L_elbow: [-0.16, -0.12], R_elbow: [0.16, -0.12],
+                L_wrist: [-0.28, -0.18], R_wrist: [0.28, -0.18],
+                L_hip: [0.02, 0], R_hip: [-0.02, 0],
+                L_knee: [0.02, 0], R_knee: [-0.02, 0],
+                L_ankle: [0.02, 0.01], R_ankle: [-0.02, 0.01],
+            } },
+            { t: 2.00, deltas: {} },
+        ],
+    },
+    jumpJack: {
+        name: '开合跳', glyph: '⨯', duration: 1.2, loop: true,
+        keyframes: [
+            { t: 0.00, deltas: {} },
+            // 闭合: 微下蹲蓄力
+            { t: 0.20, deltas: {
+                head: [0, 0.04], neck: [0, 0.03],
+                L_shoulder: [0.01, 0.02], R_shoulder: [-0.01, 0.02],
+                L_elbow: [0.01, 0.04], R_elbow: [-0.01, 0.04],
+                L_wrist: [0.02, 0.06], R_wrist: [-0.02, 0.06],
+                L_hip: [0, 0.03], R_hip: [0, 0.03],
+                L_knee: [0, 0.04], R_knee: [0, 0.04],
+                L_ankle: [0, 0.03], R_ankle: [0, 0.03],
+            } },
+            // 张开: 双臂上举 + 双腿外开 + 腾空
+            { t: 0.60, deltas: {
+                head: [0, -0.16], neck: [0, -0.13],
+                L_shoulder: [-0.03, -0.12], R_shoulder: [0.03, -0.12],
+                L_elbow: [-0.10, -0.22], R_elbow: [0.10, -0.22],
+                L_wrist: [-0.18, -0.32], R_wrist: [0.18, -0.32],
+                L_hip: [-0.03, -0.10], R_hip: [0.03, -0.10],
+                L_knee: [-0.08, -0.06], R_knee: [0.08, -0.06],
+                L_ankle: [-0.16, -0.04], R_ankle: [0.16, -0.04],
+            } },
+            { t: 1.00, deltas: {
+                head: [0, 0.03], neck: [0, 0.02],
+                L_shoulder: [0.01, 0.02], R_shoulder: [-0.01, 0.02],
+                L_elbow: [0.01, 0.03], R_elbow: [-0.01, 0.03],
+                L_wrist: [0.02, 0.04], R_wrist: [-0.02, 0.04],
+                L_hip: [0, 0.02], R_hip: [0, 0.02],
+                L_knee: [0, 0.03], R_knee: [0, 0.03],
+                L_ankle: [0, 0.02], R_ankle: [0, 0.02],
+            } },
+            { t: 1.20, deltas: {} },
+        ],
+    },
+    cheer: {
+        name: '欢呼', glyph: '✷', duration: 1.6, loop: true,
+        keyframes: [
+            { t: 0.00, deltas: {} },
+            // 双臂高举 + 头略仰
+            { t: 0.40, deltas: {
+                head: [0, -0.04], neck: [0, -0.03],
+                L_shoulder: [0, -0.02], R_shoulder: [0, -0.02],
+                L_elbow: [-0.05, -0.22], R_elbow: [0.05, -0.22],
+                L_wrist: [-0.08, -0.40], R_wrist: [0.08, -0.40],
+            } },
+            // 维持举起 + 微微左摇
+            { t: 0.80, deltas: {
+                head: [-0.01, -0.045], neck: [-0.01, -0.035],
+                L_shoulder: [-0.01, -0.025], R_shoulder: [-0.01, -0.025],
+                L_elbow: [-0.06, -0.235], R_elbow: [0.04, -0.21],
+                L_wrist: [-0.10, -0.42], R_wrist: [0.06, -0.39],
+            } },
+            { t: 1.20, deltas: {
+                head: [0.01, -0.045], neck: [0.01, -0.035],
+                L_shoulder: [0.01, -0.025], R_shoulder: [0.01, -0.025],
+                L_elbow: [-0.04, -0.21], R_elbow: [0.06, -0.235],
+                L_wrist: [-0.06, -0.39], R_wrist: [0.10, -0.42],
+            } },
+            { t: 1.60, deltas: {} },
+        ],
+    },
 };
 
 function exp1BuildActionGrid() {
@@ -7474,7 +8800,7 @@ function exp1BuildActionGrid() {
     Object.entries(EXP1_ACTIONS).forEach(([key, act]) => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'exp1-action-btn' + (key === 'idle' ? ' is-active' : '');
+        btn.className = 'exp1-action-btn' + (key === EXP1_DEFAULT_ACTION ? ' is-active' : '');
         btn.dataset.action = key;
         btn.innerHTML = `<span class="exp1-action-btn-glyph">${act.glyph}</span><span class="exp1-action-btn-name">${act.name}</span>`;
         btn.addEventListener('click', () => exp1SetAction(key));
@@ -7482,45 +8808,101 @@ function exp1BuildActionGrid() {
     });
 }
 
-/* ── 1. Build segments (extract skin per capsule region ∩ mask) ── */
+/* ── 1. Build segments — 每个 mask 像素分配给最近的骨段 (Voronoi) ──
+   旧实现是「胶囊∩mask」, 相邻段半径会重叠 → 同一像素被多段重复绘制 →
+   动作起来后产生重影/重四肢/重叠裙子 (用户图一)。
+   新实现：扫描整张 mask, 计算每个前景像素到 10 条骨段的距离, 取最近段。
+   每像素只属于一段, 渲染时不再有重叠 ghost。 ── */
 function exp1BuildSegments() {
     const J = exp1State.joints, mskInfo = exp1State.mask, img = exp1State.croppedCanvas;
     if (!J || !mskInfo || !img) return;
 
-    // 派生 mid_hip 关节（动作驱动时也派生它，所以记进 restJoints）
     const mid_hip = [(J.L_hip[0] + J.R_hip[0]) / 2, (J.L_hip[1] + J.R_hip[1]) / 2];
     const Jrest = { ...J, mid_hip };
 
     const bb = exp1MaskBBox();
     if (!bb) return;
     const bbW = bb.xmax - bb.xmin, bbH = bb.ymax - bb.ymin;
-    const shortSide = Math.min(bbW, bbH);
 
-    const srcCtx = img.getContext('2d');
-    const fullId = srcCtx.getImageData(0, 0, img.width, img.height);
+    const iw = img.width, ih = img.height;
+    const fullId = img.getContext('2d').getImageData(0, 0, iw, ih);
     const srcAll = fullId.data;
     const mask = mskInfo.mask, mw = mskInfo.w;
 
-    const segs = [];
+    // 准备 10 条骨段。head 段稍延伸覆盖头顶留白
+    const bones = [];
     for (const def of EXP1_SEGMENT_DEFS) {
-        const origA = Jrest[def.endA], origB = Jrest[def.endB];
-        if (!origA || !origB) continue;
-
-        // head 段把整张脸都包进去：endB 沿 neck→head 方向再延伸一截
-        let a = origA, b = origB;
-        let r = shortSide * def.rad;
+        const oa = Jrest[def.endA], ob = Jrest[def.endB];
+        if (!oa || !ob) continue;
+        let ax = oa[0], ay = oa[1], bx = ob[0], by = ob[1];
         if (def.padHeadCircle) {
-            const dx0 = b[0] - a[0], dy0 = b[1] - a[1];
+            const dx0 = bx - ax, dy0 = by - ay;
             const ln = Math.hypot(dx0, dy0) || 1;
-            const ext = ln * 0.55;
-            b = [b[0] + dx0 / ln * ext, b[1] + dy0 / ln * ext];
-            r = Math.max(r, ln * 0.85);
+            const ext = ln * 0.50;
+            bx = bx + dx0 / ln * ext;
+            by = by + dy0 / ln * ext;
         }
+        bones.push({ def, oa, ob, ax, ay, bx, by });
+    }
 
-        const minX = Math.max(0, Math.floor(Math.min(a[0], b[0]) - r) - 4);
-        const maxX = Math.min(img.width - 1,  Math.ceil(Math.max(a[0], b[0]) + r) + 4);
-        const minY = Math.max(0, Math.floor(Math.min(a[1], b[1]) - r) - 4);
-        const maxY = Math.min(img.height - 1, Math.ceil(Math.max(a[1], b[1]) + r) + 4);
+    // 点到线段平方距离
+    const dist2ToBone = (px, py, b) => {
+        const dx = b.bx - b.ax, dy = b.by - b.ay;
+        const len2 = dx * dx + dy * dy;
+        let t = len2 > 0 ? ((px - b.ax) * dx + (py - b.ay) * dy) / len2 : 0;
+        if (t < 0) t = 0; else if (t > 1) t = 1;
+        const cx = b.ax + t * dx, cy = b.ay + t * dy;
+        return (px - cx) * (px - cx) + (py - cy) * (py - cy);
+    };
+
+    // 限制扫描范围到 mask bbox + pad（避免扫整张图）
+    const padPix = 8;
+    const x0 = Math.max(0, bb.xmin - padPix);
+    const x1 = Math.min(iw - 1, bb.xmax + padPix);
+    const y0 = Math.max(0, bb.ymin - padPix);
+    const y1 = Math.min(ih - 1, bb.ymax + padPix);
+
+    // assign[y*iw+x] = -1 没分配 / 0..N-1 段索引
+    const assign = new Int8Array(iw * ih).fill(-1);
+    for (let y = y0; y <= y1; y++) {
+        for (let x = x0; x <= x1; x++) {
+            if (!mask[y * mw + x]) continue;
+            let best = -1, bestD = Infinity;
+            for (let k = 0; k < bones.length; k++) {
+                const d = dist2ToBone(x, y, bones[k]);
+                if (d < bestD) { bestD = d; best = k; }
+            }
+            assign[y * iw + x] = best;
+        }
+    }
+
+    // 为每段生成独立 sprite
+    const segs = [];
+    for (let k = 0; k < bones.length; k++) {
+        const { def, oa, ob } = bones[k];
+        // 找该段所属像素的 bbox
+        let minX = iw, minY = ih, maxX = -1, maxY = -1;
+        for (let y = y0; y <= y1; y++) {
+            for (let x = x0; x <= x1; x++) {
+                if (assign[y * iw + x] !== k) continue;
+                if (x < minX) minX = x; if (x > maxX) maxX = x;
+                if (y < minY) minY = y; if (y > maxY) maxY = y;
+            }
+        }
+        // 即便段内没分到像素，仍要确保 anchor 在范围内（避免 sprite 完全空白）
+        if (maxX < 0) {
+            minX = Math.floor(Math.min(oa[0], ob[0])) - 2;
+            maxX = Math.ceil(Math.max(oa[0], ob[0])) + 2;
+            minY = Math.floor(Math.min(oa[1], ob[1])) - 2;
+            maxY = Math.ceil(Math.max(oa[1], ob[1])) + 2;
+        } else {
+            minX = Math.min(minX, Math.floor(oa[0]) - 2, Math.floor(ob[0]) - 2);
+            maxX = Math.max(maxX, Math.ceil(oa[0])  + 2, Math.ceil(ob[0])  + 2);
+            minY = Math.min(minY, Math.floor(oa[1]) - 2, Math.floor(ob[1]) - 2);
+            maxY = Math.max(maxY, Math.ceil(oa[1])  + 2, Math.ceil(ob[1])  + 2);
+        }
+        minX = Math.max(0, minX); minY = Math.max(0, minY);
+        maxX = Math.min(iw - 1, maxX); maxY = Math.min(ih - 1, maxY);
         const sw = maxX - minX + 1, sh = maxY - minY + 1;
         if (sw < 2 || sh < 2) continue;
 
@@ -7529,48 +8911,28 @@ function exp1BuildSegments() {
         const sctx = segCanvas.getContext('2d');
         const id = sctx.createImageData(sw, sh);
         const dst = id.data;
-
-        const ax = a[0] - minX, ay = a[1] - minY;
-        const bx = b[0] - minX, by = b[1] - minY;
-        const dxAB = bx - ax, dyAB = by - ay;
-        const len2 = Math.max(1e-6, dxAB * dxAB + dyAB * dyAB);
-        const r2 = r * r;
-        const featherR = r + 1.0;
-        const featherR2 = featherR * featherR;
-
         for (let py = 0; py < sh; py++) {
             for (let px = 0; px < sw; px++) {
-                let t = ((px - ax) * dxAB + (py - ay) * dyAB) / len2;
-                t = Math.max(0, Math.min(1, t));
-                const cx = ax + t * dxAB, cy = ay + t * dyAB;
-                const dist2 = (px - cx) ** 2 + (py - cy) ** 2;
-                if (dist2 > featherR2) continue;
                 const ix = px + minX, iy = py + minY;
-                if (!mask[iy * mw + ix]) continue;
-                const sIdx = (iy * img.width + ix) * 4;
+                if (assign[iy * iw + ix] !== k) continue;
+                const sIdx = (iy * iw + ix) * 4;
                 const dIdx = (py * sw + px) * 4;
                 dst[dIdx]     = srcAll[sIdx];
                 dst[dIdx + 1] = srcAll[sIdx + 1];
                 dst[dIdx + 2] = srcAll[sIdx + 2];
-                let alpha = srcAll[sIdx + 3];
-                if (dist2 > r2) {
-                    const f = 1 - (Math.sqrt(dist2) - r) / Math.max(0.001, featherR - r);
-                    alpha = Math.max(0, Math.min(255, alpha * f));
-                }
-                dst[dIdx + 3] = alpha;
+                dst[dIdx + 3] = srcAll[sIdx + 3];
             }
         }
         sctx.putImageData(id, 0, 0);
 
-        const anchorAx = origA[0] - minX, anchorAy = origA[1] - minY;
-        const anchorBx = origB[0] - minX, anchorBy = origB[1] - minY;
+        const anchorAx = oa[0] - minX, anchorAy = oa[1] - minY;
+        const anchorBx = ob[0] - minX, anchorBy = ob[1] - minY;
         segs.push({
             name: def.name,
             endA: def.endA, endB: def.endB,
             anchorA: { x: anchorAx, y: anchorAy },
             anchorB: { x: anchorBx, y: anchorBy },
             restAngle: Math.atan2(anchorBy - anchorAy, anchorBx - anchorAx),
-            // 沿骨轴缩放需要的 rest 长度
             restLen: Math.max(1, Math.hypot(anchorBx - anchorAx, anchorBy - anchorAy)),
             canvas: segCanvas,
         });
@@ -7635,7 +8997,12 @@ function exp1FitAnim() {
         let dw, dh;
         if (ar > fr) { dw = aw; dh = aw / ar; }
         else         { dh = ah; dw = ah * ar; }
-        const scale = dw / img.width;
+        let scale = dw / img.width;
+        if (scale > 1) {
+            scale = 1;
+            dw = img.width;
+            dh = img.height;
+        }
         const ox = (cw - dw) / 2;
         const oy = (ch - dh) / 2;
         exp1State.animSize = { cw, ch, dpr, scale, ox, oy };
@@ -7650,6 +9017,8 @@ function exp1RenderAnim() {
     if (!sz) return;
     const ctx = canvas.getContext('2d');
     ctx.setTransform(sz.dpr, 0, 0, sz.dpr, 0, 0);
+    ctx.imageSmoothingEnabled = sz.scale < 0.999;
+    if (ctx.imageSmoothingEnabled) ctx.imageSmoothingQuality = 'high';
     ctx.clearRect(0, 0, sz.cw, sz.ch);
 
     const grad = ctx.createRadialGradient(sz.cw / 2, sz.ch / 2, 0, sz.cw / 2, sz.ch / 2, Math.max(sz.cw, sz.ch) / 2);
@@ -7669,7 +9038,7 @@ function exp1RenderAnim() {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    const action = EXP1_ACTIONS[exp1State.action] || EXP1_ACTIONS.idle;
+    const action = EXP1_ACTIONS[exp1State.action] || EXP1_ACTIONS[EXP1_DEFAULT_ACTION];
     const pose = exp1EvalPose(action, exp1State.actionTime);
 
     ctx.save();
@@ -8098,7 +9467,7 @@ function exp1DrawExample(ctx, idx, w, h) {
         });
     } else if (idx === 2) {
         // 招手 / Hello —— 前视, 右臂高举弯曲招手, 左臂自然下垂, 双腿略开
-        // 不对称姿态, 适合演示 wave 动作的 rigging 效果
+        // 不对称姿态, 便于演示挥臂类动作的骨骼形变
         const headR = w * 0.082;
         const headY = h * 0.205;
         inkFill('#a3e635', () => { ctx.beginPath(); ctx.arc(cx, headY, headR, 0, Math.PI*2); ctx.fill(); });
@@ -8142,7 +9511,6 @@ function exp1DrawExample(ctx, idx, w, h) {
 ═════════════════════════════════════════════════════════════ */
 
 let exp2State = null;
-let exp2Init = false;
 
 function exp2SobelAt(d, w, x, y) {
     const lum = (xx, yy) => {
@@ -8542,7 +9910,7 @@ const EXP2_STYLES = {
 };
 
 function initExp2Page() {
-    if (exp2Init) return; exp2Init = true;
+    if (alreadyInited('exp2')) return;
 
     // 封面：受《星夜》启发的油画旋涡笔触动画（多旋涡流场 + 月/星 + 丝柏剪影）
     const cover = document.getElementById('exp2-cover-canvas');
@@ -8722,10 +10090,7 @@ function initExp2Page() {
             ctx.fillRect(0, 0, w, h);
         }
 
-        function frame() {
-            if (!document.getElementById('page-exp2').classList.contains('active')) {
-                requestAnimationFrame(frame); return;
-            }
+        dncRegisterDecorLoop('exp2-cover', 'exp2', () => {
             const w = getW(), h = getH();
 
             if (firstFrame) {
@@ -8750,9 +10115,7 @@ function initExp2Page() {
             drawLumens(w, h);
             // 丝柏剪影 — 最前景
             drawCypress(w, h);
-
-            requestAnimationFrame(frame);
-        }
+        });
 
         function advance(w, h, time) {
             for (let i = strokes.length - 1; i >= 0; i--) {
@@ -8800,8 +10163,6 @@ function initExp2Page() {
             }
             if (strokes.length > 1700) strokes.splice(0, strokes.length - 1700);
         }
-
-        frame();
     }
 
     // 工作台 · 主引擎
@@ -9096,16 +10457,11 @@ function exp2ScrollToLab(ev) {
 
 function exp2Loop(ctx, sample, sctx, getW, getH) {
     let t = 0;
-    function frame() {
-        const root = document.getElementById('page-exp2');
-        if (!root || !root.classList.contains('active')) {
-            requestAnimationFrame(frame);
-            return;
-        }
+    dncRegisterDecorLoop('exp2-engine', 'exp2', () => {
         t += 0.005;
         const w = getW(), h = getH();
         const st = exp2State;
-        if (!st) { requestAnimationFrame(frame); return; }
+        if (!st) return;
 
         // FPS
         const now = performance.now();
@@ -9490,10 +10846,7 @@ function exp2Loop(ctx, sample, sctx, getW, getH) {
 
         // 音频 FX 顶层叠加：闪屏 / 冲击环 / 高频火花
         exp2DrawAudioFx(ctx, w, h, now, a);
-
-        requestAnimationFrame(frame);
-    }
-    frame();
+    });
 }
 
 function exp2DrawAudioFx(ctx, w, h, now, a) {
@@ -10082,7 +11435,7 @@ function sealAwakenPlateToStatic() {
     vid.pause();
     const img = document.createElement('img');
     img.className = 'plate-awaken-static';
-    img.src = 'assets/plate-awaken-poster.jpg';
+    img.src = resolveMediaUrl('assets/plate-awaken-poster.jpg');
     img.alt = '智能觉醒';
     img.decoding = 'async';
     plate.insertBefore(img, vid);
@@ -10183,6 +11536,7 @@ function bindInteractivePlateHover() {
 }
 
 /* ─────────── Initial init ─────────── */
+hydrateStaticAssetUrls();
 bindInteractivePlateHover();
 hydrateAwakenPlateFromStorage();
 setupPlateAwakenViewportPlay();
