@@ -2491,6 +2491,228 @@ body {
 .ex-phase-status.plan { color: var(--paper-faint); }
 .ex-phase-status.plan::before { background: var(--paper-faint); }
 
+/* ── MR · 虚实之间 · 阶段区块视频背景 + 毛玻璃 ── */
+#page-mr .ex-phases {
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+    border-top: none;
+    padding: 120px var(--gutter);
+}
+.ex-phases-video {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.88;
+    filter: brightness(0.92) saturate(1.1);
+}
+.ex-phases-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg,
+        rgba(10,9,8,0.48) 0%,
+        rgba(10,9,8,0.18) 45%,
+        rgba(10,9,8,0.42) 100%);
+    z-index: 1;
+}
+#page-mr .ex-phases > .sec-head,
+#page-mr .ex-phases > .ex-phase-list {
+    position: relative;
+    z-index: 2;
+}
+#page-mr .ex-phase {
+    background: rgba(10, 9, 8, 0.045);
+    backdrop-filter: blur(38px) saturate(155%);
+    -webkit-backdrop-filter: blur(38px) saturate(155%);
+    border: 1px solid rgba(235, 231, 223, 0.15);
+    box-shadow: inset 0 1px 0 rgba(235,231,223,0.06), 0 8px 28px rgba(0,0,0,0.18);
+    transition: background 0.35s ease, border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
+}
+#page-mr .ex-phase:hover {
+    background: rgba(235, 231, 223, 0.055);
+    border-color: rgba(212, 165, 116, 0.38);
+    box-shadow: inset 0 1px 0 rgba(235,231,223,0.12), 0 16px 44px rgba(0,0,0,0.22);
+    transform: translateY(-4px);
+}
+#page-mr .ex-phase-status {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 8px;
+    display: inline-flex;
+    width: fit-content;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(235,231,223,0.18);
+    border-radius: 24px;
+    padding: 6px 16px 6px 11px;
+    transition: background 0.2s, border-color 0.2s;
+}
+#page-mr .ex-phase-status.live {
+    color: var(--moss);
+    background: rgba(107, 128, 98, 0.14);
+    border-color: rgba(107, 128, 98, 0.38);
+}
+#page-mr .ex-phase-status.live::before {
+    background: var(--moss);
+    box-shadow: 0 0 8px var(--moss);
+}
+#page-mr .ex-phase-status.proto {
+    color: var(--gold);
+    background: rgba(212, 165, 116, 0.11);
+    border-color: rgba(212, 165, 116, 0.35);
+}
+#page-mr .ex-phase-status.proto::before {
+    background: var(--gold);
+    box-shadow: 0 0 8px rgba(212,165,116,0.55);
+}
+#page-mr .ex-phase-status.plan {
+    color: var(--paper-faint);
+    background: rgba(235,231,223,0.05);
+    border-color: rgba(235,231,223,0.12);
+}
+#page-mr .ex-phase-status.plan::before {
+    background: var(--paper-faint);
+}
+#page-mr .footer {
+    background: rgba(10,9,8,0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(235,231,223,0.08);
+}
+.mr-back-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper-soft);
+    cursor: pointer; text-decoration: none;
+    background: rgba(235,231,223,0.07);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(235,231,223,0.18);
+    border-radius: 24px;
+    padding: 8px 20px;
+    transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+.mr-back-btn:hover {
+    background: rgba(212,165,116,0.12);
+    border-color: rgba(212,165,116,0.38);
+    color: var(--gold);
+}
+
+/* ── X · 未来的课 ── */
+.ex-future {
+    padding: 100px var(--gutter) 120px;
+    border-top: 1px solid var(--line);
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+}
+.ex-future::before {
+    content: 'X';
+    font-family: var(--f-serif); font-style: italic;
+    font-size: clamp(180px, 22vw, 320px);
+    color: rgba(212,165,116,0.045);
+    position: absolute; right: var(--gutter); top: 50%;
+    transform: translateY(-50%);
+    line-height: 1; pointer-events: none; user-select: none;
+    letter-spacing: -0.04em;
+}
+.ex-future-inner {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 60px 80px;
+    align-items: start;
+    position: relative;
+}
+.ex-future-left {
+    display: flex; flex-direction: column; gap: 20px;
+    padding-top: 8px;
+}
+.ex-future-mark {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 80px; color: var(--gold);
+    line-height: 0.85; letter-spacing: -0.02em;
+}
+.ex-future-eyebrow {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--paper-faint);
+}
+.ex-future-divider {
+    width: 40px; height: 1px;
+    background: var(--gold-deep); opacity: 0.6;
+    margin: 4px 0;
+}
+.ex-future-right {
+    display: flex; flex-direction: column; gap: 32px;
+}
+.ex-future-title {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: clamp(32px, 3.5vw, 52px);
+    color: var(--paper); line-height: 1.1;
+    letter-spacing: -0.015em;
+}
+.ex-future-title em {
+    color: var(--gold); font-style: inherit;
+}
+.ex-future-lede {
+    font-size: 15px; line-height: 1.85;
+    color: var(--paper-soft); max-width: 52ch;
+}
+.ex-future-pillars {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1px; background: var(--line);
+    border: 1px solid var(--line);
+    margin-top: 8px;
+}
+.ex-future-pillar {
+    background: var(--ink-2);
+    padding: 28px 24px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: background 0.25s;
+}
+.ex-future-pillar:hover { background: var(--ink-3); }
+.ex-future-pillar-icon {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 22px; color: var(--gold); line-height: 1;
+}
+.ex-future-pillar-label {
+    font-family: var(--f-mono); font-size: 9.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--paper-faint);
+}
+.ex-future-pillar-text {
+    font-size: 13.5px; line-height: 1.65;
+    color: var(--paper-soft);
+}
+.ex-future-quote {
+    border-left: 2px solid var(--gold-deep);
+    padding-left: 20px;
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 18px; color: var(--paper-soft);
+    line-height: 1.55;
+}
+.ex-future-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper-faint);
+    border: 1px solid var(--line); padding: 6px 14px;
+    width: fit-content;
+}
+.ex-future-badge::before {
+    content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--paper-faint);
+}
+@media (max-width: 800px) {
+    .ex-future-inner { grid-template-columns: 1fr; gap: 36px; }
+    .ex-future-pillars { grid-template-columns: 1fr; }
+    .ex-future::before { font-size: 140px; right: -20px; opacity: 0.03; }
+}
+
 /* Modal video */
 .video-modal {
     position: fixed; inset: 0; z-index: 9999;
@@ -3385,13 +3607,10 @@ body {
     overflow: hidden;
     cursor: grab;
     transform-origin: 50% 50%;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
     transition:
         transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
         opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
         filter 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
-        visibility 0s linear 0.35s,
         box-shadow 0.5s,
         border-color 0.3s;
     will-change: transform, opacity, filter;
@@ -4257,7 +4476,7 @@ body {
                 <div class="footer-col-list">
                     <a onclick="showPage('exp1')">让画动起来</a>
                     <a onclick="showPage('exp2')">梵高之眼</a>
-                    <a>实验札记</a>
+                    <a onclick="showPage('art-flow')">代码与我们</a>
                     <a>对谈</a>
                 </div>
             </div>
@@ -4667,6 +4886,10 @@ body {
         </div>
 
         <div class="ex-phases">
+            <video class="ex-phases-video" autoplay muted loop playsinline>
+                <source src="assets/mr-phases-bg.mp4" type="video/mp4">
+            </video>
+            <div class="ex-phases-overlay"></div>
             <div class="sec-head" style="margin-bottom:0;">
                 <div class="sec-head-num">路线图<span>从屏幕到空间</span></div>
                 <h2 class="section-title">三个阶段。<br>当前在 <em>第一阶段</em>。</h2>
@@ -4700,7 +4923,7 @@ body {
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>展览 III · 虚实之间 · DanceNet.Lab</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a onclick="showPage('home')" class="mr-back-btn">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -4792,6 +5015,41 @@ body {
                     <h3 class="ex-phase-title">Style Transfer</h3>
                     <p class="ex-phase-desc">把任意风格的"舞蹈口音"注入你的动作。 像换一支笔, 不换内容。</p>
                     <div class="ex-phase-status plan">概念</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── X · 未来的课 ── -->
+        <div class="ex-future">
+            <div class="ex-future-inner">
+                <div class="ex-future-left">
+                    <div class="ex-future-eyebrow">下一站 · 愿景</div>
+                    <div class="ex-future-mark">X</div>
+                    <div class="ex-future-divider"></div>
+                    <p style="font-size:13px;line-height:1.7;color:var(--paper-faint);font-family:var(--f-mono);letter-spacing:0.04em;">不只是生成——<br>是真正属于你的课。</p>
+                    <div class="ex-future-badge">构想中</div>
+                </div>
+                <div class="ex-future-right">
+                    <h2 class="ex-future-title">未来的舞蹈教学，<br>只<em>属于你</em>。</h2>
+                    <p class="ex-future-lede">教学内容不再是固定的教材——它是实时生成的，根据你当前的学习阶段、你的喜好、你的当前进度，每一次都不同。也许是你喜欢的那个虚拟人物，也许是你一直单曲循环的那首歌，也许恰好是你今天需要练的那个技术点。</p>
+                    <div class="ex-future-pillars">
+                        <div class="ex-future-pillar">
+                            <div class="ex-future-pillar-icon">你喜欢的人物</div>
+                            <div class="ex-future-pillar-label">风格参照</div>
+                            <p class="ex-future-pillar-text">从你仰慕的舞者身上提取动作语言——不是模仿，是用你喜欢的"口音"来和你说话。</p>
+                        </div>
+                        <div class="ex-future-pillar">
+                            <div class="ex-future-pillar-icon">你喜欢的声音</div>
+                            <div class="ex-future-pillar-label">音乐驱动</div>
+                            <p class="ex-future-pillar-text">把你的歌单变成教材。系统读取节奏与情绪，生成与之契合的练习序列，让学习本身就带着赏心悦目。</p>
+                        </div>
+                        <div class="ex-future-pillar">
+                            <div class="ex-future-pillar-icon">你的学习阶段</div>
+                            <div class="ex-future-pillar-label">自适应难度</div>
+                            <p class="ex-future-pillar-text">AI导师跟随你的成长，你现在的学习进度，生成恰好能拉伸你一点点的内容——不太难，不太容易，刚好是你的下一步。</p>
+                        </div>
+                    </div>
+                    <blockquote class="ex-future-quote">"最好的老师，永远知道你现在需要什么。<br>也许 AI 第一次可以做到这件事。"</blockquote>
                 </div>
             </div>
         </div>
@@ -5599,14 +5857,16 @@ body {
                     </div>
                 </div>
             </article>
-            <article class="art-flow-share-item" data-empty="true">
-                <div class="art-flow-share-cover"></div>
+            <article class="art-flow-share-item">
+                <div class="art-flow-share-cover">
+                    <video src="assets/share-case02-cv.mov" poster="assets/share-case02-poster.png" muted loop playsinline autoplay preload="auto" aria-label="Python 计算机视觉重现 TouchDesigner 效果 · 预览"></video>
+                </div>
                 <div class="art-flow-share-text">
-                    <div class="art-flow-share-tag">CASE 02 · 装置</div>
-                    <h3 class="art-flow-share-title">案例标题<em>占位</em>。</h3>
-                    <p class="art-flow-share-desc">美术馆 / 艺术节 装置型展陈案例。 关注的是非舞者观众如何被装置"邀请"进入运动。</p>
+                    <div class="art-flow-share-tag">CASE 02 · 技术实验</div>
+                    <h3 class="art-flow-share-title">Python 与<em>计算机视觉</em>重现 TouchDesigner 效果</h3>
+                    <p class="art-flow-share-desc">用 Python + 计算机视觉模型，在纯代码环境里复刻节点式视觉工具的实时效果。</p>
                     <div class="art-flow-share-meta">
-                        <span>场地 · 待填</span><span>时间 · 待填</span><span>合作方 · 待填</span>
+                        <span>抖动 · 斑点跟踪</span><span>色彩搭配选项</span><span>实时摄像头 / 视频文件</span>
                     </div>
                 </div>
             </article>
@@ -5743,6 +6003,12 @@ const PAGE_HOOKS = {
     },
     'art-flow': {
         lazyInit: () => initArtFlowPage(),
+        onEnter() {
+            scheduleArtFlowShareVideosPlay();
+        },
+        onLeave() {
+            document.querySelectorAll('#page-art-flow .art-flow-share-cover video').forEach((v) => v.pause());
+        },
     },
     mr: {
         lazyInit: () => initMRCanvas(),
@@ -6532,6 +6798,24 @@ function initArtFlowPage() {
         drawPlateFlow(ctx, getW, getH, c, 'art-flow-hero', 'art-flow');
     }
     initArtFlowReel();
+    scheduleArtFlowShareVideosPlay();
+}
+
+/* 落地分享区 cover 视频：页面从隐藏切到可见时 autoplay 可能不触发，需延迟 play() */
+function scheduleArtFlowShareVideosPlay() {
+    const pg = document.getElementById('page-art-flow');
+    if (!pg || !pg.classList.contains('active')) return;
+    const videos = () => Array.from(pg.querySelectorAll('.art-flow-share-cover video'));
+    const go = () => {
+        const p = document.getElementById('page-art-flow');
+        if (!p || !p.classList.contains('active')) return;
+        videos().forEach((v) => v.play().catch(() => {}));
+    };
+    go();
+    requestAnimationFrame(() => requestAnimationFrame(go));
+    setTimeout(go, 50);
+    setTimeout(go, 200);
+    setTimeout(go, 600);
 }
 
 /* ─────────── ART · FLOW · 现场记录 3D Coverflow Reel (CIRCULAR) ───────────
@@ -6591,34 +6875,50 @@ function initArtFlowReel() {
         return Math.max(280, w * RADIUS_FACTOR);
     }
 
+    // 每张卡片直接按「最短偏移 × 角度」就位；stage 只负责透视,
+    // 不再叠加 rotateY. 这样无论 active 累积多少圈, 主卡都在 0° 正对相机.
     function applyTransforms(activeFloat) {
         const R = cylinderRadius();
-        // 整个 stage 绕 Y 轴反向旋转, 把目标卡片带到正前方
-        stage.style.transform = `translateZ(${-R * 0.4}px) rotateY(${-activeFloat * ANGLE_STEP}deg)`;
+        stage.style.transform = `translateZ(${-R * 0.4}px)`;
         cards.forEach((c, i) => {
-            // 圆柱位置: 先按自身角度旋转, 再沿局部 Z 轴推到圆柱表面
-            const angle = i * ANGLE_STEP;
-            // 主卡向前再"探出"一点, 强调聚焦感 (越接近主位 fwd 越大)
             const off = shortestOff(i - activeFloat);
             const abs = Math.abs(off);
             const fwd = Math.max(0, 1 - abs) * 56;
             c.style.transform =
                 `translate(-50%, -50%) ` +
-                `rotateY(${angle}deg) translateZ(${R + fwd}px)`;
+                `rotateY(${off * ANGLE_STEP}deg) ` +
+                `translateZ(${R + fwd}px)`;
             const hidden = abs > 2.4;
-            const opacity = hidden ? 0 : Math.max(0.18, 1 - abs * 0.18);
-            c.style.opacity = String(opacity);
-            // visibility:hidden delays on CSS transition so it waits for opacity fade,
-            // but when becoming visible we remove it immediately (no delay).
-            if (hidden) {
-                c.style.visibility = 'hidden';
-            } else {
-                c.style.visibility = '';
-            }
+            c.style.opacity = String(hidden ? 0 : Math.max(0.16, 0.95 - abs * 0.32));
             c.style.filter = abs < 0.5
                 ? 'none'
-                : `brightness(${Math.max(0.30, 0.75 - abs * 0.10)}) blur(${Math.min(abs * 0.6, 2.0)}px)`;
+                : `brightness(${Math.max(0.28, 0.82 - abs * 0.14)}) blur(${Math.min(abs * 1.0, 2.8)}px)`;
             c.style.zIndex = String(hidden ? 0 : 200 - Math.round(abs * 10));
+        });
+    }
+
+    // 当一次 step 会让某卡片沿「环形最短路径」从 +N/2 端跳到 -N/2 端
+    // (shortestOff 在 ±N/2 处的离散翻转), 若走 CSS transition 会从
+    // 正前方横扫过屏幕. 这里检测到此类卡片, 先无过渡瞬移到新位置
+    // (它此刻 opacity≈0, 位于圆柱背面, 不可见), 再走正常过渡.
+    function teleportWrappingCards(prevActive, nextActive, stepBy) {
+        const threshold = Math.max(Math.abs(stepBy), 1) + 0.5;
+        const R = cylinderRadius();
+        cards.forEach((c, i) => {
+            const prevOff = shortestOff(i - prevActive);
+            const newOff = shortestOff(i - nextActive);
+            if (Math.abs(newOff - prevOff) <= threshold) return;
+            const absNew = Math.abs(newOff);
+            const fwd = Math.max(0, 1 - absNew) * 56;
+            const prevTransition = c.style.transition;
+            c.style.transition = 'none';
+            c.style.opacity = '0';
+            c.style.transform =
+                `translate(-50%, -50%) ` +
+                `rotateY(${newOff * ANGLE_STEP}deg) ` +
+                `translateZ(${R + fwd}px)`;
+            void c.offsetHeight; // force reflow so next style change animates
+            c.style.transition = prevTransition;
         });
     }
 
@@ -6645,8 +6945,11 @@ function initArtFlowReel() {
 
     // 步进: 永远以"最短路径"调整 active 的无界值
     function step(by) {
-        state.active = state.active + by;
+        const prevActive = state.active;
+        const nextActive = state.active + by;
         stage.classList.remove('is-dragging');
+        teleportWrappingCards(prevActive, nextActive, by);
+        state.active = nextActive;
         applyTransforms(state.active);
         applyActiveSideEffects();
     }
