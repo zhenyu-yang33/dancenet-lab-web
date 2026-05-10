@@ -3,7 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
 <title>DanceNet.Lab — 身体、运动与人工智能</title>
+<meta name="description" content="DanceNet.Lab 是一所为身体语言而建的实验室。以姿态、音乐与表达为材料，让人工智能成为新的舞蹈合作者——不是取代肉身，而是延伸它。">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0a0908">
+<!-- Open Graph / Twitter Card -->
+<meta property="og:type"        content="website">
+<meta property="og:site_name"   content="DanceNet.Lab">
+<meta property="og:locale"      content="zh_CN">
+<meta property="og:title"       content="DanceNet.Lab — 身体、运动与人工智能">
+<meta property="og:description" content="DanceNet.Lab 是一所为身体语言而建的实验室。我们以姿态、音乐与表达为材料，让人工智能成为新的舞蹈合作者。">
+<meta property="og:image"       content="assets/og-home.jpg">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card"       content="summary_large_image">
+<meta name="twitter:title"      content="DanceNet.Lab — 身体、运动与人工智能">
+<meta name="twitter:description" content="DanceNet.Lab 是一所为身体语言而建的实验室。我们以姿态、音乐与表达为材料，让人工智能成为新的舞蹈合作者。">
+<meta name="twitter:image"      content="assets/og-home.jpg">
+<!-- Favicon -->
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="assets/manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -176,9 +198,16 @@ body {
 
 .nav-spacer { flex: 1; }
 
-.nav-links { display: flex; gap: 4px; }
+.nav-links {
+    display: flex; gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.nav-links > li { margin: 0; padding: 0; }
 
 .nav-link {
+    display: inline-block;
     background: none; border: none; cursor: pointer;
     font-family: var(--f-mono);
     font-size: 11px; letter-spacing: 0.16em;
@@ -187,6 +216,7 @@ body {
     padding: 8px 14px;
     transition: color 0.2s;
     position: relative;
+    text-decoration: none;
 }
 .nav-link:hover { color: var(--paper); }
 .nav-link.active { color: var(--gold); }
@@ -194,6 +224,10 @@ body {
     content: ''; position: absolute;
     left: 14px; right: 14px; bottom: 2px;
     height: 1px; background: var(--gold);
+}
+.nav-link:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 3px;
 }
 
 .nav-meta {
@@ -206,8 +240,25 @@ body {
 /* ═════════════════════════════════════════════════════════════
    PAGE SYSTEM
 ═════════════════════════════════════════════════════════════ */
+@keyframes dnl-fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
 .page { display: none; }
-.page.active { display: block; }
+.page.active {
+    display: block;
+    animation: dnl-fade-in 0.35s cubic-bezier(.2,.8,.2,1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+    .page.active { animation: none; }
+}
+
+/* SPA 导航链接：消除 <a> 默认样式，保持原有视觉不变 */
+a.exhibit-row, a.story-card, a.exp-card, a.today-image {
+    color: inherit;
+    text-decoration: none;
+}
+a.nav-link { -webkit-tap-highlight-color: transparent; }
 
 /* ═════════════════════════════════════════════════════════════
    HOME · HERO
@@ -279,6 +330,8 @@ body {
     background: none; border: none;
     padding: 14px 0;
     transition: color 0.2s;
+    text-decoration: none;
+    box-sizing: border-box;
 }
 .hero-cta-arrow {
     width: 36px; height: 1px; background: var(--paper);
@@ -295,6 +348,11 @@ body {
 .hero-cta:hover .hero-cta-arrow { background: var(--gold); width: 56px; }
 .hero-cta:hover .hero-cta-arrow::after {
     border-top-color: var(--gold); border-right-color: var(--gold);
+}
+.hero-cta:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 6px;
+    border-radius: 2px;
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -360,6 +418,7 @@ body {
 }
 .today-image {
     /* 限制可视高度，避免人物区过高、整屏无法一屏看完，右侧被撑出大块留白 */
+    display: block;
     width: 100%;
     max-height: min(58vh, 520px);
     aspect-ratio: 4 / 5;
@@ -369,6 +428,7 @@ body {
     position: relative;
     overflow: hidden;
     cursor: pointer;
+    color: inherit; text-decoration: none;
     transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
 }
 .today-image:hover { transform: translateY(-4px); }
@@ -446,6 +506,7 @@ body {
     padding: 36px 0;
     border-top: 1px solid var(--line);
     cursor: pointer;
+    color: inherit; text-decoration: none;
     transition: padding 0.4s cubic-bezier(.2,.8,.2,1);
     align-items: center;
     position: relative;
@@ -518,9 +579,11 @@ body {
 .stories-scroll { scrollbar-width: none; }
 
 .story-card {
+    display: block;
     flex: 0 0 360px;
     cursor: pointer;
     scroll-snap-align: start;
+    color: inherit; text-decoration: none;
     transition: transform 0.5s cubic-bezier(.2,.8,.2,1);
 }
 .story-card:hover { transform: translateY(-6px); }
@@ -626,12 +689,14 @@ body {
     gap: 24px;
 }
 .exp-card {
+    display: block;
     aspect-ratio: 4 / 5;
     background: var(--ink-2);
     border: 1px solid var(--line);
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    color: inherit; text-decoration: none;
     transition: border-color 0.3s;
 }
 .exp-card:hover { border-color: var(--gold-soft); }
@@ -2369,9 +2434,11 @@ body {
     gap: 30px;
 }
 .ex-plate {
+    display: block;
     aspect-ratio: 3 / 4;
     background: var(--ink-2);
     position: relative; overflow: hidden;
+    color: inherit; text-decoration: none;
 }
 .ex-plate canvas { width: 100%; height: 100%; display: block; }
 .ex-plate-cap {
@@ -2610,31 +2677,88 @@ body {
     position: relative;
     overflow: hidden;
 }
-.ex-future::before {
-    content: 'X';
-    font-family: var(--f-serif); font-style: italic;
-    font-size: clamp(180px, 22vw, 320px);
-    color: rgba(212,165,116,0.045);
-    position: absolute; right: var(--gutter); top: 50%;
-    transform: translateY(-50%);
-    line-height: 1; pointer-events: none; user-select: none;
-    letter-spacing: -0.04em;
-}
 .ex-future-inner {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 60px 80px;
+    grid-template-columns: 1fr 1.85fr;
+    gap: 56px 72px;
     align-items: start;
     position: relative;
 }
-.ex-future-left {
-    display: flex; flex-direction: column; gap: 20px;
-    padding-top: 8px;
+
+/* ── 左：视频占位卡 ── */
+.ex-future-video-slot {
+    position: relative;
+    background: var(--ink-2);
+    border: 1px dashed rgba(212,165,116,0.2);
+    aspect-ratio: 3 / 4;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 18px;
+    cursor: pointer;
+    transition: border-color 0.35s, background 0.35s;
+    overflow: hidden;
 }
-.ex-future-mark {
-    font-family: var(--f-serif); font-style: italic;
-    font-size: 80px; color: var(--gold);
-    line-height: 0.85; letter-spacing: -0.02em;
+.ex-future-video-slot:hover {
+    border-color: rgba(212,165,116,0.45);
+    background: var(--ink-3);
+}
+.ex-future-video-slot::after {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent 0, transparent 22px,
+        rgba(212,165,116,0.025) 22px, rgba(212,165,116,0.025) 23px
+    );
+}
+.ex-fvs-play {
+    width: 52px; height: 52px;
+    border: 1px solid rgba(212,165,116,0.3);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative; z-index: 1;
+}
+.ex-future-video-slot:hover .ex-fvs-play {
+    border-color: rgba(212,165,116,0.65);
+    transform: scale(1.1);
+}
+.ex-fvs-play svg { width: 16px; height: 16px; fill: var(--gold); opacity: 0.65; margin-left: 3px; }
+.ex-fvs-label {
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--paper-faint); position: relative; z-index: 1;
+}
+.ex-fvs-sub {
+    font-family: var(--f-mono); font-size: 9px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper-faint); opacity: 0.45; position: relative; z-index: 1;
+}
+
+/* ── 右：整体列 ── */
+.ex-future-right {
+    display: flex; flex-direction: column; gap: 44px;
+}
+
+/* ── 右列整体 ── */
+.ex-future-right { display: flex; flex-direction: column; }
+
+/* ── 同行行：标题（左）＋ X+元信息（右） ── */
+.ex-future-header {
+    display: grid;
+    grid-template-columns: 1fr 190px;
+    gap: 20px 52px;
+    align-items: center;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 44px;
+}
+
+/* ── X + 元信息纵列 ── */
+.ex-future-meta {
+    display: flex; flex-direction: column; gap: 20px;
+}
+.ex-future-meta-text {
+    display: flex; flex-direction: column; gap: 12px;
 }
 .ex-future-eyebrow {
     font-family: var(--f-mono); font-size: 10.5px;
@@ -2644,20 +2768,29 @@ body {
 .ex-future-divider {
     width: 40px; height: 1px;
     background: var(--gold-deep); opacity: 0.6;
-    margin: 4px 0;
 }
-.ex-future-right {
-    display: flex; flex-direction: column; gap: 32px;
+.ex-future-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper-faint);
+    border: 1px solid var(--line); padding: 6px 14px;
+    width: fit-content;
 }
+.ex-future-badge::before {
+    content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--paper-faint);
+}
+
+/* ── 主体内容 ── */
+.ex-future-body { display: flex; flex-direction: column; gap: 32px; }
 .ex-future-title {
     font-family: var(--f-serif); font-style: italic;
-    font-size: clamp(32px, 3.5vw, 52px);
-    color: var(--paper); line-height: 1.1;
+    font-size: clamp(30px, 3.2vw, 50px);
+    color: var(--paper); line-height: 1.05;
     letter-spacing: -0.015em;
 }
-.ex-future-title em {
-    color: var(--gold); font-style: inherit;
-}
+.ex-future-title em { color: var(--gold); font-style: inherit; }
 .ex-future-lede {
     font-size: 15px; line-height: 1.85;
     color: var(--paper-soft); max-width: 52ch;
@@ -2666,7 +2799,6 @@ body {
     display: grid; grid-template-columns: repeat(3,1fr);
     gap: 1px; background: var(--line);
     border: 1px solid var(--line);
-    margin-top: 8px;
 }
 .ex-future-pillar {
     background: var(--ink-2);
@@ -2695,22 +2827,83 @@ body {
     font-size: 18px; color: var(--paper-soft);
     line-height: 1.55;
 }
-.ex-future-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-family: var(--f-mono); font-size: 10px;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--paper-faint);
-    border: 1px solid var(--line); padding: 6px 14px;
-    width: fit-content;
+
+/* ══ 动态 X ── 与 β / γ 同款字型，专属光效 ══ */
+
+/* 外层：负责呼吸光晕 */
+.vision-x-wrap {
+    flex-shrink: 0;
+    display: inline-block;
+    position: relative;
+    animation: vx-halo 3.8s ease-in-out 1.5s infinite;
 }
-.ex-future-badge::before {
-    content: ''; width: 5px; height: 5px; border-radius: 50%;
-    background: var(--paper-faint);
+@keyframes vx-halo {
+    0%, 100% {
+        filter:
+            drop-shadow(0 0  6px rgba(212,165,116,0.28))
+            drop-shadow(0 0 18px rgba(212,165,116,0.08));
+    }
+    50% {
+        filter:
+            drop-shadow(0 0 20px rgba(245,200, 80,0.62))
+            drop-shadow(0 0 50px rgba(212,165,116,0.20));
+    }
 }
+
+/* 字符本体：serif italic，同 β / γ，但稍大 + 金渐变 + 扫光 + 漂浮 */
+.vision-x-char {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 88px; line-height: 0.8;
+    display: block;
+
+    /* 多段金渐变（从暗到亮再暗，模拟铸金质感） */
+    background: linear-gradient(
+        128deg,
+        #6a3e10 0%,
+        #c88828 18%,
+        #f0be48 36%,
+        #fdf4b8 52%,
+        #f0be48 68%,
+        #c88828 84%,
+        #6a3e10 100%
+    );
+    background-size: 260% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    opacity: 0;
+    animation:
+        vx-char-in  0.65s cubic-bezier(.2,.8,.2,1) 0.18s forwards,
+        vx-sweep    5.2s  linear                   1.0s  infinite,
+        vx-float    5.8s  ease-in-out              2.2s  infinite;
+}
+
+/* 入场：模糊→清晰，缩放弹入 */
+@keyframes vx-char-in {
+    from { opacity: 0; filter: blur(18px); transform: scale(0.78) translateY(12px); }
+    to   { opacity: 1; filter: blur(0);    transform: scale(1)    translateY(0); }
+}
+
+/* 光带扫过：background-position 左→右循环 */
+@keyframes vx-sweep {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -60% 0; }
+}
+
+/* 漂浮 + 轻微转角（比 β/γ 更活泼） */
+@keyframes vx-float {
+    0%, 100% { transform: translateY(0)    rotate(0deg);   }
+    32%      { transform: translateY(-5px) rotate(0.6deg); }
+    68%      { transform: translateY(3px)  rotate(-0.4deg); }
+}
+
 @media (max-width: 800px) {
-    .ex-future-inner { grid-template-columns: 1fr; gap: 36px; }
+    .ex-future-inner  { grid-template-columns: 1fr; gap: 40px; }
+    .ex-future-header { grid-template-columns: 1fr; gap: 28px; }
+    .ex-future-video-slot { aspect-ratio: 16 / 9; }
     .ex-future-pillars { grid-template-columns: 1fr; }
-    .ex-future::before { font-size: 140px; right: -20px; opacity: 0.03; }
+    .vision-x-char { font-size: 68px; }
 }
 
 /* Modal video */
@@ -4201,6 +4394,92 @@ body {
     .wb2-nav-center { width: 100%; flex: none; text-align: left; order: 3; }
     .wb2-nav-right { margin-left: 0; }
 }
+
+/* ═════════════════════════════════════════════════════════════
+   TOAST NOTIFICATION SYSTEM
+═════════════════════════════════════════════════════════════ */
+#dnl-toast-host {
+    position: fixed;
+    top: calc(var(--nav-h) + 12px);
+    right: 20px;
+    z-index: 9900;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    max-width: min(360px, calc(100vw - 40px));
+}
+.dnl-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 4px;
+    background: rgba(24, 22, 19, 0.96);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--line-mid);
+    border-left-width: 3px;
+    color: var(--paper);
+    font-family: var(--f-sans);
+    font-size: 13.5px;
+    line-height: 1.45;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.55);
+    animation: toastIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+    will-change: transform, opacity;
+}
+.dnl-toast.is-exiting {
+    animation: toastOut 0.22s ease-in both;
+}
+.dnl-toast--error { border-left-color: var(--ember); }
+.dnl-toast--warn  { border-left-color: var(--gold); }
+.dnl-toast--ok    { border-left-color: var(--moss); }
+.dnl-toast__icon {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-style: normal;
+}
+.dnl-toast--error .dnl-toast__icon { background: var(--ember); color: #fff; }
+.dnl-toast--warn  .dnl-toast__icon { background: var(--gold);  color: var(--ink); }
+.dnl-toast--ok    .dnl-toast__icon { background: var(--moss);  color: #fff; }
+.dnl-toast__body { flex: 1; min-width: 0; }
+.dnl-toast__title {
+    font-weight: 500;
+    margin-bottom: 2px;
+    color: var(--paper);
+}
+.dnl-toast__msg { color: var(--paper-soft); font-size: 13px; }
+.dnl-toast__close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: var(--paper-faint);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    font-size: 16px;
+    margin-top: -1px;
+    transition: color 0.15s;
+}
+.dnl-toast__close:hover { color: var(--paper); }
+@keyframes toastIn {
+    from { opacity: 0; transform: translateX(18px) scale(0.97); }
+    to   { opacity: 1; transform: translateX(0)    scale(1); }
+}
+@keyframes toastOut {
+    from { opacity: 1; transform: translateX(0); max-height: 120px; margin-top: 0; }
+    to   { opacity: 0; transform: translateX(18px); max-height: 0;   margin-top: -10px; }
+}
+@media (max-width: 480px) {
+    #dnl-toast-host { right: 12px; left: 12px; max-width: none; }
+}
 </style>
 </head>
 <body>
@@ -4209,20 +4488,20 @@ body {
 <!-- ════════════════════════════════════════
      NAVIGATION
 ════════════════════════════════════════ -->
-<nav class="nav" id="nav">
-    <a class="nav-brand" onclick="showPage('home')">
+<nav class="nav" id="nav" aria-label="主导航">
+    <a class="nav-brand" href="#home">
         <span class="nav-brand-mark"></span>
         DanceNet<span style="opacity:.5">.Lab</span>
     </a>
     <div class="nav-spacer"></div>
-    <div class="nav-links">
-        <button class="nav-link" id="nav-home" onclick="showPage('home')">首页</button>
-        <button class="nav-link" id="nav-agent" onclick="showPage('agent')">智能导师</button>
-        <button class="nav-link" id="nav-art" onclick="showPage('art')">光影为媒</button>
-        <button class="nav-link" id="nav-mr" onclick="showPage('mr')">虚实之间</button>
-        <button class="nav-link" id="nav-aigc" onclick="showPage('aigc')">The Synthesis</button>
-    </div>
-    <div class="nav-meta" id="nav-meta">第 04 期 · 2026</div>
+    <ul class="nav-links">
+        <li><a class="nav-link" id="nav-home"  href="#home">首页</a></li>
+        <li><a class="nav-link" id="nav-agent" href="#agent">智能导师</a></li>
+        <li><a class="nav-link" id="nav-art"   href="#art">光影为媒</a></li>
+        <li><a class="nav-link" id="nav-mr"    href="#mr">虚实之间</a></li>
+        <li><a class="nav-link" id="nav-aigc"  href="#aigc">The Synthesis</a></li>
+    </ul>
+    <div class="nav-meta" id="nav-meta" aria-hidden="true">第 04 期 · 2026</div>
 </nav>
 
 <!-- ════════════════════════════════════════
@@ -4232,7 +4511,7 @@ body {
 
     <!-- HERO -->
     <section class="hero">
-        <canvas id="hero-canvas"></canvas>
+        <canvas id="hero-canvas" aria-hidden="true"></canvas>
         <div class="hero-vignette"></div>
         <div class="hero-meta-top">
             <div class="left">DanceNet.Lab · 身体、运动与人工智能</div>
@@ -4245,10 +4524,10 @@ body {
             </div>
             <div class="hero-pull">
                 <p class="lede">DanceNet.Lab 是一所为身体语言而建的实验室。我们以姿态、音乐与表达为材料，让人工智能成为新的舞蹈合作者——不是取代肉身，而是延伸它。</p>
-                <button class="hero-cta" onclick="showPage('agent')">
+                <a class="hero-cta" href="#agent">
                     进入AI导师互动
                     <span class="hero-cta-arrow"></span>
-                </button>
+                </a>
                 <div class="hero-pull-meta">
                     <span>春 · 2026</span>
                     <span>卷四</span>
@@ -4280,14 +4559,14 @@ body {
         </div>
 
         <div class="today">
-            <div class="today-image" onclick="showPage('agent')">
-                <canvas id="today-canvas"></canvas>
+            <a class="today-image" href="#agent">
+                <canvas id="today-canvas" aria-hidden="true"></canvas>
                 <div class="today-image-tag">正在呈现</div>
                 <div class="today-image-caption">
                     <span>姿态 · 音乐 · 表达 · 知识</span>
                     <span>实时</span>
                 </div>
-            </div>
+            </a>
             <div class="today-text">
                 <div>
                     <div class="today-eyebrow">展览 I · AI agent 智能导师</div>
@@ -4305,10 +4584,10 @@ body {
                         <div class="today-meta-item"><span class="k">参考时长</span><span class="v">约 2 分钟 / 段</span></div>
                         <div class="today-meta-item"><span class="k">模型</span><span class="v">MediaPipe · Qwen3.6</span></div>
                     </div>
-                    <button class="hero-cta" style="margin-top:24px;" onclick="showPage('agent')">
+                    <a class="hero-cta" href="#agent" style="margin-top:24px;">
                         进入智能导师
                         <span class="hero-cta-arrow"></span>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -4322,7 +4601,7 @@ body {
         </div>
 
         <div class="exhibits-list">
-            <div class="exhibit-row" onclick="showPage('agent')">
+            <a class="exhibit-row" href="#agent">
                 <div class="exhibit-num">I</div>
                 <div class="exhibit-info">
                     <div class="exhibit-info-tag">展览 · 线上 · 互动</div>
@@ -4330,10 +4609,10 @@ body {
                     <div class="exhibit-info-zh">AI Agent 教练 · 一位会看你跳舞的算法</div>
                 </div>
                 <div class="exhibit-desc">从视频到诊断的完整工作流：感知层 → 运动学 → 认知 → RAG → 报告。可上传、可追问、可下载。</div>
-                <div class="exhibit-thumb"><canvas data-thumb="studio"></canvas></div>
-            </div>
+                <div class="exhibit-thumb"><canvas data-thumb="studio" aria-hidden="true"></canvas></div>
+            </a>
 
-            <div class="exhibit-row" onclick="showPage('art')">
+            <a class="exhibit-row" href="#art">
                 <div class="exhibit-num">II</div>
                 <div class="exhibit-info">
                     <div class="exhibit-info-tag">展览 · 研究 · 生成</div>
@@ -4341,10 +4620,10 @@ body {
                     <div class="exhibit-info-zh">舞蹈与艺术 · 让动作本身成为材料</div>
                 </div>
                 <div class="exhibit-desc">把 33 个关键点的时序数据当作画笔，让算法画出一支舞的形状、能量场与频谱。</div>
-                <div class="exhibit-thumb"><canvas data-thumb="medium"></canvas></div>
-            </div>
+                <div class="exhibit-thumb"><canvas data-thumb="medium" aria-hidden="true"></canvas></div>
+            </a>
 
-            <div class="exhibit-row" onclick="showPage('mr')">
+            <a class="exhibit-row" href="#mr">
                 <div class="exhibit-num">III</div>
                 <div class="exhibit-info">
                     <div class="exhibit-info-tag">展览 · 原型 · 空间</div>
@@ -4352,10 +4631,10 @@ body {
                     <div class="exhibit-info-zh">舞蹈与 MR · 在空间中重写身体</div>
                 </div>
                 <div class="exhibit-desc">把 AI 教练搬进混合现实——3D 骨架、运动残影、关节级标注，悬浮于真实空间之中。</div>
-                <div class="exhibit-thumb"><canvas data-thumb="spaces"></canvas></div>
-            </div>
+                <div class="exhibit-thumb"><canvas data-thumb="spaces" aria-hidden="true"></canvas></div>
+            </a>
 
-            <div class="exhibit-row" onclick="showPage('aigc')">
+            <a class="exhibit-row" href="#aigc">
                 <div class="exhibit-num">IV</div>
                 <div class="exhibit-info">
                     <div class="exhibit-info-tag">展览 · 即将 · 生成</div>
@@ -4363,8 +4642,8 @@ body {
                     <div class="exhibit-info-zh">AIGC · 让 AI 成为编舞者</div>
                 </div>
                 <div class="exhibit-desc">从一句话到一段编排：文本驱动动作生成、音乐到编舞作品、风格之间的迁移。</div>
-                <div class="exhibit-thumb"><canvas data-thumb="synthesis"></canvas></div>
-            </div>
+                <div class="exhibit-thumb"><canvas data-thumb="synthesis" aria-hidden="true"></canvas></div>
+            </a>
         </div>
     </section>
 
@@ -4377,31 +4656,31 @@ body {
     </section>
 
     <div class="stories-scroll">
-        <div class="story-card" onclick="showPage('art')">
-            <div class="story-image"><canvas data-thumb="story1"></canvas><div class="story-tag">随笔</div></div>
+        <a class="story-card" href="#art">
+            <div class="story-image"><canvas data-thumb="story1" aria-hidden="true"></canvas><div class="story-tag">随笔</div></div>
             <div class="story-meta"><span>社论 · 04.27</span><span>约 7 分钟</span></div>
             <h3 class="story-title">为什么 AI 永远学不会<em>那一秒</em>的停顿。</h3>
-        </div>
-        <div class="story-card" onclick="showPage('agent')">
-            <div class="story-image"><canvas data-thumb="story2"></canvas><div class="story-tag">札记</div></div>
+        </a>
+        <a class="story-card" href="#agent">
+            <div class="story-image"><canvas data-thumb="story2" aria-hidden="true"></canvas><div class="story-tag">札记</div></div>
             <div class="story-meta"><span>实验札记 · 04.21</span><span>约 5 分钟</span></div>
-            <h3 class="story-title">33 个关键点能描述一支舞的<em>多少</em>？</h3>
-        </div>
-        <div class="story-card" onclick="showPage('mr')">
-            <div class="story-image"><canvas data-thumb="story3"></canvas><div class="story-tag">档案</div></div>
+            <h3 class="story-title">33 个关键点能描述一支舞的<em>多少动作</em>？</h3>
+        </a>
+        <a class="story-card" href="#mr">
+            <div class="story-image"><canvas data-thumb="story3" aria-hidden="true"></canvas><div class="story-tag">档案</div></div>
             <div class="story-meta"><span>现场 · 04.14</span><span>约 9 分钟</span></div>
-            <h3 class="story-title">混合现实里, 肌肉<em>记得</em>路径。</h3>
-        </div>
-        <div class="story-card" onclick="showPage('aigc')">
-            <div class="story-image"><canvas data-thumb="story4"></canvas><div class="story-tag">实验</div></div>
+            <h3 class="story-title">现实训练里, 肌肉<em>记忆</em>动作路径。</h3>
+        </a>
+        <a class="story-card" href="#aigc">
+            <div class="story-image"><canvas data-thumb="story4" aria-hidden="true"></canvas><div class="story-tag">实验</div></div>
             <div class="story-meta"><span>研究 · 04.07</span><span>约 6 分钟</span></div>
-            <h3 class="story-title">编舞模型的<em>风格向量</em>能不能交易？</h3>
-        </div>
-        <div class="story-card" onclick="showPage('art')">
-            <div class="story-image"><canvas data-thumb="story5"></canvas><div class="story-tag">对谈</div></div>
+            <h3 class="story-title">编舞模型的<em>风格向量</em>能不能切换？</h3>
+        </a>
+        <a class="story-card" href="#art">
+            <div class="story-image"><canvas data-thumb="story5" aria-hidden="true"></canvas><div class="story-tag">对谈</div></div>
             <div class="story-meta"><span>对谈 · 03.30</span><span>约 12 分钟</span></div>
-            <h3 class="story-title">与 Popping 老师 W 的<em>三次对话</em>。</h3>
-        </div>
+            <h3 class="story-title">与 Hiphop 老师 Rain 的<em>三次对话</em>。</h3>
+        </a>
     </div>
 
     <!-- MANIFESTO -->
@@ -4432,8 +4711,8 @@ body {
         </div>
 
         <div class="experiments">
-            <div class="exp-card" onclick="showPage('exp1')">
-                <canvas class="exp-canvas" data-exp="paper-rig"></canvas>
+            <a class="exp-card" href="#exp1">
+                <canvas class="exp-canvas" data-exp="paper-rig" aria-hidden="true"></canvas>
                 <div class="exp-overlay">
                     <div class="exp-tag">实验 · 01 · 全流程上线</div>
                     <div class="exp-bottom">
@@ -4441,9 +4720,9 @@ body {
                         <p class="exp-desc">上传一张你随手画的纸人或动物——AI 帮它找到关节, 选一段动作, 让它在屏幕上跳起来。</p>
                     </div>
                 </div>
-            </div>
-            <div class="exp-card" onclick="showPage('exp2')">
-                <canvas class="exp-canvas" data-exp="vangogh"></canvas>
+            </a>
+            <a class="exp-card" href="#exp2">
+                <canvas class="exp-canvas" data-exp="vangogh" aria-hidden="true"></canvas>
                 <div class="exp-overlay">
                     <div class="exp-tag">实验 · 02 · 可玩</div>
                     <div class="exp-bottom">
@@ -4451,7 +4730,7 @@ body {
                         <p class="exp-desc">打开摄像头, 把你的舞动转成梵高式的笔触粒子。 拖入一段音乐——低音推动速度, 高音点亮新笔触。</p>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
     </section>
 
@@ -4465,28 +4744,28 @@ body {
             <div>
                 <div class="footer-col-title">展览</div>
                 <div class="footer-col-list">
-                    <a onclick="showPage('agent')">智能导师</a>
-                    <a onclick="showPage('art')">光影为媒</a>
-                    <a onclick="showPage('mr')">虚实之间</a>
-                    <a onclick="showPage('aigc')">The Synthesis</a>
+                    <a href="#agent">智能导师</a>
+                    <a href="#art">光影为媒</a>
+                    <a href="#mr">虚实之间</a>
+                    <a href="#aigc">The Synthesis</a>
                 </div>
             </div>
             <div>
                 <div class="footer-col-title">实验</div>
                 <div class="footer-col-list">
-                    <a onclick="showPage('exp1')">让画动起来</a>
-                    <a onclick="showPage('exp2')">梵高之眼</a>
-                    <a onclick="showPage('art-flow')">代码与我们</a>
+                    <a href="#exp1">让画动起来</a>
+                    <a href="#exp2">梵高之眼</a>
+                    <a href="#art-flow">代码与我们</a>
                     <a>对谈</a>
                 </div>
             </div>
             <div>
                 <div class="footer-col-title">实验室</div>
                 <div class="footer-col-list">
-                    <a onclick="showPage('about')">关于我们</a>
-                    <a onclick="showPage('about')">研究</a>
-                    <a onclick="showPage('about'); setTimeout(() => document.getElementById('about-contact')?.scrollIntoView({behavior:'smooth'}), 60);">联系</a>
-                    <a onclick="showPage('about'); setTimeout(() => document.getElementById('about-contact')?.scrollIntoView({behavior:'smooth'}), 60);">媒体</a>
+                    <a href="#about">关于我们</a>
+                    <a href="#about">研究</a>
+                    <a href="#about" data-scroll-to="about-contact">联系</a>
+                    <a href="#about" data-scroll-to="about-contact">媒体</a>
                 </div>
             </div>
         </div>
@@ -4504,7 +4783,7 @@ body {
 
     <!-- HERO -->
     <section class="agent-hero">
-        <canvas id="agent-hero-canvas"></canvas>
+        <canvas id="agent-hero-canvas" aria-hidden="true"></canvas>
         <div class="agent-hero-mask"></div>
         <div class="agent-hero-inner">
             <div class="agent-hero-badge"><span class="num">I</span><span>展览 · 线上 · v1.0</span></div>
@@ -4707,7 +4986,7 @@ body {
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>展览 I · 智能导师 · DanceNet.Lab</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a href="#home" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -4720,14 +4999,14 @@ body {
         <div class="ex-cover art-cover">
             <!-- 背景视频 -->
             <video id="art-cover-video"
-                   src="assets/art-hero.mp4"
-                   poster="assets/art-hero-poster.jpg"
+                   data-src="assets/art-hero.mp4"
+                   data-poster="assets/art-hero-poster.jpg"
                    muted loop playsinline autoplay
-                   preload="auto"></video>
+                   preload="none"></video>
             <!-- 视频遮罩：左→右暗化，右边内容区保持可读 -->
             <div class="art-cover-overlay"></div>
             <!-- 圆形 canvas 动效：左侧叠加 -->
-            <canvas id="art-cover-canvas" class="art-cover-canvas"></canvas>
+            <canvas id="art-cover-canvas" class="art-cover-canvas" aria-hidden="true"></canvas>
             <div class="ex-cover-vignette"></div>
             <div class="ex-cover-content">
                 <div>
@@ -4747,7 +5026,7 @@ body {
                     <dt>状态</dt><dd>研究中</dd>
                     <dt>年份</dt><dd>2026 — 持续</dd>
                     <dt>媒介</dt><dd>17 关键点 · canvas · 时间</dd>
-                    <dt>相关</dt><dd><a onclick="showPage('agent')" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
+                    <dt>相关</dt><dd><a href="#agent" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
                 </dl>
             </aside>
 
@@ -4777,37 +5056,37 @@ body {
                 </div>
                 <div class="ex-aux-card">
                     <div class="ex-aux-card-title">延伸阅读</div>
-                    <p style="margin-bottom:14px;"><a onclick="showPage('art-flow')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 摄像机看见我们</a></p>
-                    <p style="margin-bottom:14px;"><a onclick="showPage('agent')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 智能导师</a></p>
-                    <p><a onclick="showPage('aigc')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ The Synthesis</a></p>
+                    <p style="margin-bottom:14px;"><a href="#art-flow" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 摄像机看见我们</a></p>
+                    <p style="margin-bottom:14px;"><a href="#agent" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 智能导师</a></p>
+                    <p><a href="#aigc" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ The Synthesis</a></p>
                 </div>
             </aside>
         </div>
 
         <!-- Plates -->
         <div class="ex-plates">
-            <div class="ex-plate ex-plate-video" id="plate-flow" onclick="showPage('art-flow')" role="button" tabindex="0">
-                <canvas data-plate="plate-flow"></canvas>
+            <a class="ex-plate ex-plate-video" id="plate-flow" href="#art-flow" aria-label="图版 I · 看见我们 — 进入互动现场">
+                <canvas data-plate="plate-flow" aria-hidden="true"></canvas>
                 <div class="ex-plate-mask"></div>
                 <div class="ex-plate-hint">
                     <span class="ex-plate-hint-mark">▶</span>
                     <span class="ex-plate-hint-txt">点击 · 进入互动现场</span>
                 </div>
-                <div class="ex-plate-cap"><span>图版 I ·看见我们</span><span>实时互动 · 2026</span></div>
-            </div>
+                <div class="ex-plate-cap"><span>图版 I · 看见我们</span><span>实时互动 · 2026</span></div>
+            </a>
             <div class="ex-plate ex-plate-ambient" id="plate-interactive-wrap">
                 <video id="plate-interactive-video"
-                       src="assets/plate-interactive.mp4"
-                       poster="assets/plate-interactive-poster.jpg"
-                       muted loop playsinline preload="metadata"></video>
+                       data-src="assets/plate-interactive.mp4"
+                       data-poster="assets/plate-interactive-poster.jpg"
+                       muted loop playsinline preload="none"></video>
                 <div class="ex-plate-mask"></div>
                 <div class="ex-plate-cap"><span>图版 II · 光影互动</span><span>2026</span></div>
             </div>
             <div class="ex-plate ex-plate-video" id="plate-awaken" onclick="openAwakenModal()" role="button" tabindex="0">
                 <video id="plate-awaken-video"
-                       src="assets/plate-awaken.mp4"
-                       poster="assets/plate-awaken-poster.jpg"
-                       muted loop playsinline autoplay preload="auto"
+                       data-src="assets/plate-awaken.mp4"
+                       data-poster="assets/plate-awaken-poster.jpg"
+                       muted loop playsinline autoplay preload="none"
                        data-art-plate-video></video>
                 <div class="ex-plate-mask"></div>
                 <div class="ex-plate-hint">
@@ -4821,7 +5100,7 @@ body {
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>展览 II · 光影为媒 · DanceNet.Lab</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a href="#home" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -4832,7 +5111,7 @@ body {
 <div id="page-mr" class="page">
     <section class="ex-page">
         <div class="ex-cover">
-            <canvas id="mr-cover-canvas"></canvas>
+            <canvas id="mr-cover-canvas" aria-hidden="true"></canvas>
             <div class="ex-cover-vignette"></div>
             <div class="ex-cover-content">
                 <div>
@@ -4852,7 +5131,7 @@ body {
                     <dt>状态</dt><dd>原型</dd>
                     <dt>硬件</dt><dd>Vision Pro · ARKit</dd>
                     <dt>技术栈</dt><dd>WebXR · MediaPipe 3D</dd>
-                    <dt>相关</dt><dd><a onclick="showPage('agent')" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
+                    <dt>相关</dt><dd><a href="#agent" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
                 </dl>
             </aside>
 
@@ -4880,14 +5159,14 @@ body {
                 </div>
                 <div class="ex-aux-card">
                     <div class="ex-aux-card-title">延伸阅读</div>
-                    <p><a onclick="showPage('agent')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 智能导师</a></p>
+                    <p><a href="#agent" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 智能导师</a></p>
                 </div>
             </aside>
         </div>
 
         <div class="ex-phases">
-            <video class="ex-phases-video" autoplay muted loop playsinline>
-                <source src="assets/mr-phases-bg.mp4" type="video/mp4">
+            <video class="ex-phases-video" autoplay muted loop playsinline preload="none">
+                <source data-src="assets/mr-phases-bg.mp4" type="video/mp4">
             </video>
             <div class="ex-phases-overlay"></div>
             <div class="sec-head" style="margin-bottom:0;">
@@ -4923,7 +5202,7 @@ body {
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>展览 III · 虚实之间 · DanceNet.Lab</span>
-            <span><a onclick="showPage('home')" class="mr-back-btn">← 回到首页</a></span>
+            <span><a href="#home" class="mr-back-btn">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -4934,7 +5213,7 @@ body {
 <div id="page-aigc" class="page">
     <section class="ex-page">
         <div class="ex-cover">
-            <canvas id="aigc-cover-canvas"></canvas>
+            <canvas id="aigc-cover-canvas" aria-hidden="true"></canvas>
             <div class="ex-cover-vignette"></div>
             <div class="ex-cover-content">
                 <div>
@@ -4954,7 +5233,7 @@ body {
                     <dt>状态</dt><dd>即将推出</dd>
                     <dt>模型</dt><dd>MDM · MoMask · Custom</dd>
                     <dt>格式</dt><dd>SMPL-X · BVH</dd>
-                    <dt>相关</dt><dd><a onclick="showPage('agent')" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
+                    <dt>相关</dt><dd><a href="#agent" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
                 </dl>
             </aside>
 
@@ -4984,7 +5263,7 @@ body {
                 </div>
                 <div class="ex-aux-card">
                     <div class="ex-aux-card-title">延伸阅读</div>
-                    <p><a onclick="showPage('art')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 光影为媒</a></p>
+                    <p><a href="#art" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 光影为媒</a></p>
                 </div>
             </aside>
         </div>
@@ -5022,34 +5301,64 @@ body {
         <!-- ── X · 未来的课 ── -->
         <div class="ex-future">
             <div class="ex-future-inner">
-                <div class="ex-future-left">
-                    <div class="ex-future-eyebrow">下一站 · 愿景</div>
-                    <div class="ex-future-mark">X</div>
-                    <div class="ex-future-divider"></div>
-                    <p style="font-size:13px;line-height:1.7;color:var(--paper-faint);font-family:var(--f-mono);letter-spacing:0.04em;">不只是生成——<br>是真正属于你的课。</p>
-                    <div class="ex-future-badge">构想中</div>
+
+                <!-- 左：视频占位卡（待上传） -->
+                <div class="ex-future-video-slot" id="vision-video-slot" role="img" aria-label="视频占位 · 即将上传">
+                    <div class="ex-fvs-play">
+                        <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <polygon points="3,1 15,8 3,15"/>
+                        </svg>
+                    </div>
+                    <div class="ex-fvs-label">即将呈现</div>
+                    <div class="ex-fvs-sub">视频 · 愿景演示</div>
                 </div>
+
+                <!-- 右：同行标题+X · 然后正文 -->
                 <div class="ex-future-right">
-                    <h2 class="ex-future-title">未来的舞蹈教学，<br>只<em>属于你</em>。</h2>
-                    <p class="ex-future-lede">教学内容不再是固定的教材——它是实时生成的，根据你当前的学习阶段、你的喜好、你的当前进度，每一次都不同。也许是你喜欢的那个虚拟人物，也许是你一直单曲循环的那首歌，也许恰好是你今天需要练的那个技术点。</p>
-                    <div class="ex-future-pillars">
-                        <div class="ex-future-pillar">
-                            <div class="ex-future-pillar-icon">你喜欢的人物</div>
-                            <div class="ex-future-pillar-label">风格参照</div>
-                            <p class="ex-future-pillar-text">从你仰慕的舞者身上提取动作语言——不是模仿，是用你喜欢的"口音"来和你说话。</p>
-                        </div>
-                        <div class="ex-future-pillar">
-                            <div class="ex-future-pillar-icon">你喜欢的声音</div>
-                            <div class="ex-future-pillar-label">音乐驱动</div>
-                            <p class="ex-future-pillar-text">把你的歌单变成教材。系统读取节奏与情绪，生成与之契合的练习序列，让学习本身就带着赏心悦目。</p>
-                        </div>
-                        <div class="ex-future-pillar">
-                            <div class="ex-future-pillar-icon">你的学习阶段</div>
-                            <div class="ex-future-pillar-label">自适应难度</div>
-                            <p class="ex-future-pillar-text">AI导师跟随你的成长，你现在的学习进度，生成恰好能拉伸你一点点的内容——不太难，不太容易，刚好是你的下一步。</p>
+
+                    <!-- 同行行：h2（左）＋ X+元信息（右） -->
+                    <div class="ex-future-header">
+
+                        <h2 class="ex-future-title">未来的舞蹈教学，<br>只<em>属于你</em>。</h2>
+
+                        <div class="ex-future-meta">
+                            <!-- 动态 X（与 β/γ 同款字型，专属光效） -->
+                            <div class="vision-x-wrap" aria-hidden="true">
+                                <span class="vision-x-char">X</span>
+                            </div>
+
+                            <div class="ex-future-meta-text">
+                                <div class="ex-future-eyebrow">下一站 · 愿景</div>
+                                <div class="ex-future-divider"></div>
+                                <p style="font-size:13px;line-height:1.7;color:var(--paper-faint);font-family:var(--f-mono);letter-spacing:0.04em;">不只是生成——<br>是真正属于你的课。</p>
+                                <div class="ex-future-badge">构想中</div>
+                            </div>
                         </div>
                     </div>
-                    <blockquote class="ex-future-quote">"最好的老师，永远知道你现在需要什么。<br>也许 AI 第一次可以做到这件事。"</blockquote>
+
+                    <!-- 主体正文 -->
+                    <div class="ex-future-body">
+                        <p class="ex-future-lede">教学内容不再是固定的教材——它是实时生成的，根据你当前的学习阶段、你的喜好、你的当前进度，每一次都不同。也许是你喜欢的那个虚拟人物，也许是你一直单曲循环的那首歌，也许恰好是你今天需要练的那个技术点。</p>
+                        <div class="ex-future-pillars">
+                            <div class="ex-future-pillar">
+                                <div class="ex-future-pillar-icon">你喜欢的人物</div>
+                                <div class="ex-future-pillar-label">风格参照</div>
+                                <p class="ex-future-pillar-text">从你仰慕的舞者身上提取动作语言——不是模仿，是用你喜欢的"口音"来和你说话。</p>
+                            </div>
+                            <div class="ex-future-pillar">
+                                <div class="ex-future-pillar-icon">你喜欢的声音</div>
+                                <div class="ex-future-pillar-label">音乐驱动</div>
+                                <p class="ex-future-pillar-text">把你的歌单变成教材。系统读取节奏与情绪，生成与之契合的练习序列，让学习本身就带着赏心悦目。</p>
+                            </div>
+                            <div class="ex-future-pillar">
+                                <div class="ex-future-pillar-icon">你的学习阶段</div>
+                                <div class="ex-future-pillar-label">自适应难度</div>
+                                <p class="ex-future-pillar-text">AI导师跟随你的成长，你现在的学习进度，生成恰好能拉伸你一点点的内容——不太难，不太容易，刚好是你的下一步。</p>
+                            </div>
+                        </div>
+                        <blockquote class="ex-future-quote">"最好的老师，永远知道你现在需要什么。<br>也许 AI 第一次可以做到这件事。"</blockquote>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -5058,7 +5367,7 @@ body {
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>展览 IV · The Synthesis · DanceNet.Lab</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a href="#home" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -5070,9 +5379,9 @@ body {
     <section class="ex-page">
         <div class="ex-cover exp1-cover">
             <video id="exp1-cover-video"
-                src="file:///Users/Zhuanz1/Desktop/4%E6%9C%8830%E6%97%A5%281%29.mov"
+                data-src="assets/exp1-cover-hero.mp4"
                 muted loop playsinline autoplay
-                preload="auto"></video>
+                preload="metadata"></video>
             <div class="ex-cover-vignette"></div>
             <a href="#exp1-playground" class="exp1-cover-hit" aria-label="前往工作台 · 上传作品并试玩"></a>
             <div class="ex-cover-content">
@@ -5094,7 +5403,7 @@ body {
                     <dt>状态</dt><dd>全部五阶段 · 已上线</dd>
                     <dt>类型</dt><dd>纯前端 · 可上传 · 可导出</dd>
                     <dt>关键词</dt><dd>上传 · 裁剪 · 抠图 · 关节 · Rigging · 导出</dd>
-                    <dt>相关</dt><dd><a onclick="showPage('exp2')" style="color:var(--gold);cursor:pointer;text-decoration:none;">实验 02 →</a></dd>
+                    <dt>相关</dt><dd><a href="#exp2" style="color:var(--gold);cursor:pointer;text-decoration:none;">实验 02 →</a></dd>
                 </dl>
             </aside>
 
@@ -5118,7 +5427,7 @@ body {
                 </div>
                 <div class="ex-aux-card">
                     <div class="ex-aux-card-title">下一站</div>
-                    <p><a onclick="showPage('exp2')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 实验 02 · 梵高之眼</a></p>
+                    <p><a href="#exp2" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 实验 02 · 梵高之眼</a></p>
                 </div>
             </aside>
         </div>
@@ -5328,14 +5637,14 @@ body {
                 <div class="lab-step is-soon"><div class="lab-step-num">05 · 动作</div><div class="lab-step-flag">即将</div><div class="lab-step-title">让它跳起来。</div><div class="lab-step-desc">选动作，导出。</div></div>
             </div>
 
-            <p class="lab-hint">五步全部上线 · 上传 → 裁剪 → 自动抠图 → 14 关节 → 选一段动作 → 导出。 也可以去玩 <a onclick="showPage('exp2')" style="color:var(--gold);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">实验 02 · 梵高之眼</a>。</p>
+            <p class="lab-hint">五步全部上线 · 上传 → 裁剪 → 自动抠图 → 14 关节 → 选一段动作 → 导出。 也可以去玩 <a href="#exp2" style="color:var(--gold);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">实验 02 · 梵高之眼</a>。</p>
         </div>
     </section>
 
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>实验 01 · 让画动起来 · DanceNet.Lab</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a href="#home" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -5346,7 +5655,7 @@ body {
 <div id="page-exp2" class="page">
     <section class="ex-page">
         <div class="ex-cover is-clickable" onclick="exp2ScrollToLab(event)">
-            <canvas id="exp2-cover-canvas"></canvas>
+            <canvas id="exp2-cover-canvas" aria-hidden="true"></canvas>
             <div class="ex-cover-vignette"></div>
             <div class="ex-cover-content">
                 <div>
@@ -5495,7 +5804,7 @@ body {
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>实验 02 · 梵高之眼 · DanceNet.Lab</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a href="#home" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -5633,7 +5942,7 @@ body {
         <div class="about-contact-grid">
             <div class="about-contact-card">
                 <div class="k">合作 · 创始人</div>
-                <div class="v"><em>微信：</em>13340381991</div>
+                <div class="v"><em>微信：</em>SD12th_Rain</div>
                 <p>项目共创 · 教育合作 · 学术研究。</p>
             </div>
             <div class="about-contact-card">
@@ -5644,7 +5953,7 @@ body {
             <div class="about-contact-card">
                 <div class="k">据点 · Studio</div>
                 <div class="v">重庆 · <em>两江</em></div>
-                <p>研究据点位于山城——— 沿江、 沿坡、 沿节拍。</p>
+                <p>研究据点位于山城——— 沿江、 沿山、 沿姿态。</p>
             </div>
         </div>
     </section>
@@ -5652,7 +5961,7 @@ body {
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>关于 · DanceNet.Lab · 第 04 期 · 2026</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a href="#home" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -5689,7 +5998,7 @@ body {
                 <span class="art-flow-hero-corner bl"></span>
                 <span class="art-flow-hero-corner br"></span>
                 <span class="art-flow-hero-stamp">FLOW · No.001</span>
-                <canvas id="art-flow-hero-canvas" data-plate="plate-flow-hero"></canvas>
+                <canvas id="art-flow-hero-canvas" data-plate="plate-flow-hero" aria-hidden="true"></canvas>
                 <figcaption class="art-flow-hero-cap">DANCE WITH PARTICLES · INTERACTIVE MEDIA ART · 2026</figcaption>
             </figure>
         </div>
@@ -5751,7 +6060,7 @@ body {
                 <button type="button" class="art-flow-reel-nav next" aria-label="下一个案例">›</button>
                 <div class="art-flow-reel-stage" id="art-flow-reel-stage">
                     <article class="art-flow-reel-card" data-idx="0">
-                        <video src="assets/art-flow-case-01.mov" muted loop playsinline preload="metadata"></video>
+                        <video data-src="assets/art-flow-case-01.mp4" muted loop playsinline preload="none"></video>
                         <div class="art-flow-reel-shade"></div>
                         <span class="art-flow-reel-corner tl"></span>
                         <span class="art-flow-reel-corner tr"></span>
@@ -5765,7 +6074,7 @@ body {
                         </div>
                     </article>
                     <article class="art-flow-reel-card" data-idx="1">
-                        <video src="assets/art-flow-case-02.mov" muted loop playsinline preload="metadata"></video>
+                        <video data-src="assets/art-flow-case-02.mp4" muted loop playsinline preload="none"></video>
                         <div class="art-flow-reel-shade"></div>
                         <span class="art-flow-reel-corner tl"></span>
                         <span class="art-flow-reel-corner tr"></span>
@@ -5779,7 +6088,7 @@ body {
                         </div>
                     </article>
                     <article class="art-flow-reel-card" data-idx="2">
-                        <video src="assets/art-flow-case-03.mov" muted loop playsinline preload="metadata"></video>
+                        <video data-src="assets/art-flow-case-03.mp4" muted loop playsinline preload="none"></video>
                         <div class="art-flow-reel-shade"></div>
                         <span class="art-flow-reel-corner tl"></span>
                         <span class="art-flow-reel-corner tr"></span>
@@ -5793,7 +6102,7 @@ body {
                         </div>
                     </article>
                     <article class="art-flow-reel-card" data-idx="3">
-                        <video src="assets/art-flow-case-04.mov" muted loop playsinline preload="metadata"></video>
+                        <video data-src="assets/art-flow-case-04.mp4" muted loop playsinline preload="none"></video>
                         <div class="art-flow-reel-shade"></div>
                         <span class="art-flow-reel-corner tl"></span>
                         <span class="art-flow-reel-corner tr"></span>
@@ -5807,7 +6116,7 @@ body {
                         </div>
                     </article>
                     <article class="art-flow-reel-card" data-idx="4">
-                        <video src="assets/art-flow-case-05.mov" muted loop playsinline preload="metadata"></video>
+                        <video data-src="assets/art-flow-case-05.mp4" muted loop playsinline preload="none"></video>
                         <div class="art-flow-reel-shade"></div>
                         <span class="art-flow-reel-corner tl"></span>
                         <span class="art-flow-reel-corner tr"></span>
@@ -5846,7 +6155,7 @@ body {
         <div class="art-flow-share-list">
             <article class="art-flow-share-item">
                 <div class="art-flow-share-cover">
-                    <video src="assets/exp1-hero-april30.mov" muted loop playsinline autoplay preload="auto" aria-label="Kpop 舞蹈 MV 转绘特效粒子案例 · 预览"></video>
+                    <video data-src="assets/exp1-hero-april30.mp4" muted loop playsinline autoplay preload="none" aria-label="Kpop 舞蹈 MV 转绘特效粒子案例 · 预览"></video>
                 </div>
                 <div class="art-flow-share-text">
                     <div class="art-flow-share-tag">CASE 01 · 后期项目</div>
@@ -5859,7 +6168,7 @@ body {
             </article>
             <article class="art-flow-share-item">
                 <div class="art-flow-share-cover">
-                    <video src="assets/share-case02-cv.mov" poster="assets/share-case02-poster.png" muted loop playsinline autoplay preload="auto" aria-label="Python 计算机视觉重现 TouchDesigner 效果 · 预览"></video>
+                    <video data-src="assets/share-case02-cv.mp4" data-poster="assets/share-case02-poster.png" muted loop playsinline autoplay preload="none" aria-label="Python 计算机视觉重现 TouchDesigner 效果 · 预览"></video>
                 </div>
                 <div class="art-flow-share-text">
                     <div class="art-flow-share-tag">CASE 02 · 技术实验</div>
@@ -5876,7 +6185,7 @@ body {
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>展览 II · 子项 · 代码看见我们 · DanceNet.Lab</span>
-            <span><a onclick="showPage('art')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到 光影为媒</a></span>
+            <span><a href="#art" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到 光影为媒</a></span>
         </div>
     </footer>
 </div>
@@ -5960,6 +6269,31 @@ function hydrateStaticAssetUrls(root) {
     });
 }
 
+/**
+ * 进入某一页时再把 [data-src] / [data-poster] 写到真实 src/poster 上，
+ * 避免首屏一次性请求所有子页的 ~300MB 媒体。video 内 <source> 也支持。
+ */
+function hydratePageMedia(pageEl) {
+    if (!pageEl) return;
+    const touched = new Set();
+    pageEl.querySelectorAll('video[data-src]:not([data-hydrated]), img[data-src]:not([data-hydrated])').forEach((el) => {
+        const ds = el.getAttribute('data-src');
+        const dp = el.getAttribute('data-poster');
+        if (ds) el.src = /^(data:|https?:|blob:)/i.test(ds) ? ds : resolveMediaUrl(ds.replace(/^\.\//, ''));
+        if (dp && 'poster' in el) el.poster = /^(data:|https?:|blob:)/i.test(dp) ? dp : resolveMediaUrl(dp.replace(/^\.\//, ''));
+        el.setAttribute('data-hydrated', '1');
+        if (el.tagName === 'VIDEO') touched.add(el);
+    });
+    pageEl.querySelectorAll('source[data-src]:not([data-hydrated])').forEach((s) => {
+        const ds = s.getAttribute('data-src');
+        if (ds) s.src = /^(data:|https?:|blob:)/i.test(ds) ? ds : resolveMediaUrl(ds.replace(/^\.\//, ''));
+        s.setAttribute('data-hydrated', '1');
+        const v = s.closest('video');
+        if (v) touched.add(v);
+    });
+    touched.forEach((v) => { try { v.load(); } catch (_) {} });
+}
+
 /** 实验 01 封面视频播放速率（1 = 原速，越小越慢） */
 const EXP1_COVER_PLAYBACK_RATE = 0.75;
 
@@ -5974,6 +6308,63 @@ function exp1ResumeCoverVideo() {
     if (!v) return;
     v.playbackRate = EXP1_COVER_PLAYBACK_RATE;
     v.play().catch(() => {});
+}
+
+/** 首次进入 exp1 时 lazyInit 晚于 onEnter，单次 play 也会在 display 切换时被忽略；延迟重试与图版页一致 */
+function scheduleExp1CoverVideoPlay() {
+    const pg = document.getElementById('page-exp1');
+    if (!pg || !pg.classList.contains('active')) return;
+    const go = () => exp1ResumeCoverVideo();
+    go();
+    requestAnimationFrame(() => requestAnimationFrame(go));
+    setTimeout(go, 50);
+    setTimeout(go, 200);
+    setTimeout(go, 600);
+}
+
+/* ─────────── Page metadata（title / og / cover image per page） ─────────── */
+const PAGE_META = {
+    home:     { title: 'DanceNet.Lab — 身体、运动与人工智能',      desc: 'DanceNet.Lab 是一所为身体语言而建的实验室。以姿态、音乐与表达为材料，让 AI 成为新的舞蹈合作者。', img: 'assets/og-home.jpg' },
+    agent:    { title: '智能导师 · DanceNet.Lab',                   desc: '一位会观看、度量、并回应舞者身体的 AI Agent。上传视频，从感知到诊断的完整工作流。',              img: 'assets/og-agent.jpg' },
+    art:      { title: '光影为媒 · DanceNet.Lab',                   desc: '把 33 个关键点的时序数据当作画笔，让算法画出一支舞的形状、能量场与频谱。',                       img: 'assets/og-art.jpg' },
+    'art-flow': { title: '代码与我们 · DanceNet.Lab',               desc: '实时摄像头互动：让代码看见你的每一步移动，并把它变成光迹。',                                       img: 'assets/og-art-flow.jpg' },
+    mr:       { title: '虚实之间 · DanceNet.Lab',                   desc: '把 AI 教练搬进混合现实——3D 骨架、运动残影、关节级标注，悬浮于真实空间之中。',                    img: 'assets/og-mr.jpg' },
+    aigc:     { title: 'The Synthesis · DanceNet.Lab',              desc: '从一句话到一段编排：文本驱动动作生成、音乐到编舞作品、风格之间的迁移。',                          img: 'assets/og-aigc.jpg' },
+    exp1:     { title: '让画动起来 · 实验 01 · DanceNet.Lab',       desc: '上传纸人或动物，AI 找到关节，选一段动作，让它在屏幕上跳起来。',                                   img: 'assets/og-exp1.jpg' },
+    exp2:     { title: '梵高之眼 · 实验 02 · DanceNet.Lab',         desc: '打开摄像头，把你的舞动转成梵高式的笔触粒子。低音推动速度，高音点亮新笔触。',                      img: 'assets/og-exp2.jpg' },
+    about:    { title: '关于我们 · DanceNet.Lab',                   desc: 'DanceNet.Lab 是一所关于身体、运动与人工智能的实验室。每季更新。',                                  img: 'assets/og-home.jpg' },
+};
+
+/** 同步更新 <title> 及所有 og / twitter meta */
+function applyPageMeta(name) {
+    const m = PAGE_META[name] || PAGE_META.home;
+    document.title = m.title;
+    const set = (sel, val) => { const el = document.querySelector(sel); if (el) el.setAttribute('content', val); };
+    set('meta[property="og:title"]',       m.title);
+    set('meta[property="og:description"]', m.desc);
+    set('meta[property="og:image"]',       m.img);
+    set('meta[name="twitter:title"]',      m.title);
+    set('meta[name="twitter:description"]', m.desc);
+    set('meta[name="twitter:image"]',      m.img);
+}
+
+/* ─────────── Scroll-position memory ─────────── */
+/** 记录每页离开时的滚动位置，再次进入时恢复（条目超过 TTL 则丢弃） */
+const SCROLL_MEMORY_TTL_MS = 30 * 60 * 1000;
+const __dncScrollMap = new Map();
+
+function dncRememberScroll(pageName, y) {
+    __dncScrollMap.set(pageName, { y, t: Date.now() });
+}
+
+function dncRecallScroll(pageName) {
+    const rec = __dncScrollMap.get(pageName);
+    if (!rec) return null;
+    if (Date.now() - rec.t > SCROLL_MEMORY_TTL_MS) {
+        __dncScrollMap.delete(pageName);
+        return null;
+    }
+    return rec.y;
 }
 
 /* ─────────── Page router ─────────── */
@@ -6019,9 +6410,7 @@ const PAGE_HOOKS = {
     exp1: {
         lazyInit: () => initExp1Page(),
         onEnter() {
-            if (_initialized.has('exp1')) {
-                requestAnimationFrame(() => requestAnimationFrame(() => exp1ResumeCoverVideo()));
-            }
+            scheduleExp1CoverVideoPlay();
         },
         onLeave() {
             if (typeof exp1Pause === 'function') exp1Pause();
@@ -6041,18 +6430,40 @@ function showPage(name) {
     if (!pageEl) return;
 
     const prev = __dncActivePage;
+
+    // 离开前保存当前滚动位置（带时间戳，供 TTL 判定）
+    dncRememberScroll(prev, window.scrollY);
+
     PAGE_HOOKS[prev]?.onLeave?.(prev, name);
 
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => {
+        l.classList.remove('active');
+        l.removeAttribute('aria-current');
+    });
     pageEl.classList.add('active');
     const navEl = document.getElementById('nav-' + name);
-    if (navEl) navEl.classList.add('active');
-    if (name === 'art-flow') document.getElementById('nav-art')?.classList.add('active');
+    if (navEl) { navEl.classList.add('active'); navEl.setAttribute('aria-current', 'page'); }
+    if (name === 'art-flow') {
+        const artNav = document.getElementById('nav-art');
+        if (artNav) { artNav.classList.add('active'); artNav.setAttribute('aria-current', 'page'); }
+    }
 
     __dncActivePage = name;
 
-    window.scrollTo({ top: 0 });
+    // 更新 URL hash（不产生历史记录条目，仅更新地址栏 + 支持刷新直链）
+    history.replaceState({ page: name }, '', '#' + name);
+
+    // 更新页面 title 与 og meta
+    applyPageMeta(name);
+
+    hydratePageMedia(pageEl);
+
+    // 恢复滚动：有未过期的记忆则恢复，否则回到顶部；用 rAF 确保在 display 切换后生效
+    const savedY = dncRecallScroll(name);
+    requestAnimationFrame(() => {
+        window.scrollTo({ top: savedY != null ? savedY : 0 });
+    });
 
     requestAnimationFrame(() => {
         PAGE_HOOKS[name]?.lazyInit?.();
@@ -6061,6 +6472,35 @@ function showPage(name) {
     PAGE_HOOKS[name]?.onEnter?.(name, prev);
     dncNotifyDecorLoops();
 }
+
+/* ─────────── 集中式 SPA 链接拦截 ─────────── */
+/**
+ * 拦截所有 <a href="#pageName"> 点击：阻止默认跳转（避免页面跳动），
+ * 改走 showPage。右键 / 中键 / 屏幕阅读器仍可读取 href 直链。
+ * 支持 data-scroll-to="elementId" 属性：进入目标页后平滑滚动到指定锚点。
+ */
+document.addEventListener('click', function(e) {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const name = a.getAttribute('href').slice(1);
+    if (!name || !document.getElementById('page-' + name)) return;
+    e.preventDefault();
+    showPage(name);
+    const scrollTarget = a.dataset.scrollTo;
+    if (scrollTarget) {
+        setTimeout(() => {
+            const el = document.getElementById(scrollTarget);
+            if (!el) return;
+            window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+        }, 60);
+    }
+});
+
+/* ─────────── Hash 路由：hashchange + 初始化 ─────────── */
+window.addEventListener('hashchange', function() {
+    const name = location.hash.slice(1);
+    if (name && document.getElementById('page-' + name)) showPage(name);
+});
 
 /* 图版 III：从 display:none 切到可见时单次 play() 常被忽略，需延迟重试 + 视口内再播 */
 function schedulePlateAwakenVideoPlay() {
@@ -11260,7 +11700,7 @@ if (uploadZone) {
 }
 
 function downloadResults() {
-    if (!currentResult) { alert('暂无可下载的分析结果。'); return; }
+    if (!currentResult) { showToast('暂无可下载的分析结果，请先完成一次分析。', 'warn'); return; }
     const blob = new Blob([JSON.stringify(currentResult, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -11303,7 +11743,7 @@ function showResult() {
 
 async function startPoseAnalysis() {
     const videoFile = document.getElementById('videoFile').files[0];
-    if (!videoFile) { alert('请先选择视频文件'); return; }
+    if (!videoFile) { showToast('请先选择或拖入一个视频文件。', 'warn', '未选择文件'); return; }
     currentVideoFile = videoFile;
     document.getElementById('poseAnalyzeBtn').disabled = true;
     showProgress();
@@ -11329,7 +11769,10 @@ async function startPoseAnalysis() {
         updateProgress(100);
         showPoseResults(result);
     } catch(e) {
-        alert('错误：' + e.message);
+        showToast(e.message, 'error', '姿态分析失败');
+        updateStep(2, 'active', '✕ 分析中断');
+        document.getElementById('upload-block').classList.remove('hidden');
+        document.getElementById('progress-block').classList.add('hidden');
     } finally {
         document.getElementById('poseAnalyzeBtn').disabled = false;
     }
@@ -11352,7 +11795,7 @@ function showPoseResults(result) {
 
 async function startWaveAnalysis() {
     const videoFile = document.getElementById('videoFile').files[0];
-    if (!videoFile) { alert('请先选择视频文件'); return; }
+    if (!videoFile) { showToast('请先选择或拖入一个视频文件。', 'warn', '未选择文件'); return; }
     currentVideoFile = videoFile;
     document.getElementById('waveAnalyzeBtn').disabled = true;
     showProgress();
@@ -11388,8 +11831,10 @@ async function startWaveAnalysis() {
         updateProgress(100);
         showWaveResults(result);
     } catch(e) {
-        alert('错误：' + e.message);
+        showToast(e.message, 'error', 'Wave 分析失败');
         updateStep(2, 'active', '✕ ' + e.message);
+        document.getElementById('upload-block').classList.remove('hidden');
+        document.getElementById('progress-block').classList.add('hidden');
     } finally {
         document.getElementById('waveAnalyzeBtn').disabled = false;
     }
@@ -11443,7 +11888,8 @@ async function getLLMReport() {
         document.getElementById('llm-progress').style.width = '100%';
 
         if (data.error) {
-            alert('失败：' + data.error);
+            showToast(data.error, 'error', '报告生成失败');
+            loading.classList.add('hidden');
         } else {
             const text = data.report;
             const qRegex = /👉 提问：(.+?)(?=\n|👉 提问：|$)/g;
@@ -11490,7 +11936,8 @@ async function getLLMReport() {
         btn.disabled = false;
     } catch(e) {
         clearInterval(iv);
-        alert('请求失败：' + e.message);
+        showToast(e.message, 'error', '网络请求失败');
+        loading.classList.add('hidden');
         btn.disabled = false;
         btn.textContent = '生成策展式读解 →';
     }
@@ -11531,12 +11978,12 @@ async function sendChatMessageDirect(message) {
         msgs.scrollTop = msgs.scrollHeight;
     } catch(e) {
         if (loadDiv.parentNode) msgs.removeChild(loadDiv);
-        alert('发送失败：' + e.message);
+        showToast(e.message, 'error', '消息发送失败');
     }
 }
 
 function sendChatPreset(text) {
-    if (!currentResult) { alert('请先完成一次分析。'); return; }
+    if (!currentResult) { showToast('请先完成一次视频分析，再使用快捷提问。', 'warn', '尚未分析'); return; }
     const inp = document.getElementById('chat-input');
     if (inp) inp.value = '';
     sendChatMessageDirect(text);
@@ -11546,7 +11993,7 @@ async function sendChatMessage() {
     const inp = document.getElementById('chat-input');
     const msg = inp.value.trim();
     if (!msg) return;
-    if (!currentResult) { alert('请先完成一次分析。'); return; }
+    if (!currentResult) { showToast('请先完成一次视频分析，再向导师提问。', 'warn', '尚未分析'); return; }
     inp.value = '';
     await sendChatMessageDirect(msg);
 }
@@ -11838,13 +12285,73 @@ function bindInteractivePlateHover() {
     wrap.addEventListener('mouseleave', () => { vid.pause(); });
 }
 
+/* ═════════════════════════════════════════════════════════════
+   TOAST NOTIFICATION SYSTEM
+   showToast(msg, type = 'error'|'warn'|'ok', title?)
+═════════════════════════════════════════════════════════════ */
+(function() {
+    const HOST_ID = 'dnl-toast-host';
+    const ICONS = { error: '✕', warn: '!', ok: '✓' };
+    const LABELS = { error: '出错了', warn: '提示', ok: '完成' };
+    const DURATION = { error: 6000, warn: 4000, ok: 3000 };
+
+    function getHost() {
+        let h = document.getElementById(HOST_ID);
+        if (!h) {
+            h = document.createElement('div');
+            h.id = HOST_ID;
+            h.setAttribute('role', 'status');
+            h.setAttribute('aria-live', 'polite');
+            document.body.appendChild(h);
+        }
+        return h;
+    }
+
+    window.showToast = function(msg, type, title) {
+        type = type || 'error';
+        const host = getHost();
+        const el = document.createElement('div');
+        el.className = `dnl-toast dnl-toast--${type}`;
+        el.setAttribute('role', 'alert');
+        el.innerHTML = `
+            <span class="dnl-toast__icon" aria-hidden="true">${ICONS[type] || '!'}</span>
+            <div class="dnl-toast__body">
+                <div class="dnl-toast__title">${title || LABELS[type] || '提示'}</div>
+                <div class="dnl-toast__msg">${msg}</div>
+            </div>
+            <button class="dnl-toast__close" aria-label="关闭通知" onclick="this.parentNode.remove()">×</button>
+        `.trim();
+        host.appendChild(el);
+        const dur = DURATION[type] || 5000;
+        setTimeout(() => {
+            if (!el.parentNode) return;
+            el.classList.add('is-exiting');
+            el.addEventListener('animationend', () => el.remove(), { once: true });
+        }, dur);
+    };
+})();
+
 /* ─────────── Initial init ─────────── */
 hydrateStaticAssetUrls();
+hydratePageMedia(document.querySelector('.page.active'));
 bindInteractivePlateHover();
 hydrateAwakenPlateFromStorage();
 setupPlateAwakenViewportPlay();
-document.getElementById('nav-home').classList.add('active');
-initHomeCanvases();
+
+// Hash 路由初始化：刷新 / 直链 / 书签均可定位到正确页面
+(function() {
+    const initPage = location.hash.slice(1) || 'home';
+    if (initPage !== 'home' && document.getElementById('page-' + initPage)) {
+        showPage(initPage);
+    } else {
+        // 默认首页：手动设置 hash 与 title，不重复触发完整 showPage 流程
+        history.replaceState({ page: 'home' }, '', '#home');
+        applyPageMeta('home');
+        document.getElementById('nav-home').classList.add('active');
+        document.getElementById('nav-home').setAttribute('aria-current', 'page');
+        initHomeCanvases();
+    }
+})();
 </script>
 </body>
 </html>
