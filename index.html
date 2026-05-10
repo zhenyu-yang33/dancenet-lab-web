@@ -190,6 +190,11 @@ body {
     user-select: none;
     display: flex; align-items: baseline; gap: 8px;
 }
+.nav-brand:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 4px;
+    border-radius: 2px;
+}
 .nav-brand-mark {
     width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
     display: inline-block; transform: translateY(-3px);
@@ -275,7 +280,11 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
 }
 .hero-vignette {
     position: absolute; inset: 0;
-    background: radial-gradient(ellipse at center, transparent 30%, rgba(10,9,8,0.55) 75%, rgba(10,9,8,0.92) 100%);
+    background:
+        /* 顶边保护 — 骨架肩/肘与元数据文字共用区，需 78%→透明 渐变压制 */
+        linear-gradient(180deg, rgba(10,9,8,0.78) 0%, rgba(10,9,8,0.30) 15%, transparent 30%),
+        /* 底边 + 四角暗角 */
+        radial-gradient(ellipse at center, transparent 26%, rgba(10,9,8,0.38) 65%, rgba(10,9,8,0.88) 100%);
     pointer-events: none;
 }
 .hero-meta-top {
@@ -287,8 +296,9 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
 .hero-meta-top .right {
     font-family: var(--f-mono);
     font-size: 10.5px; letter-spacing: 0.16em;
-    color: var(--paper-faint);
+    color: var(--paper-soft);
     text-transform: uppercase;
+    text-shadow: 0 1px 10px rgba(10,9,8,1), 0 0 2px rgba(10,9,8,1);
 }
 .hero-content {
     position: absolute; left: var(--gutter); right: var(--gutter); bottom: 9vh;
@@ -322,20 +332,48 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
     display: flex; justify-content: space-between;
 }
 
+/* 会跳的箭头：4s 静止 → 0.6s 横向轻弹 */
+@keyframes cta-nudge {
+    0%, 85%  { transform: translateX(0); }
+    91%       { transform: translateX(8px); }
+    96%       { transform: translateX(-1px); }
+    100%      { transform: translateX(0); }
+}
+
 .hero-cta {
     display: inline-flex; align-items: center; gap: 14px;
     font-family: var(--f-mono); font-size: 11px;
     letter-spacing: 0.2em; text-transform: uppercase;
     color: var(--paper); cursor: pointer;
-    background: none; border: none;
-    padding: 14px 0;
-    transition: color 0.2s;
+    background: none;
+    border: 1px solid rgba(212,165,116,0.28);
+    padding: 13px 22px;
+    position: relative;
+    transition: color 0.25s, border-color 0.35s;
     text-decoration: none;
     box-sizing: border-box;
 }
+/* 金箔下划线：hover 时从左向右展开 */
+.hero-cta::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%; height: 1px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s cubic-bezier(.2,.8,.2,1);
+}
+.hero-cta:hover { color: var(--gold); border-color: rgba(212,165,116,0.6); }
+.hero-cta:hover::after { transform: scaleX(1); }
+
 .hero-cta-arrow {
     width: 36px; height: 1px; background: var(--paper);
-    position: relative; transition: width 0.3s, background 0.2s;
+    position: relative;
+    transition: width 0.3s, background 0.25s;
+    /* 4.6s = 4s 静止 + 0.6s 弹动 */
+    animation: cta-nudge 4.6s ease-in-out infinite;
+    flex-shrink: 0;
 }
 .hero-cta-arrow::after {
     content: ''; position: absolute; right: 0; top: -3px;
@@ -343,16 +381,22 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
     border-top: 1px solid var(--paper);
     border-right: 1px solid var(--paper);
     transform: rotate(45deg);
+    transition: border-color 0.25s;
 }
-.hero-cta:hover { color: var(--gold); }
-.hero-cta:hover .hero-cta-arrow { background: var(--gold); width: 56px; }
+/* hover 时暂停弹动，执行展宽 */
+.hero-cta:hover .hero-cta-arrow {
+    background: var(--gold);
+    width: 56px;
+    animation-play-state: paused;
+}
 .hero-cta:hover .hero-cta-arrow::after {
     border-top-color: var(--gold); border-right-color: var(--gold);
 }
 .hero-cta:focus-visible {
     outline: 1px solid var(--gold);
-    outline-offset: 6px;
+    outline-offset: 4px;
     border-radius: 2px;
+    border-color: var(--gold);
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -501,7 +545,7 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
 
 .exhibit-row {
     display: grid;
-    grid-template-columns: 80px 1fr 1.2fr 100px;
+    grid-template-columns: 80px 1fr 1.2fr 72px 100px;
     gap: 40px;
     padding: 36px 0;
     border-top: 1px solid var(--line);
@@ -510,6 +554,7 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
     transition: padding 0.4s cubic-bezier(.2,.8,.2,1);
     align-items: center;
     position: relative;
+    isolation: isolate;
 }
 .exhibit-row:last-child { border-bottom: 1px solid var(--line); }
 .exhibit-row:hover { padding-left: 16px; }
@@ -518,16 +563,35 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
     left: 0; top: 0; height: 100%; width: 0;
     background: var(--gold);
     transition: width 0.4s cubic-bezier(.2,.8,.2,1);
+    z-index: 0;
 }
 .exhibit-row:hover::before { width: 2px; }
 
+/* ── numeral column ── */
 .exhibit-num {
+    display: flex; flex-direction: column;
+    gap: 10px; justify-content: center;
+    min-height: 76px;
+}
+.exhibit-num-roman {
     font-family: var(--f-serif); font-style: italic;
     font-size: 64px; line-height: 1;
     color: var(--paper-faint);
     transition: color 0.3s;
+    display: block;
 }
-.exhibit-row:hover .exhibit-num { color: var(--gold); }
+.exhibit-row:hover .exhibit-num-roman { color: var(--gold); }
+.exhibit-num-status {
+    font-family: var(--f-mono); font-size: 9px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--paper-faint);
+    white-space: nowrap;
+    opacity: 0; transform: translateY(5px);
+    transition: opacity 0.35s 0.05s, transform 0.35s 0.05s;
+}
+.exhibit-row:hover .exhibit-num-status {
+    opacity: 1; transform: translateY(0);
+}
 
 .exhibit-info { display: flex; flex-direction: column; gap: 8px; }
 .exhibit-info-tag {
@@ -556,24 +620,132 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
     max-width: 44ch;
 }
 
+/* ── progress / status bar column ── */
+.exhibit-progress {
+    display: flex; flex-direction: column;
+    gap: 9px; align-self: center;
+}
+.exhibit-progress-label {
+    font-family: var(--f-mono); font-size: 9px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    transition: color 0.3s;
+}
+.exhibit-progress-bar {
+    width: 48px; height: 2px; background: var(--line-mid);
+    position: relative; overflow: hidden;
+}
+.exhibit-progress-fill {
+    position: absolute; left: 0; top: 0; height: 100%;
+    transition: background 0.3s;
+}
+
+/* status variants */
+.exhibit-progress[data-status="live"]  .exhibit-progress-label { color: var(--gold); }
+.exhibit-progress[data-status="proto"] .exhibit-progress-label { color: var(--paper-soft); }
+.exhibit-progress[data-status="soon"]  .exhibit-progress-label { color: var(--paper-faint); }
+
+.exhibit-progress[data-status="live"]  .exhibit-progress-fill { width: 100%; background: var(--gold); }
+.exhibit-progress[data-status="proto"] .exhibit-progress-fill { width: 60%;  background: var(--paper-soft); }
+.exhibit-progress[data-status="soon"]  .exhibit-progress-fill { width: 18%;  background: var(--paper-trace); }
+
+/* ── thumbnail column — expands on hover ── */
 .exhibit-thumb {
     aspect-ratio: 1; width: 100px; background: var(--ink-2);
     overflow: hidden; position: relative;
-    transition: transform 0.4s cubic-bezier(.2,.8,.2,1);
     align-self: center;
+    transition:
+        transform 0.55s cubic-bezier(.2,.8,.2,1),
+        box-shadow 0.55s cubic-bezier(.2,.8,.2,1),
+        z-index 0s;
+    z-index: 1;
+    will-change: transform;
 }
 .exhibit-thumb canvas { width: 100%; height: 100%; display: block; }
-.exhibit-row:hover .exhibit-thumb { transform: scale(1.06); }
+
+/* spotlight glow layer — hidden by default */
+.exhibit-thumb::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 50%,
+        rgba(212,165,116,0.22) 0%,
+        transparent 68%);
+    opacity: 0;
+    transition: opacity 0.55s;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.exhibit-row:hover .exhibit-thumb {
+    transform: scale(2.4);
+    transform-origin: right center;
+    z-index: 10;
+    box-shadow:
+        0 0 0 1px rgba(212,165,116,0.28),
+        0 24px 64px -8px rgba(0,0,0,0.85),
+        0 0 80px 20px rgba(0,0,0,0.5);
+}
+.exhibit-row:hover .exhibit-thumb::after { opacity: 1; }
 
 /* ═════════════════════════════════════════════════════════════
-   STORIES · horizontal scroll
+   STORIES · horizontal scroll (+ shared “card wall” chrome)
 ═════════════════════════════════════════════════════════════ */
+.horiz-card-wall {
+    margin: 0 calc(-1 * var(--gutter));
+}
+.horiz-card-wall__viewport {
+    position: relative;
+}
+.horiz-card-wall__fade {
+    position: absolute;
+    top: 8px;
+    right: 0;
+    width: 80px;
+    bottom: 20px;
+    pointer-events: none;
+    z-index: 2;
+    background: linear-gradient(to right, transparent, var(--ink) 90%);
+}
+.horiz-card-wall__hint {
+    position: absolute;
+    top: 50%;
+    right: max(10px, calc(var(--gutter) - 6px));
+    transform: translateY(-50%);
+    z-index: 3;
+    pointer-events: none;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--paper-soft);
+    white-space: nowrap;
+    text-shadow: 0 1px 12px var(--ink);
+}
+.horiz-card-wall__foot {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px var(--gutter) clamp(32px, 5vw, 56px);
+}
+.horiz-card-wall__count {
+    display: none;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--paper-faint);
+}
+/* 至少 5 张卡片时显示 mono 计数 */
+.horiz-card-wall:has(.horiz-card-wall__track > :nth-child(5)) .horiz-card-wall__count {
+    display: block;
+}
+
 .stories-scroll {
     display: flex; gap: 24px;
     overflow-x: auto;
-    padding: 8px var(--gutter) 60px;
+    padding: 8px var(--gutter) 28px;
     scroll-snap-type: x mandatory;
-    margin: 0 calc(-1 * var(--gutter));
+    margin: 0;
+}
+.horiz-card-wall .stories-scroll {
+    padding-bottom: 20px;
 }
 .stories-scroll::-webkit-scrollbar { display: none; }
 .stories-scroll { scrollbar-width: none; }
@@ -706,7 +878,12 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
     padding: 32px;
     display: flex; flex-direction: column;
     justify-content: space-between;
-    background: linear-gradient(180deg, rgba(10,9,8,0.4) 0%, transparent 30%, transparent 60%, rgba(10,9,8,0.92) 100%);
+    background: linear-gradient(180deg,
+        rgba(10,9,8,0.70) 0%,
+        rgba(10,9,8,0.28) 26%,
+        transparent 44%,
+        transparent 60%,
+        rgba(10,9,8,0.92) 100%);
 }
 .exp-tag {
     font-family: var(--f-mono); font-size: 10.5px;
@@ -1592,6 +1769,7 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
     font-family: var(--f-mono); font-size: 10.5px;
     letter-spacing: 0.22em; text-transform: uppercase;
     color: var(--paper-soft);
+    text-shadow: 0 1px 10px rgba(10,9,8,1), 0 0 2px rgba(10,9,8,1);
     cursor: pointer;
     z-index: 5;
     transition: color 0.25s, transform 0.25s;
@@ -1691,18 +1869,19 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
    AGENT PAGE · 智能导师
 ═════════════════════════════════════════════════════════════ */
 .agent-hero {
-    padding: calc(var(--nav-h) + 80px) var(--gutter) 80px;
+    padding: calc(var(--nav-h) + 96px) var(--gutter) 88px;
     border-bottom: 1px solid var(--line);
     position: relative; overflow: hidden;
 }
 #agent-hero-canvas {
-    position: absolute; right: -10%; top: 0; bottom: 0;
-    width: 60%; opacity: 0.6;
+    position: absolute; right: -8%;
+    top: calc(var(--nav-h) + 32px); bottom: 0;
+    width: 62%; opacity: 0.94;
     pointer-events: none;
 }
 .agent-hero-mask {
     position: absolute; inset: 0;
-    background: linear-gradient(90deg, var(--ink) 30%, rgba(10,9,8,0.4) 60%, transparent 100%);
+    background: linear-gradient(90deg, var(--ink) 38%, rgba(10,9,8,0.28) 65%, transparent 100%);
     pointer-events: none;
 }
 .agent-hero-inner { position: relative; z-index: 1; max-width: 880px; }
@@ -2272,6 +2451,12 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
     pointer-events: none;
     z-index: 2;
 }
+/* 梵高之眼 — canvas 笔触极繁杂，左侧加半透明色块保护序号 + 标题落点 */
+#page-exp2 .ex-cover-vignette {
+    background:
+        linear-gradient(90deg, rgba(10,9,8,0.70) 0%, rgba(10,9,8,0.42) 28%, transparent 54%),
+        linear-gradient(180deg, rgba(10,9,8,0.46) 0%, transparent 32%, transparent 50%, rgba(10,9,8,0.95) 100%);
+}
 
 /* ── 光影为媒 hero 专属 ── */
 .art-cover #art-cover-video {
@@ -2315,6 +2500,7 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
     color: var(--gold); margin-bottom: 22px;
     border-top: 1px solid var(--gold); padding-top: 14px;
     width: fit-content;
+    text-shadow: 0 1px 12px rgba(10,9,8,0.95), 0 0 2px rgba(10,9,8,1);
 }
 .ex-cover-meta .num {
     font-family: var(--f-serif); font-style: italic;
@@ -4040,6 +4226,54 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
     margin-top: 4px;
 }
 
+/* art-flow §03 · 与首页笔记墙同款横向提示（覆盖默认纵向 list） */
+.horiz-card-wall .art-flow-share-list.horiz-card-wall__track {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 8px var(--gutter) 20px;
+    margin-top: 30px;
+    margin-left: 0;
+    margin-right: 0;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+.horiz-card-wall .art-flow-share-list.horiz-card-wall__track::-webkit-scrollbar {
+    display: none;
+}
+.horiz-card-wall .art-flow-share-item {
+    flex: 0 0 min(440px, 86vw);
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: none;
+    padding-top: 0;
+    border: 1px solid var(--line);
+    background: var(--ink-2);
+    direction: ltr;
+    min-height: 0;
+}
+.horiz-card-wall .art-flow-share-item > * {
+    direction: ltr;
+}
+.horiz-card-wall .art-flow-share-cover {
+    flex-shrink: 0;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+}
+.horiz-card-wall .art-flow-share-text {
+    padding: 22px 24px 26px;
+    flex: 1;
+}
+.horiz-card-wall .art-flow-share-meta {
+    flex-wrap: wrap;
+    row-gap: 8px;
+}
+
 @media (max-width: 1100px) {
     .art-flow-hero-grid { grid-template-columns: 1fr; }
     .art-flow-principle-head { grid-template-columns: 1fr; gap: 22px; }
@@ -4076,9 +4310,11 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
     .ex-cover-content { grid-template-columns: 1fr; gap: 30px; }
     .ex-plates { grid-template-columns: repeat(2, 1fr); }
     .ex-phase-list { grid-template-columns: 1fr; }
-    .exhibit-row { grid-template-columns: 50px 1fr 90px; gap: 20px; }
-    .exhibit-row .exhibit-desc { display: none; }
-    .exhibit-num { font-size: 42px; }
+    .exhibit-row { grid-template-columns: 50px 1fr 80px; gap: 20px; }
+    .exhibit-row .exhibit-desc,
+    .exhibit-row .exhibit-progress { display: none; }
+    .exhibit-num-roman { font-size: 42px; }
+    .exhibit-row:hover .exhibit-thumb { transform: scale(1.5); }
     .result-metrics { grid-template-columns: repeat(2, 1fr); }
     .r-metric:nth-child(2) { border-right: none; }
     .field-row { grid-template-columns: 1fr; gap: 12px; }
@@ -4092,6 +4328,10 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
     .nav-links { gap: 0; }
     .nav-link { padding: 8px 8px; font-size: 10px; letter-spacing: 0.12em; }
     .stories-scroll { padding-left: 24px; padding-right: 24px; }
+    .horiz-card-wall__foot {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
     .story-card { flex: 0 0 280px; }
     .footer-grid { grid-template-columns: 1fr; }
 }
@@ -4489,8 +4729,8 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
      NAVIGATION
 ════════════════════════════════════════ -->
 <nav class="nav" id="nav" aria-label="主导航">
-    <a class="nav-brand" href="#home">
-        <span class="nav-brand-mark"></span>
+    <a class="nav-brand" href="#home" aria-label="返回 DanceNet.Lab 首页">
+        <span class="nav-brand-mark" aria-hidden="true"></span>
         DanceNet<span style="opacity:.5">.Lab</span>
     </a>
     <div class="nav-spacer"></div>
@@ -4602,46 +4842,74 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
 
         <div class="exhibits-list">
             <a class="exhibit-row" href="#agent">
-                <div class="exhibit-num">I</div>
+                <div class="exhibit-num">
+                    <span class="exhibit-num-roman">I</span>
+                    <span class="exhibit-num-status">Open Now · 2026.05</span>
+                </div>
                 <div class="exhibit-info">
                     <div class="exhibit-info-tag">展览 · 线上 · 互动</div>
                     <div class="exhibit-info-title">智能<em>导师</em></div>
                     <div class="exhibit-info-zh">AI Agent 教练 · 一位会看你跳舞的算法</div>
                 </div>
                 <div class="exhibit-desc">从视频到诊断的完整工作流：感知层 → 运动学 → 认知 → RAG → 报告。可上传、可追问、可下载。</div>
+                <div class="exhibit-progress" data-status="live">
+                    <span class="exhibit-progress-label">Live</span>
+                    <div class="exhibit-progress-bar"><div class="exhibit-progress-fill"></div></div>
+                </div>
                 <div class="exhibit-thumb"><canvas data-thumb="studio" aria-hidden="true"></canvas></div>
             </a>
 
             <a class="exhibit-row" href="#art">
-                <div class="exhibit-num">II</div>
+                <div class="exhibit-num">
+                    <span class="exhibit-num-roman">II</span>
+                    <span class="exhibit-num-status">Open Now · 2026.05</span>
+                </div>
                 <div class="exhibit-info">
                     <div class="exhibit-info-tag">展览 · 研究 · 生成</div>
                     <div class="exhibit-info-title">光影<em>为媒</em></div>
                     <div class="exhibit-info-zh">舞蹈与艺术 · 让动作本身成为材料</div>
                 </div>
                 <div class="exhibit-desc">把 33 个关键点的时序数据当作画笔，让算法画出一支舞的形状、能量场与频谱。</div>
+                <div class="exhibit-progress" data-status="live">
+                    <span class="exhibit-progress-label">Live</span>
+                    <div class="exhibit-progress-bar"><div class="exhibit-progress-fill"></div></div>
+                </div>
                 <div class="exhibit-thumb"><canvas data-thumb="medium" aria-hidden="true"></canvas></div>
             </a>
 
             <a class="exhibit-row" href="#mr">
-                <div class="exhibit-num">III</div>
+                <div class="exhibit-num">
+                    <span class="exhibit-num-roman">III</span>
+                    <span class="exhibit-num-status">In Progress</span>
+                </div>
                 <div class="exhibit-info">
                     <div class="exhibit-info-tag">展览 · 原型 · 空间</div>
                     <div class="exhibit-info-title">虚实<em>之间</em></div>
                     <div class="exhibit-info-zh">舞蹈与 MR · 在空间中重写身体</div>
                 </div>
                 <div class="exhibit-desc">把 AI 教练搬进混合现实——3D 骨架、运动残影、关节级标注，悬浮于真实空间之中。</div>
+                <div class="exhibit-progress" data-status="proto">
+                    <span class="exhibit-progress-label">Proto</span>
+                    <div class="exhibit-progress-bar"><div class="exhibit-progress-fill"></div></div>
+                </div>
                 <div class="exhibit-thumb"><canvas data-thumb="spaces" aria-hidden="true"></canvas></div>
             </a>
 
             <a class="exhibit-row" href="#aigc">
-                <div class="exhibit-num">IV</div>
+                <div class="exhibit-num">
+                    <span class="exhibit-num-roman">IV</span>
+                    <span class="exhibit-num-status">Coming Soon</span>
+                </div>
                 <div class="exhibit-info">
                     <div class="exhibit-info-tag">展览 · 即将 · 生成</div>
                     <div class="exhibit-info-title">The <em>Synthesis</em></div>
                     <div class="exhibit-info-zh">AIGC · 让 AI 成为编舞者</div>
                 </div>
                 <div class="exhibit-desc">从一句话到一段编排：文本驱动动作生成、音乐到编舞作品、风格之间的迁移。</div>
+                <div class="exhibit-progress" data-status="soon">
+                    <span class="exhibit-progress-label">Soon</span>
+                    <div class="exhibit-progress-bar"><div class="exhibit-progress-fill"></div></div>
+                </div>
                 <div class="exhibit-thumb"><canvas data-thumb="synthesis" aria-hidden="true"></canvas></div>
             </a>
         </div>
@@ -4653,9 +4921,10 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
             <div class="sec-head-num">003 / 故事<span>读与看</span></div>
             <h2 class="section-title">关于舞蹈与人工智能的,<br>一些<em>笔记</em>。</h2>
         </div>
-    </section>
 
-    <div class="stories-scroll">
+        <div class="horiz-card-wall">
+            <div class="horiz-card-wall__viewport">
+                <div class="stories-scroll horiz-card-wall__track">
         <a class="story-card" href="#art">
             <div class="story-image"><canvas data-thumb="story1" aria-hidden="true"></canvas><div class="story-tag">随笔</div></div>
             <div class="story-meta"><span>社论 · 04.27</span><span>约 7 分钟</span></div>
@@ -4681,7 +4950,15 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
             <div class="story-meta"><span>对谈 · 03.30</span><span>约 12 分钟</span></div>
             <h3 class="story-title">与 Hiphop 老师 Rain 的<em>三次对话</em>。</h3>
         </a>
-    </div>
+                </div>
+                <div class="horiz-card-wall__fade" aria-hidden="true"></div>
+                <span class="horiz-card-wall__hint" aria-hidden="true">→ 继续</span>
+            </div>
+            <div class="horiz-card-wall__foot">
+                <span class="horiz-card-wall__count" aria-hidden="true">01 — 05</span>
+            </div>
+        </div>
+    </section>
 
     <!-- MANIFESTO -->
     <section class="manifesto">
@@ -6152,7 +6429,9 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
             <h2>它在<em>哪里</em>跳过？</h2>
             <p class="lede">从街舞 cypher、 商业开幕、 美术馆装置到校园开放课——同一套技术骨架, 在不同语境里长出截然不同的样貌。</p>
         </div>
-        <div class="art-flow-share-list">
+        <div class="horiz-card-wall">
+            <div class="horiz-card-wall__viewport">
+                <div class="art-flow-share-list horiz-card-wall__track">
             <article class="art-flow-share-item">
                 <div class="art-flow-share-cover">
                     <video data-src="assets/exp1-hero-april30.mp4" muted loop playsinline autoplay preload="none" aria-label="Kpop 舞蹈 MV 转绘特效粒子案例 · 预览"></video>
@@ -6179,6 +6458,13 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
                     </div>
                 </div>
             </article>
+                </div>
+                <div class="horiz-card-wall__fade" aria-hidden="true"></div>
+                <span class="horiz-card-wall__hint" aria-hidden="true">→ 继续</span>
+            </div>
+            <div class="horiz-card-wall__foot">
+                <span class="horiz-card-wall__count" aria-hidden="true">01 — 02</span>
+            </div>
         </div>
     </section>
 
@@ -6425,7 +6711,8 @@ const PAGE_HOOKS = {
     },
 };
 
-function showPage(name) {
+function showPage(name, opts) {
+    opts = opts || {};
     const pageEl = document.getElementById('page-' + name);
     if (!pageEl) return;
 
@@ -6459,10 +6746,17 @@ function showPage(name) {
 
     hydratePageMedia(pageEl);
 
-    // 恢复滚动：有未过期的记忆则恢复，否则回到顶部；用 rAF 确保在 display 切换后生效
-    const savedY = dncRecallScroll(name);
+    // 恢复滚动：默认恢复该页上次位置；左上角品牌链接触发 opts.scrollHomeToTop（回到首页首屏）
+    let scrollTop;
+    if (opts.scrollHomeToTop && name === 'home') {
+        __dncScrollMap.delete('home');
+        scrollTop = 0;
+    } else {
+        const savedY = dncRecallScroll(name);
+        scrollTop = savedY != null ? savedY : 0;
+    }
     requestAnimationFrame(() => {
-        window.scrollTo({ top: savedY != null ? savedY : 0 });
+        window.scrollTo({ top: scrollTop });
     });
 
     requestAnimationFrame(() => {
@@ -6477,6 +6771,7 @@ function showPage(name) {
 /**
  * 拦截所有 <a href="#pageName"> 点击：阻止默认跳转（避免页面跳动），
  * 改走 showPage。右键 / 中键 / 屏幕阅读器仍可读取 href 直链。
+ * 左上角 .nav-brand 指向 #home：始终回到首页顶栏与主视觉（首屏）。
  * 支持 data-scroll-to="elementId" 属性：进入目标页后平滑滚动到指定锚点。
  */
 document.addEventListener('click', function(e) {
@@ -6485,7 +6780,8 @@ document.addEventListener('click', function(e) {
     const name = a.getAttribute('href').slice(1);
     if (!name || !document.getElementById('page-' + name)) return;
     e.preventDefault();
-    showPage(name);
+    const scrollHomeToTop = !!(a.classList.contains('nav-brand') && name === 'home');
+    showPage(name, { scrollHomeToTop });
     const scrollTarget = a.dataset.scrollTo;
     if (scrollTarget) {
         setTimeout(() => {
@@ -6560,7 +6856,9 @@ function setupCanvas(canvas) {
     }
     resize();
     window.addEventListener('resize', resize);
-    return { ctx, getW: () => canvas.getBoundingClientRect().width, getH: () => canvas.getBoundingClientRect().height };
+    /* Use the stored canvas buffer size (÷ DPR) rather than live getBoundingClientRect,
+       so CSS transforms (e.g. scale on exhibit-thumb hover) don't distort drawing coords. */
+    return { ctx, getW: () => canvas.width / devicePixelRatio, getH: () => canvas.height / devicePixelRatio };
 }
 
 const COCO_EDGES = [[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
@@ -6809,7 +7107,7 @@ const THUMB_PAINTERS = {
     studio(ctx, t, w, h) {
         const pts = lerpFrames(t * 1.2);
         const fw = Math.min(w*0.68, h*0.62), fh = h*0.76;
-        const mapped = pts.map(p => [w*.5 - fw/2 + p[0]*fw, h*.10 + p[1]*fh]);
+        const mapped = pts.map(p => [w*.5 - fw/2 + p[0]*fw, (h - fh) * 0.5 + p[1]*fh]);
         drawSkeleton(ctx, mapped, fh, {
             lw: 1.1,
             bc: 'rgba(212,165,116,0.82)',
@@ -6826,7 +7124,7 @@ const THUMB_PAINTERS = {
         ctx.fillRect(0,0,w,h);
         for (let i = 0; i < 3; i++) {
             ctx.beginPath();
-            const sy = h * (0.2 + i*0.25);
+            const sy = h * (0.32 + i * 0.18);
             ctx.moveTo(0, sy);
             for (let x = 0; x <= w; x += 4) {
                 ctx.lineTo(x, sy + Math.sin(x*0.04 + t*1.2 + i*1.5) * 12);
@@ -7138,38 +7436,132 @@ function initHomeCanvases() {
 /* ═════════════════════════════════════════════════════════════
    AGENT HERO CANVAS
 ═════════════════════════════════════════════════════════════ */
+/* ── 等高线速度场（marching-squares 实现）── */
+// MS lookup: index = TL<<3 | TR<<2 | BR<<1 | BL, edges 0=top 1=right 2=bottom 3=left
+const _MS_TABLE = [[], [[2,3]], [[1,2]], [[1,3]], [[0,1]], [[0,3],[1,2]],
+                   [[0,2]], [[0,3]], [[0,3]], [[0,2]], [[0,1],[2,3]],
+                   [[0,1]], [[1,3]], [[1,2]], [[2,3]], []];
+
 function initAgentHero() {
     if (alreadyInited('agentHero')) return;
     const canvas = document.getElementById('agent-hero-canvas');
+    if (!canvas) return;
     const { ctx, getW, getH } = setupCanvas(canvas);
-    let t = 0;
-    const trails = [];
+    let t = 0, scanY = 0;
+    let prevMapped = null;
+
+    const COLS = 44, ROWS = 62;
+    const field = new Float32Array(COLS * ROWS);
+
+    /* 7 等高线等级 → 冷(paper) … 热(gold)，对应 5 个感知维度 */
+    const CLVL = [
+        [0.09, 'rgba(235,231,223,0.10)'],
+        [0.18, 'rgba(235,231,223,0.16)'],
+        [0.29, 'rgba(235,231,223,0.24)'],
+        [0.41, 'rgba(212,165,116,0.36)'],
+        [0.54, 'rgba(212,165,116,0.52)'],
+        [0.67, 'rgba(212,165,116,0.68)'],
+        [0.80, 'rgba(212,165,116,0.88)'],
+    ];
+    const DIM_LABELS = ['01 · 感知', '02 · 运动学', '03 · 认知', '04 · RAG', '05 · 报告'];
+
     dncRegisterDecorLoop('agent-hero', 'agent', () => {
         const w = getW(), h = getH();
-        ctx.fillStyle = 'rgba(10,9,8,0.05)';
-        ctx.fillRect(0,0,w,h);
-        t += 0.0035;
+        ctx.fillStyle = 'rgba(10,9,8,0.06)';
+        ctx.fillRect(0, 0, w, h);
+        t += 0.004;
+
         const pts = lerpFrames(t);
-        const fw = Math.min(w*0.38, h*0.58), fh = h*0.78;
-        const mapped = pts.map(p => [w*0.5 - fw/2 + p[0]*fw, h*0.08 + p[1]*fh]);
-        trails.push(mapped.map(p=>[...p]));
-        if (trails.length > 40) trails.shift();
-        trails.forEach((fr, fi) => {
-            const a = fi/trails.length;
-            BODY_EDGES.forEach(([i,j]) => {
-                ctx.beginPath();
-                ctx.moveTo(fr[i][0], fr[i][1]);
-                ctx.lineTo(fr[j][0], fr[j][1]);
-                ctx.strokeStyle = `rgba(212,165,116,${a*0.08})`;
-                ctx.lineWidth = 0.7; ctx.stroke();
-            });
+        const fw = Math.min(w * 0.39, h * 0.56), fh = h * 0.78;
+        const mapped = pts.map(p => [
+            w * 0.5 - fw / 2 + p[0] * fw,
+            (h - fh) * 0.52 + p[1] * fh,
+        ]);
+
+        /* 逐关节速度 */
+        const speeds = mapped.map((p, k) => {
+            if (!prevMapped) return 0;
+            const dx = p[0] - prevMapped[k][0], dy = p[1] - prevMapped[k][1];
+            return Math.sqrt(dx * dx + dy * dy);
         });
+        prevMapped = mapped.map(p => [...p]);
+
+        /* 标量速度场（高斯叠加）*/
+        const sigma2 = (fh * 0.13) * (fh * 0.13);
+        const cw = w / COLS, ch = h / ROWS;
+        let maxV = 0;
+        for (let r = 0; r < ROWS; r++) {
+            const py = (r + 0.5) * ch;
+            for (let c = 0; c < COLS; c++) {
+                const px = (c + 0.5) * cw;
+                let val = 0;
+                for (let k = 0; k < mapped.length; k++) {
+                    const dx = px - mapped[k][0], dy = py - mapped[k][1];
+                    val += (0.35 + speeds[k] * 6) * Math.exp(-(dx * dx + dy * dy) / sigma2);
+                }
+                field[r * COLS + c] = val;
+                if (val > maxV) maxV = val;
+            }
+        }
+        if (maxV < 0.001) maxV = 0.001;
+
+        /* marching-squares 等高线 */
+        for (const [level, color] of CLVL) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.05;
+            ctx.beginPath();
+            for (let r = 0; r < ROWS - 1; r++) {
+                const y0 = r * ch;
+                for (let c = 0; c < COLS - 1; c++) {
+                    const x0 = c * cw;
+                    const vtl = field[r * COLS + c] / maxV;
+                    const vtr = field[r * COLS + c + 1] / maxV;
+                    const vbr = field[(r + 1) * COLS + c + 1] / maxV;
+                    const vbl = field[(r + 1) * COLS + c] / maxV;
+                    const idx = (vtl >= level ? 8 : 0) | (vtr >= level ? 4 : 0)
+                              | (vbr >= level ? 2 : 0) | (vbl >= level ? 1 : 0);
+                    for (const [e1, e2] of _MS_TABLE[idx]) {
+                        /* 边中点插值 */
+                        let x1, y1, x2, y2, t0;
+                        if (e1 === 0) { t0 = (level-vtl)/(vtr-vtl+1e-9); x1=x0+t0*cw; y1=y0; }
+                        else if (e1===1){ t0=(level-vtr)/(vbr-vtr+1e-9); x1=x0+cw; y1=y0+t0*ch; }
+                        else if (e1===2){ t0=(level-vbl)/(vbr-vbl+1e-9); x1=x0+t0*cw; y1=y0+ch; }
+                        else            { t0=(level-vtl)/(vbl-vtl+1e-9); x1=x0; y1=y0+t0*ch; }
+                        if (e2 === 0) { t0 = (level-vtl)/(vtr-vtl+1e-9); x2=x0+t0*cw; y2=y0; }
+                        else if (e2===1){ t0=(level-vtr)/(vbr-vtr+1e-9); x2=x0+cw; y2=y0+t0*ch; }
+                        else if (e2===2){ t0=(level-vbl)/(vbr-vbl+1e-9); x2=x0+t0*cw; y2=y0+ch; }
+                        else            { t0=(level-vtl)/(vbl-vtl+1e-9); x2=x0; y2=y0+t0*ch; }
+                        ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+                    }
+                }
+            }
+            ctx.stroke();
+        }
+
+        /* 骨架轮廓（略提亮，与大图分层一致）*/
         drawSkeleton(ctx, mapped, fh, {
-            lw: 1.4,
-            bc: 'rgba(212,165,116,0.78)',
-            bc2: 'rgba(212,165,116,0.45)',
-            jr: 2.0,
-            jc: '#ebe7df',
+            lw: 0.92, bc: 'rgba(235,231,223,0.26)', bc2: 'rgba(212,165,116,0.22)',
+            jr: 1.35, jc: 'rgba(235,231,223,0.42)', headGlow: false, jointGlow: false,
+        });
+
+        /* 横向扫描高光 */
+        scanY = (scanY + h / (60 * 8)) % h;
+        const sg = ctx.createLinearGradient(0, scanY - 24, 0, scanY + 24);
+        sg.addColorStop(0, 'transparent');
+        sg.addColorStop(0.5, 'rgba(212,165,116,0.13)');
+        sg.addColorStop(1, 'transparent');
+        ctx.fillStyle = sg; ctx.fillRect(0, scanY - 24, w, 48);
+
+        /* HUD · 5 维度标签（各带深色背板） */
+        ctx.font = '9px "JetBrains Mono", monospace';
+        DIM_LABELS.forEach((d, i) => {
+            const y = h * (0.18 + i * 0.16);
+            const tw = ctx.measureText(d).width;
+            ctx.fillStyle = 'rgba(10,9,8,0.74)';
+            ctx.fillRect(10, y - 10, tw + 14, 15);
+            const a = 0.74 + 0.2 * Math.sin(t * 2.1 + i * 1.2);
+            ctx.fillStyle = `rgba(212,165,116,${Math.min(a, 0.98)})`;
+            ctx.fillText(d, 17, y);
         });
     });
 }
