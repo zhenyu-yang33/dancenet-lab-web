@@ -25,7 +25,7 @@
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<link rel="manifest" href="assets/manifest.webmanifest">
+<!-- manifest omitted: requires HTTP server -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -242,6 +242,115 @@ body {
     text-transform: uppercase;
 }
 
+/* ── 光影为媒 · hover / focus-within 子菜单 ── */
+.nav-item-has-submenu {
+    position: relative;
+    align-self: stretch;
+    display: flex;
+    align-items: stretch;
+}
+.nav-item-has-submenu > .nav-link {
+    align-self: center;
+}
+.nav-submenu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    z-index: 110;
+    width: max-content;
+    max-width: min(260px, calc(100vw - var(--gutter) * 2));
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    background: rgba(10, 9, 8, 0.38);
+    backdrop-filter: blur(28px) saturate(1.12);
+    -webkit-backdrop-filter: blur(28px) saturate(1.12);
+    border: 1px solid rgba(235, 231, 223, 0.06);
+    border-radius: 3px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(235, 231, 223, 0.04);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity 0.32s cubic-bezier(.2, .85, .2, 1),
+        visibility 0.32s,
+        transform 0.32s cubic-bezier(.2, .85, .2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+    .nav-submenu {
+        transition: opacity 0.18s ease, visibility 0.18s;
+        transform: translateX(-50%);
+    }
+}
+/* 消除触发器与子菜单之间的间隙导致的闪烁 */
+.nav-submenu::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    height: 12px;
+}
+.nav-item-has-submenu:hover .nav-submenu,
+.nav-item-has-submenu:focus-within .nav-submenu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+    .nav-item-has-submenu:hover .nav-submenu,
+    .nav-item-has-submenu:focus-within .nav-submenu {
+        transform: translateX(-50%);
+    }
+}
+@media not all and (hover: hover) {
+    /* 触屏设备无 hover：仅靠点击进入光影页；三项仍可从此页的图版入口抵达 */
+    .nav-submenu { display: none; }
+}
+.nav-submenu-link {
+    display: block;
+    padding: 6px 14px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--paper-soft);
+    text-decoration: none;
+    text-wrap: pretty;
+    white-space: nowrap;
+    transition: color 0.22s ease, background 0.22s ease;
+}
+.nav-submenu-link:hover {
+    color: var(--gold);
+    background: rgba(212, 165, 116, 0.07);
+}
+.nav-submenu-link:focus-visible {
+    outline: none;
+    color: var(--gold);
+    background: rgba(212, 165, 116, 0.09);
+}
+@media (max-width: 900px) {
+    .nav-submenu {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%) translateY(-6px);
+    }
+    .nav-item-has-submenu:hover .nav-submenu,
+    .nav-item-has-submenu:focus-within .nav-submenu {
+        transform: translateX(-50%) translateY(0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .nav-submenu { transform: translateX(-50%); }
+        .nav-item-has-submenu:hover .nav-submenu,
+        .nav-item-has-submenu:focus-within .nav-submenu {
+            transform: translateX(-50%);
+        }
+    }
+}
+
 /* ═════════════════════════════════════════════════════════════
    PAGE SYSTEM
 ═════════════════════════════════════════════════════════════ */
@@ -263,7 +372,8 @@ a.exhibit-row, a.story-card, a.exp-card, a.today-image {
     color: inherit;
     text-decoration: none;
 }
-a.nav-link { -webkit-tap-highlight-color: transparent; }
+a.nav-link,
+a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
 
 /* ═════════════════════════════════════════════════════════════
    HOME · HERO
@@ -4737,11 +4847,19 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
     <ul class="nav-links">
         <li><a class="nav-link" id="nav-home"  href="#home">首页</a></li>
         <li><a class="nav-link" id="nav-agent" href="#agent">智能导师</a></li>
-        <li><a class="nav-link" id="nav-art"   href="#art">光影为媒</a></li>
+        <li class="nav-item-has-submenu">
+            <a class="nav-link" id="nav-art" href="#art" aria-haspopup="true" aria-controls="nav-art-submenu">光影为媒</a>
+            <ul class="nav-submenu" id="nav-art-submenu" aria-label="光影为媒 · 图版">
+                <li><a class="nav-submenu-link" href="#art-flow">看见我们</a></li>
+                <li><a class="nav-submenu-link" href="#art" data-scroll-to="plate-interactive-wrap">光影互动</a></li>
+                <li><a class="nav-submenu-link" href="#art" data-scroll-to="plate-awaken" data-open-awaken="1">智能觉醒</a></li>
+            </ul>
+        </li>
         <li><a class="nav-link" id="nav-mr"    href="#mr">虚实之间</a></li>
         <li><a class="nav-link" id="nav-aigc"  href="#aigc">The Synthesis</a></li>
+        <li><a class="nav-link" id="nav-about" href="#about">关于我们</a></li>
     </ul>
-    <div class="nav-meta" id="nav-meta" aria-hidden="true">第 04 期 · 2026</div>
+    <div class="nav-meta" id="nav-meta" aria-hidden="true">2026</div>
 </nav>
 
 <!-- ════════════════════════════════════════
@@ -5146,10 +5264,10 @@ a.nav-link { -webkit-tap-highlight-color: transparent; }
                 </div>
 
                 <div class="field-row">
-                    <label class="field-label">Gemini API Key<span class="req">选填</span></label>
+                    <label class="field-label">DanceNet API Key<span class="req">选填</span></label>
                     <div>
-                        <input class="field-input" type="text" id="apiKey" placeholder="AIzaSy... — 留空则跳过 LLM 导师点评">
-                        <div class="field-hint">用于生成策展式报告，仅留在本机浏览器，不会上传给我们。</div>
+                        <input class="field-input" type="text" id="apiKey" placeholder="正式授权后启用 — API服务">
+                        <div class="field-hint">当前为展示阶段，分析能力未接入服务；接入后密钥仅留在本机浏览器。</div>
                     </div>
                 </div>
 
@@ -6783,11 +6901,18 @@ document.addEventListener('click', function(e) {
     const scrollHomeToTop = !!(a.classList.contains('nav-brand') && name === 'home');
     showPage(name, { scrollHomeToTop });
     const scrollTarget = a.dataset.scrollTo;
+    const openAwakenAfter = a.dataset.openAwaken === '1';
+    const prefersReducedMotion = typeof window.matchMedia === 'function'
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const scrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
     if (scrollTarget) {
         setTimeout(() => {
             const el = document.getElementById(scrollTarget);
             if (!el) return;
-            window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+            window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: scrollBehavior });
+            if (openAwakenAfter && typeof openAwakenModal === 'function') {
+                setTimeout(() => openAwakenModal(), prefersReducedMotion ? 120 : 380);
+            }
         }, 60);
     }
 });
@@ -7453,7 +7578,7 @@ function initAgentHero() {
     const COLS = 44, ROWS = 62;
     const field = new Float32Array(COLS * ROWS);
 
-    /* 7 等高线等级 → 冷(paper) … 热(gold)，对应 5 个感知维度 */
+    /* 7 等高线等级 → 冷(paper) … 热(gold) */
     const CLVL = [
         [0.09, 'rgba(235,231,223,0.10)'],
         [0.18, 'rgba(235,231,223,0.16)'],
@@ -7463,7 +7588,6 @@ function initAgentHero() {
         [0.67, 'rgba(212,165,116,0.68)'],
         [0.80, 'rgba(212,165,116,0.88)'],
     ];
-    const DIM_LABELS = ['01 · 感知', '02 · 运动学', '03 · 认知', '04 · RAG', '05 · 报告'];
 
     dncRegisterDecorLoop('agent-hero', 'agent', () => {
         const w = getW(), h = getH();
@@ -7551,18 +7675,6 @@ function initAgentHero() {
         sg.addColorStop(0.5, 'rgba(212,165,116,0.13)');
         sg.addColorStop(1, 'transparent');
         ctx.fillStyle = sg; ctx.fillRect(0, scanY - 24, w, 48);
-
-        /* HUD · 5 维度标签（各带深色背板） */
-        ctx.font = '9px "JetBrains Mono", monospace';
-        DIM_LABELS.forEach((d, i) => {
-            const y = h * (0.18 + i * 0.16);
-            const tw = ctx.measureText(d).width;
-            ctx.fillStyle = 'rgba(10,9,8,0.74)';
-            ctx.fillRect(10, y - 10, tw + 14, 15);
-            const a = 0.74 + 0.2 * Math.sin(t * 2.1 + i * 1.2);
-            ctx.fillStyle = `rgba(212,165,116,${Math.min(a, 0.98)})`;
-            ctx.fillText(d, 17, y);
-        });
     });
 }
 
@@ -12050,21 +12162,24 @@ function exp2DrawAudioFx(ctx, w, h, now, a) {
 }
 
 /* ═════════════════════════════════════════════════════════════
-   AGENT API — 根地址来自 api-config.js（window.__DANCENET_API_ORIGIN__）
-   或调试：?api=https%3A%2F%2F主机%2F子路径 （需 URL 编码）
+   AGENT API — 开发阶段占位（不发起网络请求；正式环境再接后端或第三方 API）
 ═════════════════════════════════════════════════════════════ */
-function resolveApiOrigin() {
-    if (typeof window !== 'undefined' && window.__DANCENET_API_ORIGIN__)
-        return String(window.__DANCENET_API_ORIGIN__).replace(/\/$/, '');
-    try {
-        const u = new URLSearchParams(window.location.search);
-        const q = u.get('api');
-        if (q) return decodeURIComponent(q).replace(/\/$/, '');
-    } catch (_) {}
-    return '';
+const AGENT_API_UNAVAILABLE_MSG = '未连接 API 服务，请联系我们进行授权。';
+
+function agentApiUnavailable() {
+    showToast(AGENT_API_UNAVAILABLE_MSG, 'warn', '服务未就绪');
 }
-const API_ORIGIN = resolveApiOrigin();
-const API_BASE = API_ORIGIN ? API_ORIGIN + '/api' : '/api';
+
+/** 「全量分析」与「仅姿态分析」共用：需先选视频，再提示未接入服务 */
+function tryStartAgentAnalysis() {
+    const videoFile = document.getElementById('videoFile').files[0];
+    if (!videoFile) {
+        showToast('请先选择或拖入一个视频文件。', 'warn', '未选择文件');
+        return;
+    }
+    agentApiUnavailable();
+}
+
 let currentResult = null;
 let currentVideoFile = null;
 
@@ -12133,42 +12248,7 @@ function showResult() {
     document.getElementById('result-block').classList.remove('hidden');
 }
 
-async function startPoseAnalysis() {
-    const videoFile = document.getElementById('videoFile').files[0];
-    if (!videoFile) { showToast('请先选择或拖入一个视频文件。', 'warn', '未选择文件'); return; }
-    currentVideoFile = videoFile;
-    document.getElementById('poseAnalyzeBtn').disabled = true;
-    showProgress();
-    try {
-        updateStep(1, 'active', '上传中…');
-        updateProgress(10);
-        const fd = new FormData(); fd.append('video', videoFile);
-        const up = await fetch(`${API_BASE}/upload`, { method: 'POST', body: fd });
-        if (!up.ok) throw new Error('上传失败');
-        const { filename } = await up.json();
-        updateStep(1, 'done', `已接收 · ${filename}`);
-        updateProgress(30);
-
-        updateStep(2, 'active', '读取姿态…');
-        const an = await fetch(`${API_BASE}/analyze`, {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ filename })
-        });
-        if (!an.ok) { const e = await an.json(); throw new Error(e.error || '分析失败'); }
-        const result = await an.json();
-        updateStep(2, 'done', '已提取姿态');
-        updateStep(3, 'done', '时序分析完成');
-        updateProgress(100);
-        showPoseResults(result);
-    } catch(e) {
-        showToast(e.message, 'error', '姿态分析失败');
-        updateStep(2, 'active', '✕ 分析中断');
-        document.getElementById('upload-block').classList.remove('hidden');
-        document.getElementById('progress-block').classList.add('hidden');
-    } finally {
-        document.getElementById('poseAnalyzeBtn').disabled = false;
-    }
-}
+function startPoseAnalysis() { tryStartAgentAnalysis(); }
 
 function showPoseResults(result) {
     currentResult = result;
@@ -12185,209 +12265,49 @@ function showPoseResults(result) {
     window.scrollTo({ top: document.getElementById('result-block').offsetTop - 100, behavior: 'smooth' });
 }
 
-async function startWaveAnalysis() {
-    const videoFile = document.getElementById('videoFile').files[0];
-    if (!videoFile) { showToast('请先选择或拖入一个视频文件。', 'warn', '未选择文件'); return; }
-    currentVideoFile = videoFile;
-    document.getElementById('waveAnalyzeBtn').disabled = true;
-    showProgress();
-    try {
-        updateStep(1, 'active', '上传中…');
-        updateProgress(10);
-        const fd = new FormData(); fd.append('video', videoFile);
-        const up = await fetch(`${API_BASE}/upload`, { method: 'POST', body: fd });
-        if (!up.ok) throw new Error('上传失败：' + up.status);
-        const { filename } = await up.json();
-        updateStep(1, 'done', `已接收 · ${filename}`);
-        updateProgress(28);
-
-        updateStep(2, 'active', '提取运动中…');
-        updateProgress(45);
-        const an = await fetch(`${API_BASE}/analyze`, {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ filename })
-        });
-        if (!an.ok) { const e = await an.json(); throw new Error(e.error || '姿态分析失败'); }
-        await an.json();
-        updateStep(2, 'done', '已提取姿态');
-        updateProgress(62);
-
-        updateStep(3, 'active', '计算 Wave 分数…');
-        const wv = await fetch(`${API_BASE}/wave_analyze`, {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ filename, arm: 'both' })
-        });
-        if (!wv.ok) { const e = await wv.json(); throw new Error(e.error || 'Wave 分析失败'); }
-        const result = await wv.json();
-        updateStep(3, 'done', 'Wave 已计算');
-        updateProgress(100);
-        showWaveResults(result);
-    } catch(e) {
-        showToast(e.message, 'error', 'Wave 分析失败');
-        updateStep(2, 'active', '✕ ' + e.message);
-        document.getElementById('upload-block').classList.remove('hidden');
-        document.getElementById('progress-block').classList.add('hidden');
-    } finally {
-        document.getElementById('waveAnalyzeBtn').disabled = false;
-    }
-}
+function startWaveAnalysis() { tryStartAgentAnalysis(); }
 
 function showWaveResults(result) {
     currentResult = result;
-    const wave = result.wave_analysis;
-    const left = wave.left_arm, right = wave.right_arm;
+    const wave = result.wave_analysis || {};
+    const left = wave.left_arm || {}, right = wave.right_arm || {};
+    const pose = result.agent1_pose_analysis || {};
+    const temporal = result.agent2_temporal_analysis || {};
     showResult();
     document.getElementById('statsGrid').innerHTML = `
-        <div class="r-metric"><div class="r-metric-val">${wave.overall_score}</div><div class="r-metric-label">综合</div></div>
-        <div class="r-metric"><div class="r-metric-val">${left.total_score}</div><div class="r-metric-label">左臂</div></div>
-        <div class="r-metric"><div class="r-metric-val">${right.total_score}</div><div class="r-metric-label">右臂</div></div>
-        <div class="r-metric"><div class="r-metric-val">${result.visualization ? '✓' : '✕'}</div><div class="r-metric-label">可视化</div></div>
+        <div class="r-metric"><div class="r-metric-val">${wave.overall_score ?? '—'}</div><div class="r-metric-label">综合评分</div></div>
+        <div class="r-metric"><div class="r-metric-val">${pose.duration ?? '—'}<span style="font-size:20px;">s</span></div><div class="r-metric-label">时长</div></div>
+        <div class="r-metric"><div class="r-metric-val">${temporal.estimated_bpm ?? '—'}</div><div class="r-metric-label">BPM</div></div>
+        <div class="r-metric"><div class="r-metric-val">${result.skill_level ?? '—'}</div><div class="r-metric-label">水平</div></div>
     `;
     document.getElementById('sidebar-download').disabled = false;
     window.scrollTo({ top: document.getElementById('result-block').offsetTop - 100, behavior: 'smooth' });
 }
 
-async function getLLMReport() {
-    const btn = document.getElementById('getLlmBtn');
-    const card = document.getElementById('llm-report-card');
-    const loading = document.getElementById('llm-loading');
-    const content = document.getElementById('llm-report-content');
-    const chatCard = document.getElementById('chat-card');
+function getLLMReport() { agentApiUnavailable(); }
 
-    card.classList.remove('hidden');
-    loading.classList.remove('hidden');
-    content.classList.add('hidden');
-    chatCard.classList.add('hidden');
-    btn.disabled = true; btn.textContent = '正在生成…';
-
-    let prog = 0;
-    const iv = setInterval(() => {
-        prog = Math.min(90, prog + Math.random()*15);
-        document.getElementById('llm-progress').style.width = prog + '%';
-    }, 500);
-
-    try {
-        const res = await fetch(`${API_BASE}/llm_report`, {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({
-                filename: currentResult.file,
-                wave_result: currentResult,
-                video_filename: currentVideoFile?.name
-            })
-        });
-        const data = await res.json();
-        clearInterval(iv);
-        document.getElementById('llm-progress').style.width = '100%';
-
-        if (data.error) {
-            showToast(data.error, 'error', '报告生成失败');
-            loading.classList.add('hidden');
-        } else {
-            const text = data.report;
-            const qRegex = /👉 提问：(.+?)(?=\n|👉 提问：|$)/g;
-            let qs = [], m;
-            while ((m = qRegex.exec(text)) !== null) qs.push(m[1].trim());
-            const cleanText = text.replace(/💬 导师随堂问答[\s\S]*/, '').trim();
-
-            loading.classList.add('hidden');
-            content.classList.remove('hidden');
-            content.innerHTML = cleanText;
-
-            const qContainer = document.getElementById('suggested-questions');
-            const qBtns = document.getElementById('question-buttons');
-            if (qs.length > 0) {
-                qBtns.innerHTML = '';
-                qs.forEach(q => {
-                    const b = document.createElement('button');
-                    b.className = 'q-pill'; b.textContent = q;
-                    b.onclick = () => handleQuestionClick(q);
-                    qBtns.appendChild(b);
-                });
-                qContainer.classList.remove('hidden');
-            }
-
-            const vParts = text.split('推荐视频：');
-            const vContainer = document.getElementById('video-button-container');
-            vContainer.innerHTML = '';
-            if (vParts.length > 1) {
-                const [vTitle, vUrl] = vParts[1].split('|').map(s => s.trim());
-                if (vTitle && vUrl) {
-                    const vb = document.createElement('button');
-                    vb.className = 'btn-secondary';
-                    vb.style.cssText = 'width:100%; justify-content:center;';
-                    vb.textContent = '▷ ' + vTitle;
-                    vb.onclick = () => showVideoModal(vUrl);
-                    vContainer.appendChild(vb);
-                    vContainer.classList.remove('hidden');
-                }
-            }
-
-            chatCard.classList.remove('hidden');
-        }
-        btn.textContent = '重新生成读解';
-        btn.disabled = false;
-    } catch(e) {
-        clearInterval(iv);
-        showToast(e.message, 'error', '网络请求失败');
-        loading.classList.add('hidden');
-        btn.disabled = false;
-        btn.textContent = '生成策展式读解 →';
-    }
-}
-
-async function handleQuestionClick(q) {
+function handleQuestionClick(q) {
     document.getElementById('suggested-questions').classList.add('hidden');
-    await sendChatMessageDirect(q);
+    sendChatMessageDirect(q);
 }
 
-async function sendChatMessageDirect(message) {
-    if (!message || !currentResult) return;
-    const msgs = document.getElementById('chat-messages');
-    // Remove empty hint
-    const empty = msgs.querySelector('.msg-empty');
-    if (empty) empty.remove();
-    const userDiv = document.createElement('div');
-    userDiv.className = 'msg-user'; userDiv.textContent = message;
-    msgs.appendChild(userDiv);
-    const loadDiv = document.createElement('div');
-    loadDiv.className = 'msg-ai';
-    loadDiv.innerHTML = '<span class="report-loading-dots"><span></span><span></span><span></span></span>';
-    msgs.appendChild(loadDiv);
-    msgs.scrollTop = msgs.scrollHeight;
-    try {
-        const res = await fetch(`${API_BASE}/chat`, {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ question: message, previous_data: currentResult })
-        });
-        const data = await res.json();
-        msgs.removeChild(loadDiv);
-        const aiDiv = document.createElement('div');
-        aiDiv.className = 'msg-ai';
-        aiDiv.innerHTML = data.error
-            ? `<span style="color:var(--ember)">错误：${data.error}</span>`
-            : data.reply.replace(/\n/g, '<br>');
-        msgs.appendChild(aiDiv);
-        msgs.scrollTop = msgs.scrollHeight;
-    } catch(e) {
-        if (loadDiv.parentNode) msgs.removeChild(loadDiv);
-        showToast(e.message, 'error', '消息发送失败');
-    }
+function sendChatMessageDirect(message) {
+    if (!message) return;
+    agentApiUnavailable();
 }
 
 function sendChatPreset(text) {
-    if (!currentResult) { showToast('请先完成一次视频分析，再使用快捷提问。', 'warn', '尚未分析'); return; }
     const inp = document.getElementById('chat-input');
     if (inp) inp.value = '';
     sendChatMessageDirect(text);
 }
 
-async function sendChatMessage() {
+function sendChatMessage() {
     const inp = document.getElementById('chat-input');
     const msg = inp.value.trim();
     if (!msg) return;
-    if (!currentResult) { showToast('请先完成一次视频分析，再向导师提问。', 'warn', '尚未分析'); return; }
     inp.value = '';
-    await sendChatMessageDirect(msg);
+    sendChatMessageDirect(msg);
 }
 
 function showVideoModal(url) {
