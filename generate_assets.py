@@ -10,13 +10,13 @@ ASSETS = "assets"
 # ─── OG images: video source + seek time ───────────────────────────────────
 OG_SOURCES = [
     ("og-home",     "assets/art-hero.mp4",             "00:00:02"),
-    ("og-agent",    "assets/share-case02-cv.mov",       "00:00:02"),
+    ("og-agent",    "assets/share-case02-cv.mp4",       "00:00:02"),
     ("og-art",      "assets/plate-awaken.mp4",          "00:00:04"),
-    ("og-art-flow", "assets/art-flow-case-01.mov",      "00:00:02"),
+    ("og-art-flow", "assets/art-flow-case-01.mp4",      "00:00:02"),
     ("og-mr",       "assets/mr-phases-bg.mp4",          "00:00:02"),
-    ("og-aigc",     "assets/art-flow-case-02.mov",      "00:00:03"),
-    ("og-exp1",     "assets/exp1-cover-hero.mov",       "00:00:02"),
-    ("og-exp2",     "assets/art-flow-case-03.mov",      "00:00:02"),
+    ("og-aigc",     "assets/art-flow-case-02.mp4",      "00:00:03"),
+    ("og-exp1",     "assets/exp1-cover-hero.mp4",       "00:00:02"),
+    ("og-exp2",     "assets/art-flow-case-03.mp4",      "00:00:02"),
 ]
 
 OG_VF = (
