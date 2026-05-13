@@ -3653,6 +3653,39 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
     font-size: 22px; line-height: 1.6;
     color: var(--paper);
 }
+.about-intro-body .about-intro-coda {
+    position: relative;
+    margin-top: 1.85em;
+    padding-top: 1.35em;
+    font-size: 0.93em;
+    line-height: 1.72;
+    font-style: italic;
+    color: var(--paper-soft);
+}
+.about-intro-body .about-intro-coda::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 10px;
+    pointer-events: none;
+    opacity: 0.4;
+    background:
+        linear-gradient(var(--gold), var(--gold)) 0 0 / 1px 10px no-repeat,
+        linear-gradient(var(--gold), var(--gold)) 100% 0 / 1px 10px no-repeat,
+        linear-gradient(90deg, var(--gold), var(--gold)) 0 0 / 100% 1px no-repeat;
+}
+.about-intro-body .about-intro-coda-cite {
+    display: block;
+    margin-top: 0.7em;
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    font-style: normal;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+}
 
 .about-intro-aux {
     position: sticky; top: calc(var(--nav-h) + 24px);
@@ -6223,7 +6256,7 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
                     "用<em>技术</em>实现教育公平， 用<em>数据</em>实现因材施教， 用<em>体验</em>重塑学习动机——一所关于身体、 运动与人工智能的实验室。"
                 </p>
                 <div class="about-hero-tags">
-                    <span class="about-hero-tag">街舞 AI</span>
+                    <span class="about-hero-tag">舞蹈 AI</span>
                     <span class="about-hero-tag">运动智能</span>
                     <span class="about-hero-tag">教育科技</span>
                     <span class="about-hero-tag">每季更新</span>
@@ -6250,7 +6283,7 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
             <div class="label">§ 01 · 公司简介</div>
             <dl>
                 <dt>成立</dt><dd>2023</dd>
-                <dt>聚焦</dt><dd>街舞 AI 智能分析</dd>
+                <dt>聚焦</dt><dd>舞蹈 AI 智能分析</dd>
                 <dt>属性</dt><dd>教育科技 · 实验室</dd>
                 <dt>更新</dt><dd>每季一期</dd>
             </dl>
@@ -6268,6 +6301,10 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
 
             <p>
                 我们相信， 一支舞蹈背后既是身体的语言， 也是数据的轨迹。 当算法学会"看"运动， 教育就有机会从"统一灌输"走向"被看见的因人而异"。 这是 DanceNet.Lab 一直在做的事情。
+            </p>
+            <p class="about-intro-coda">
+                「我不能创造的， 我就尚未真正理解。」
+                <span class="about-intro-coda-cite">理查德·费曼</span>
             </p>
         </article>
 
@@ -6307,7 +6344,7 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
                 <div class="about-value-num">II · Personalization</div>
                 <h3 class="about-value-title">用数据实现<em>因材施教</em></h3>
                 <span class="about-value-rule"></span>
-                <p class="about-value-desc">通过 AI 分析每一具身体的差异， 把"统一课表"变成只属于一个人的学习方案。</p>
+                <p class="about-value-desc">通过 AI 分析每一具身体的差异， 把"姿态"变成制定个人的学习方案。</p>
             </div>
             <div class="about-value">
                 <div class="about-value-num">III · Motivation</div>
@@ -6341,13 +6378,13 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
                 <p>项目共创 · 教育合作 · 学术研究。</p>
             </div>
             <div class="about-contact-card">
-                <div class="k">媒体 · Press</div>
+                <div class="k">媒体 · 邮箱</div>
                 <div class="v"><em>Google@</em>dancenet.lab</div>
                 <p>采访、 展览预告、 媒体素材索取。</p>
             </div>
             <div class="about-contact-card">
-                <div class="k">据点 · Studio</div>
-                <div class="v">重庆 · <em>两江</em></div>
+                <div class="k">据点 · 实验室</div>
+                <div class="v"><em>重庆</em> · 两江</div>
                 <p>研究据点位于山城——— 沿江、 沿山、 沿姿态。</p>
             </div>
         </div>
