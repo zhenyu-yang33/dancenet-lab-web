@@ -1016,6 +1016,406 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
 }
 
 /* ═════════════════════════════════════════════════════════════
+   REEL · 番外 · 一分钟影像
+   Split-panel film card inspired by editorial "double frame" devices.
+   Two rounded panels are joined by a circular notch holding a play head;
+   a gold halo traces the silhouette via filter: drop-shadow.
+═════════════════════════════════════════════════════════════ */
+.reel-sec {
+    padding: clamp(48px, 9vh, 110px) var(--gutter) clamp(48px, 9vh, 110px);
+    position: relative;
+    background:
+        radial-gradient(ellipse at 50% 30%, rgba(212,165,116,0.05), transparent 55%),
+        var(--ink);
+}
+
+.reel-head {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 60px;
+    align-items: end;
+    margin-bottom: 56px;
+}
+.reel-head-num {
+    font-family: var(--f-mono);
+    font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border-top: 1px solid var(--gold);
+    padding-top: 12px;
+}
+.reel-head-num span {
+    display: block; margin-top: 4px;
+    color: var(--paper-faint);
+    font-size: 10.5px;
+}
+.reel-tagline {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(28px, 3vw, 44px);
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    color: var(--paper);
+    text-wrap: pretty;
+    max-width: 22ch;
+}
+.reel-tagline em {
+    font-style: italic;
+    color: var(--gold);
+}
+.reel-head-link {
+    align-self: end;
+    display: flex; flex-direction: column; gap: 6px;
+    font-family: var(--f-mono);
+    font-size: 10.5px; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+    text-align: right;
+    white-space: nowrap;
+}
+.reel-head-link b {
+    color: var(--paper-soft);
+    font-weight: 400;
+    letter-spacing: 0.18em;
+}
+
+.reel-stage {
+    max-width: 1080px;
+    margin: 0 auto;
+    position: relative;
+    isolation: isolate;
+}
+
+/* Card root — anchor that navigates to b23.tv */
+.reel-card {
+    --notch-r: 64px;
+    display: block;
+    position: relative;
+    color: inherit;
+    text-decoration: none;
+    transition:
+        transform 0.6s cubic-bezier(.2,.8,.2,1),
+        filter 0.6s cubic-bezier(.2,.8,.2,1);
+    /* Halo + thin gold edge that follow the dumbbell silhouette */
+    filter:
+        drop-shadow(0 0 0.5px rgba(212,165,116,0.55))
+        drop-shadow(0 0 14px rgba(212,165,116,0.18))
+        drop-shadow(0 40px 80px rgba(0,0,0,0.55));
+}
+.reel-card:hover {
+    transform: translateY(-6px);
+    filter:
+        drop-shadow(0 0 0.5px rgba(212,165,116,0.85))
+        drop-shadow(0 0 22px rgba(212,165,116,0.32))
+        drop-shadow(0 60px 100px rgba(0,0,0,0.6));
+}
+.reel-card:focus-visible {
+    outline: none;
+}
+.reel-card:focus-visible .reel-panels {
+    outline: 2px solid var(--gold);
+    outline-offset: 8px;
+    border-radius: 30px;
+}
+
+/* Two side-by-side panels, each masked with a circular indent toward the center */
+.reel-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+.reel-panel {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background-color: var(--ink-2);
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    isolation: isolate;
+}
+/* radial-gradient mask gives a true circular notch independent of panel aspect */
+.reel-panel--left {
+    border-radius: 28px 10px 10px 28px;
+    -webkit-mask: radial-gradient(circle var(--notch-r) at 100% 50%,
+        transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+    mask: radial-gradient(circle var(--notch-r) at 100% 50%,
+        transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+}
+.reel-panel--right {
+    border-radius: 10px 28px 28px 10px;
+    -webkit-mask: radial-gradient(circle var(--notch-r) at 0% 50%,
+        transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+    mask: radial-gradient(circle var(--notch-r) at 0% 50%,
+        transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+}
+
+/* faint editorial grid laid over the right "lab" panel, like blueprint paper */
+.reel-grid {
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(212,165,116,0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212,165,116,0.10) 1px, transparent 1px);
+    background-size: 36px 36px;
+    mix-blend-mode: screen;
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+/* vignetted darkening: at the inner edge (notch read) and along the bottom (brand legibility) */
+.reel-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+.reel-panel--left::after {
+    background:
+        /* deep bottom darken — suppresses original image's watermark */
+        linear-gradient(180deg, transparent 50%, rgba(10,9,8,0.55) 78%, rgba(10,9,8,1) 100%),
+        /* inner-edge darken so the notch reads against the imagery */
+        linear-gradient(270deg, rgba(10,9,8,0.78) 0%, rgba(10,9,8,0.0) 35%, transparent 50%);
+}
+.reel-panel--right::after {
+    background:
+        linear-gradient(180deg, transparent 55%, rgba(10,9,8,0.78) 100%),
+        linear-gradient(90deg,  rgba(10,9,8,0.78) 0%, rgba(10,9,8,0.0) 35%, transparent 50%);
+}
+
+/* corner labels */
+.reel-tag {
+    position: absolute; top: 18px; left: 18px;
+    padding: 6px 11px;
+    background: rgba(10,9,8,0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--line-mid);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    z-index: 2;
+}
+.reel-mark {
+    position: absolute; top: 18px; right: 18px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 11px;
+    background: rgba(10,9,8,0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--line-mid);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--paper-soft);
+    z-index: 2;
+}
+.reel-mark::before {
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--ember);
+    box-shadow: 0 0 10px rgba(181,67,56,0.7);
+    animation: reelRecBlink 1.6s ease-in-out infinite;
+}
+@keyframes reelRecBlink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.35; }
+}
+
+.reel-brand {
+    position: absolute; bottom: 18px; right: 18px;
+    padding: 8px 13px;
+    background: rgba(10,9,8,0.78);
+    border: 1px solid var(--line-mid);
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: var(--paper);
+    z-index: 2;
+}
+.reel-brand .dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin: 0 6px;
+    transform: translateY(-3px);
+}
+
+.reel-foot-label {
+    position: absolute; bottom: 18px; left: 18px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+    z-index: 2;
+}
+
+/* ── Center notch / play head ── */
+.reel-notch {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(var(--notch-r) * 2);
+    height: calc(var(--notch-r) * 2);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 4;
+}
+.reel-notch::before {
+    /* faint inner ring tracing the notch boundary */
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(212,165,116,0.22);
+}
+.reel-play {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 76px; height: 76px;
+    border-radius: 50%;
+    background: rgba(10,9,8,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(235,231,223,0.35);
+    display: grid; place-items: center;
+    z-index: 6;
+    transition:
+        transform 0.4s cubic-bezier(.2,.8,.2,1),
+        background 0.3s,
+        border-color 0.3s;
+}
+.reel-play::before {
+    /* breathing pulse ring */
+    content: '';
+    position: absolute; inset: -1px;
+    border-radius: 50%;
+    border: 1px solid rgba(212,165,116,0.4);
+    animation: reelPulse 2.6s ease-out infinite;
+    pointer-events: none;
+}
+.reel-play svg {
+    width: 22px; height: 22px;
+    fill: var(--paper);
+    margin-left: 3px;
+    transition: fill 0.3s;
+}
+.reel-card:hover .reel-play {
+    background: var(--gold);
+    border-color: var(--gold);
+    transform: translate(-50%, -50%) scale(1.08);
+}
+.reel-card:hover .reel-play svg {
+    fill: var(--ink);
+}
+@keyframes reelPulse {
+    0%   { transform: scale(1);   opacity: 0.7; }
+    80%  { transform: scale(1.55); opacity: 0;   }
+    100% { transform: scale(1.55); opacity: 0;   }
+}
+
+/* ── Caption strip beneath the card ── */
+.reel-caption {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 28px;
+    align-items: baseline;
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+}
+.reel-caption .lead {
+    color: var(--gold);
+    letter-spacing: 0.22em;
+}
+.reel-caption .stretch {
+    height: 1px;
+    background: var(--line);
+    align-self: center;
+    transform: translateY(-2px);
+}
+.reel-caption .cta {
+    color: var(--paper);
+    transition: color 0.3s, letter-spacing 0.3s;
+}
+.reel-caption .cta::after {
+    content: ' →';
+    transition: transform 0.3s;
+    display: inline-block;
+}
+.reel-card:hover ~ .reel-caption .cta,
+.reel-card:focus-visible ~ .reel-caption .cta {
+    color: var(--gold);
+}
+
+@media (max-width: 900px) {
+    .reel-head {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        margin-bottom: 36px;
+    }
+    .reel-head-link {
+        text-align: left;
+        white-space: normal;
+    }
+    .reel-card { --notch-r: 48px; }
+    .reel-play { width: 64px; height: 64px; }
+    .reel-play svg { width: 18px; height: 18px; }
+    .reel-caption {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    .reel-caption .stretch { display: none; }
+}
+
+@media (max-width: 640px) {
+    /* Stack panels vertically with the notch on top/bottom edge */
+    .reel-card { --notch-r: 44px; }
+    .reel-panels {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+    .reel-panel {
+        aspect-ratio: 16 / 11;
+    }
+    .reel-panel--left {
+        border-radius: 24px 24px 8px 8px;
+        -webkit-mask: radial-gradient(circle var(--notch-r) at 50% 100%,
+            transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+        mask: radial-gradient(circle var(--notch-r) at 50% 100%,
+            transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+    }
+    .reel-panel--right {
+        border-radius: 8px 8px 24px 24px;
+        -webkit-mask: radial-gradient(circle var(--notch-r) at 50% 0%,
+            transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+        mask: radial-gradient(circle var(--notch-r) at 50% 0%,
+            transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+    }
+    .reel-panel--left::after,
+    .reel-panel--right::after { display: none; }
+    .reel-tag, .reel-mark { top: 14px; }
+    .reel-brand, .reel-foot-label { bottom: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reel-play::before,
+    .reel-mark::before { animation: none; }
+    .reel-card,
+    .reel-card:hover { transform: none; transition: filter 0.3s ease; }
+    .reel-card:hover .reel-play { transform: translate(-50%, -50%); }
+}
+
+/* ═════════════════════════════════════════════════════════════
    EXPERIMENT LAB PAGES (exp1 / exp2)
 ═════════════════════════════════════════════════════════════ */
 .lab-stage {
@@ -5111,6 +5511,55 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
         </div>
     </section>
 
+    <!-- REEL · 番外 · 一分钟影像（外链 Bilibili） -->
+    <section class="reel-sec" aria-labelledby="reel-tagline">
+        <div class="reel-head">
+            <div class="reel-head-num">番外 · REEL<span>影像 · 一分钟介绍</span></div>
+            <h2 class="reel-tagline" id="reel-tagline">
+                想用一分钟看懂<br>
+                这间实验室<em>在做什么</em>？
+            </h2>
+            <div class="reel-head-link">
+                <span>外链 · Bilibili</span>
+                <b>b23.tv / 2ivLtxA</b>
+            </div>
+        </div>
+
+        <div class="reel-stage">
+            <a class="reel-card"
+               href="https://b23.tv/2ivLtxA"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="播放 DanceNet.Lab 一分钟介绍影像（在 Bilibili 打开）">
+                <div class="reel-panels">
+                    <div class="reel-panel reel-panel--left"
+                         style="background-image:url('assets/reel-mocap.png');">
+                        <div class="reel-tag">现场 · 街舞 × 姿态</div>
+                        <div class="reel-mark">REC · 01</div>
+                    </div>
+                    <div class="reel-panel reel-panel--right"
+                         style="background-image:url('assets/reel-identity.png');">
+                        <div class="reel-grid" aria-hidden="true"></div>
+                        <div class="reel-foot-label">FRAME · 02</div>
+                        <div class="reel-brand">DanceNet<span class="dot"></span>Lab</div>
+                    </div>
+                </div>
+                <div class="reel-notch" aria-hidden="true">
+                    <span class="reel-play">
+                        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3l12 7-12 7V3z"/></svg>
+                    </span>
+                </div>
+            </a>
+
+            <div class="reel-caption">
+                <span class="lead">REEL · 01</span>
+                <span class="stretch" aria-hidden="true"></span>
+                <span>约 1 分钟 · 中文 / 英文字幕</span>
+                <span class="cta">在 Bilibili 打开</span>
+            </div>
+        </div>
+    </section>
+
     <!-- MANIFESTO -->
     <section class="manifesto">
         <div class="manifesto-inner">
@@ -6256,7 +6705,7 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
                     "用<em>技术</em>实现教育公平， 用<em>数据</em>实现因材施教， 用<em>体验</em>重塑学习动机——一所关于身体、 运动与人工智能的实验室。"
                 </p>
                 <div class="about-hero-tags">
-                    <span class="about-hero-tag">舞蹈 AI</span>
+                    <span class="about-hero-tag">街舞 AI</span>
                     <span class="about-hero-tag">运动智能</span>
                     <span class="about-hero-tag">教育科技</span>
                     <span class="about-hero-tag">每季更新</span>
@@ -6283,7 +6732,7 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
             <div class="label">§ 01 · 公司简介</div>
             <dl>
                 <dt>成立</dt><dd>2023</dd>
-                <dt>聚焦</dt><dd>舞蹈 AI 智能分析</dd>
+                <dt>聚焦</dt><dd>街舞 AI 智能分析</dd>
                 <dt>属性</dt><dd>教育科技 · 实验室</dd>
                 <dt>更新</dt><dd>每季一期</dd>
             </dl>
