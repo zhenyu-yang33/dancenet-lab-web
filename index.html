@@ -25,7 +25,7 @@
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<!-- manifest omitted: requires HTTP server -->
+<link rel="manifest" href="assets/manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -68,6 +68,11 @@
     /* Spacing */
     --gutter:  clamp(24px, 6vw, 96px);
     --nav-h:   58px;
+
+    /* Breakpoints (Phase 1 · mobile patch layer) */
+    --bp-sm: 480px;
+    --bp-md: 768px;
+    --bp-lg: 1100px;
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -163,6 +168,12 @@ body {
     color: var(--paper-soft);
     text-wrap: pretty;
 }
+
+/* Responsive copy / visibility helpers (desktop default) */
+.only-mobile { display: none !important; }
+.only-desktop { display: inline; }
+br.only-desktop { display: block; }
+br.only-mobile { display: none; }
 
 /* ═════════════════════════════════════════════════════════════
    NAVIGATION
@@ -2450,8 +2461,28 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
     display: flex; justify-content: space-between; align-items: center;
     font-family: var(--f-mono); font-size: 10.5px;
     letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--paper-faint);
+    color: var(--paper-soft);
 }
+.footer-bottom--home {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+}
+.footer-bottom-left,
+.footer-bottom-right {
+    color: var(--paper-soft);
+}
+.footer-bottom-left  { justify-self: start; }
+.footer-bottom-right { justify-self: end; }
+.footer-beian {
+    justify-self: center;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: none;
+    color: var(--paper-soft);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.footer-beian:hover { color: var(--gold); }
 
 /* ═════════════════════════════════════════════════════════════
    AGENT PAGE · 智能导师
@@ -4921,6 +4952,8 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 1100px) {
     .nav-meta { display: none; }
     .hero-content { grid-template-columns: 1fr; gap: 30px; }
+    .hero-headline,
+    .hero-pull { grid-column: 1 / -1; }
     .hero-pull { margin-left: 0; max-width: 100%; }
     .today { grid-template-columns: 1fr; gap: 40px; align-items: stretch; }
     .today-image { max-height: min(52vh, 440px); justify-self: stretch; }
@@ -4948,9 +4981,6 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
 }
 
 @media (max-width: 720px) {
-    .nav { padding: 0 20px; gap: 16px; }
-    .nav-links { gap: 0; }
-    .nav-link { padding: 8px 8px; font-size: 10px; letter-spacing: 0.12em; }
     .stories-scroll { padding-left: 24px; padding-right: 24px; }
     .horiz-card-wall__foot {
         padding-left: 24px;
@@ -5344,6 +5374,835 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 480px) {
     #dnl-toast-host { right: 12px; left: 12px; max-width: none; }
 }
+
+/* ═════════════════════════════════════════════════════════════
+   MOBILE · Phase 1 — drawer nav + hero (desktop unchanged)
+   Scoped to max-width: 768px only
+═════════════════════════════════════════════════════════════ */
+.nav-menu-toggle {
+    display: none;
+}
+.nav-drawer {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .nav {
+        gap: 12px;
+        padding-left: max(20px, env(safe-area-inset-left, 0px));
+        padding-right: max(20px, env(safe-area-inset-right, 0px));
+        padding-top: env(safe-area-inset-top, 0px);
+        height: calc(var(--nav-h) + env(safe-area-inset-top, 0px));
+    }
+    .nav-links,
+    .nav-meta { display: none !important; }
+
+    .nav-menu-toggle {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        width: 44px;
+        height: 44px;
+        margin: 0 0 0 auto;
+        padding: 0;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 101;
+        background: rgba(10, 9, 8, 0.72);
+        border: 1px solid rgba(212, 165, 116, 0.38);
+        border-radius: 2px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: border-color 0.2s, background 0.2s;
+    }
+    .nav-menu-toggle:hover,
+    .nav-menu-toggle:focus-visible {
+        border-color: var(--gold);
+        outline: none;
+    }
+    .nav-menu-toggle__bar {
+        display: block;
+        width: 18px;
+        height: 1px;
+        background: var(--paper);
+        transition: transform 0.28s ease, opacity 0.2s ease;
+    }
+    body.nav-drawer-open .nav-menu-toggle__bar:nth-child(1) {
+        transform: translateY(6px) rotate(45deg);
+    }
+    body.nav-drawer-open .nav-menu-toggle__bar:nth-child(2) {
+        opacity: 0;
+    }
+    body.nav-drawer-open .nav-menu-toggle__bar:nth-child(3) {
+        transform: translateY(-6px) rotate(-45deg);
+    }
+
+    .nav-drawer {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        pointer-events: none;
+        visibility: hidden;
+    }
+    .nav-drawer[aria-hidden="false"] {
+        pointer-events: auto;
+        visibility: visible;
+    }
+    .nav-drawer__backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(10, 9, 8, 0.62);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        opacity: 0;
+        transition: opacity 0.32s ease;
+    }
+    .nav-drawer[aria-hidden="false"] .nav-drawer__backdrop {
+        opacity: 1;
+    }
+    .nav-drawer__panel {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(320px, calc(100vw - 48px));
+        background: rgba(10, 9, 8, 0.97);
+        border-left: 1px solid var(--line-mid);
+        padding:
+            calc(var(--nav-h) + env(safe-area-inset-top, 0px) + 12px)
+            max(24px, env(safe-area-inset-right, 0px))
+            max(24px, env(safe-area-inset-bottom, 0px))
+            24px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        transform: translateX(100%);
+        transition: transform 0.34s cubic-bezier(.2, .85, .2, 1);
+        box-shadow: -12px 0 48px rgba(0, 0, 0, 0.45);
+    }
+    .nav-drawer[aria-hidden="false"] .nav-drawer__panel {
+        transform: translateX(0);
+    }
+    .nav-drawer__eyebrow {
+        font-family: var(--f-mono);
+        font-size: 9px;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--paper-faint);
+        margin-bottom: 18px;
+    }
+    .nav-drawer__links {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .nav-drawer__link {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 10px 0;
+        font-family: var(--f-mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--paper-soft);
+        text-decoration: none;
+        border-bottom: 1px solid var(--line);
+        transition: color 0.2s;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .nav-drawer__link:hover,
+    .nav-drawer__link:focus-visible {
+        color: var(--paper);
+        outline: none;
+    }
+    .nav-drawer__link.active {
+        color: var(--gold);
+    }
+    .nav-drawer__group {
+        padding: 0 0 4px;
+        border-bottom: 1px solid var(--line);
+    }
+    .nav-drawer__sublinks {
+        list-style: none;
+        margin: 0;
+        padding: 0 0 8px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+    .nav-drawer__sublink {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 8px 0;
+        font-family: var(--f-mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--paper-faint);
+        text-decoration: none;
+        transition: color 0.2s;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .nav-drawer__sublink:hover,
+    .nav-drawer__sublink:focus-visible {
+        color: var(--gold);
+        outline: none;
+    }
+
+    body.nav-drawer-open {
+        overflow: hidden;
+    }
+
+    /* Hero · mobile height + safe area */
+    .hero {
+        min-height: unset;
+        height: 100svh;
+        max-height: 680px;
+    }
+    #hero-canvas {
+        opacity: 0.58;
+    }
+    .hero-vignette {
+        background:
+            linear-gradient(180deg, rgba(10,9,8,0.82) 0%, rgba(10,9,8,0.42) 18%, transparent 34%),
+            linear-gradient(90deg, rgba(10,9,8,0.72) 0%, rgba(10,9,8,0.18) 42%, transparent 62%),
+            radial-gradient(ellipse at center, transparent 18%, rgba(10,9,8,0.42) 62%, rgba(10,9,8,0.9) 100%);
+    }
+    .hero-meta-top .right {
+        display: none;
+    }
+    .hero-content {
+        bottom: max(6vh, env(safe-area-inset-bottom, 0px));
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+    .hero-headline,
+    .hero-pull {
+        grid-column: 1 / -1;
+    }
+    .hero-pull .lede {
+        font-size: 16px;
+        line-height: 1.65;
+    }
+    .hero-headline .label {
+        margin-bottom: 14px;
+        font-size: 10px;
+    }
+    .hero-meta-top .left {
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        max-width: 70%;
+        line-height: 1.5;
+    }
+    .hero-cta {
+        min-height: 44px;
+        align-self: flex-start;
+    }
+
+    /* Home · issue bar + exhibits */
+    .issue-bar {
+        gap: 28px;
+        padding-top: 14px;
+        padding-bottom: 14px;
+    }
+    .sec {
+        padding-top: 48px;
+        padding-bottom: 48px;
+    }
+    .exhibit-row {
+        grid-template-columns: 40px 1fr 68px;
+        gap: 14px;
+        padding: 22px 0;
+    }
+    .exhibit-num-roman {
+        font-size: 34px;
+    }
+    .exhibit-info-title {
+        font-size: clamp(22px, 6vw, 30px);
+    }
+    .exhibit-thumb {
+        width: 68px;
+    }
+    .story-card {
+        flex: 0 0 min(280px, 78vw);
+    }
+    .horiz-card-wall__hint {
+        font-size: 9px;
+        right: 12px;
+    }
+
+    /* Agent · hero + studio + chat */
+    .agent-hero {
+        padding-top: calc(var(--nav-h) + env(safe-area-inset-top, 0px) + 48px);
+        padding-bottom: 48px;
+    }
+    #agent-hero-canvas {
+        width: 88%;
+        right: -24%;
+        opacity: 0.42;
+    }
+    .agent-hero-mask {
+        background: linear-gradient(180deg, var(--ink) 0%, rgba(10,9,8,0.88) 55%, rgba(10,9,8,0.72) 100%);
+    }
+    .agent-hero-curator {
+        gap: 16px;
+        margin-top: 32px;
+        padding-top: 28px;
+    }
+    .studio {
+        padding: 48px 20px;
+        gap: 36px;
+    }
+    .studio-block {
+        margin-bottom: 48px;
+    }
+    .studio-block-head {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .studio-block-head .meta {
+        margin-left: 0;
+        width: 100%;
+    }
+    .upload-zone {
+        padding: 40px 20px;
+    }
+    .upload-mark {
+        width: 48px;
+        height: 48px;
+    }
+    .field-label {
+        padding-top: 0;
+    }
+    .field-input,
+    .field-input[type="file"],
+    .chat-inp {
+        font-size: 16px;
+    }
+    .btn-primary,
+    .btn-secondary {
+        min-height: 44px;
+    }
+    .chat-wrap {
+        margin-top: 28px;
+    }
+    .chat-head {
+        padding: 14px 16px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .chat-msgs {
+        padding: 16px;
+        max-height: min(50svh, 360px);
+    }
+    .msg-user,
+    .msg-ai {
+        max-width: 90%;
+    }
+    .chat-quick-row {
+        padding: 12px 16px 14px;
+        gap: 8px;
+    }
+    .chat-quick {
+        min-height: 44px;
+        flex: 1 1 calc(50% - 4px);
+        text-align: center;
+    }
+    .chat-input-row {
+        flex-wrap: wrap;
+    }
+    .chat-inp {
+        flex: 1 1 100%;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+    }
+    .chat-send {
+        flex: 1 1 100%;
+        min-height: 44px;
+        padding: 14px 20px;
+    }
+
+    /* Exhibit pages · covers + plates */
+    .ex-cover {
+        min-height: unset;
+        height: min(68svh, 560px);
+    }
+    .ex-cover-content {
+        bottom: 28px;
+        gap: 24px;
+    }
+    .ex-cover-title {
+        font-size: clamp(36px, 10vw, 56px);
+    }
+    .ex-body {
+        padding: 48px 20px;
+    }
+    .ex-phases {
+        padding: 48px 20px;
+    }
+    .ex-phase {
+        padding: 24px 20px;
+    }
+    .ex-plates {
+        gap: 12px;
+    }
+    .manifesto {
+        padding: 48px 20px;
+    }
+    .manifesto-quote {
+        font-size: clamp(24px, 7vw, 36px);
+    }
+
+    /* Art-flow reel */
+    .art-flow-reel {
+        height: clamp(320px, 88vw, 440px);
+    }
+    .art-flow-reel-card {
+        width: clamp(200px, 72vw, 280px);
+    }
+
+    /* About */
+    .about-hero {
+        padding-top: calc(var(--nav-h) + env(safe-area-inset-top, 0px) + 48px);
+        padding-bottom: 48px;
+    }
+    .about-hero-grid {
+        gap: 32px;
+    }
+    .about-hero-text {
+        min-width: 0;
+    }
+    .about-hero-mantra {
+        max-width: 100%;
+        font-size: clamp(17px, 4.6vw, 20px);
+    }
+
+    /* Exp1 workbench */
+    .wb2-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .wb2-meta {
+        text-align: left;
+    }
+    .wb2-drop-zone {
+        padding: 32px 20px;
+    }
+    .wb2-aside-block {
+        padding: 18px 16px;
+    }
+    .wb2-upload .exp1-examples {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .wb2-step-name {
+        font-size: 8px;
+        letter-spacing: 0.1em;
+    }
+    .wb2-upload-cta,
+    .lab-btn {
+        min-height: 44px;
+    }
+    #exp1-playground:not([data-wb-stage="upload"]) #exp1-frame {
+        min-height: 360px;
+        height: min(calc(100svh - 240px), 620px);
+    }
+
+    /* Exp2 · 梵高之眼 */
+    #page-exp2 .lab-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    #page-exp2 .lab-toolbar-group {
+        width: 100%;
+        flex-wrap: wrap;
+        border-left: none;
+        padding-left: 0;
+        margin-left: 0;
+        justify-content: stretch;
+    }
+    #page-exp2 .lab-btn {
+        flex: 1 1 calc(50% - 6px);
+        justify-content: center;
+        min-height: 44px;
+    }
+    #page-exp2 .lab-palette {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    #page-exp2 .lab-palette-item {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    #page-exp2 .lab-meter {
+        grid-template-columns: 1fr;
+    }
+    #page-exp2 .lab-frame {
+        min-height: 280px;
+    }
+    #page-exp2 .ex-cover {
+        height: min(62svh, 480px);
+    }
+
+    /* Copy helpers */
+    .only-desktop { display: none !important; }
+    .only-mobile { display: inline !important; }
+    br.only-desktop { display: none !important; }
+    br.only-mobile { display: block !important; }
+
+    /* 防止窄屏正文被 overflow-x:hidden 裁切 */
+    .lede,
+    .body-text,
+    .about-hero-mantra,
+    .agent-curator-text,
+    .agent-hero-inner .lede {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+    }
+
+    /* Footer */
+    .footer {
+        padding: 48px 20px 32px;
+    }
+    .footer-grid {
+        gap: 32px;
+        margin-bottom: 40px;
+    }
+
+    /* 离屏子页跳过渲染，减轻移动端内存与合成开销 */
+    .page:not(.active) {
+        content-visibility: hidden;
+        contain-intrinsic-size: auto 100vh;
+    }
+}
+
+/* ═════════════════════════════════════════════════════════════
+   MOBILE · Phase 2 — home scroll zones · Exp1 · About tags
+   Scoped to max-width: 768px / 480px only
+═════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    /* ── Home · issue / today / section heads ── */
+    .issue-bar {
+        gap: 16px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+    .issue-bar > div {
+        flex: 0 0 auto;
+    }
+    .sec-head {
+        gap: 14px;
+        margin-bottom: 28px;
+    }
+    .sec-head-num {
+        font-size: 9px;
+        letter-spacing: 0.16em;
+    }
+    .today {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    /* ── Home · exhibit rows ── */
+    .exhibits-list {
+        margin-top: 4px;
+    }
+    .exhibit-row {
+        min-height: 68px;
+        align-items: center;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .exhibit-info {
+        gap: 6px;
+        min-width: 0;
+    }
+    .exhibit-info-title {
+        font-size: clamp(20px, 5.4vw, 28px);
+    }
+    .exhibit-info-zh {
+        font-size: 12px;
+        line-height: 1.45;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    .exhibit-num {
+        min-height: auto;
+        gap: 4px;
+    }
+    .exhibit-num-status {
+        font-size: 7.5px;
+        letter-spacing: 0.1em;
+        max-width: 72px;
+        white-space: normal;
+        line-height: 1.35;
+    }
+
+    /* ── Home · horizontal card walls ── */
+    .stories-scroll,
+    .horiz-card-wall .art-flow-share-list.horiz-card-wall__track {
+        scroll-padding-inline: max(20px, env(safe-area-inset-left, 0px));
+        overscroll-behavior-x: contain;
+        gap: 16px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .story-card {
+        flex: 0 0 min(268px, 80vw);
+        scroll-snap-stop: always;
+    }
+    .story-title {
+        font-size: clamp(20px, 5.5vw, 24px);
+    }
+    .horiz-card-wall__hint {
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        opacity: 0.92;
+        padding: 7px 10px;
+        background: rgba(10, 9, 8, 0.5);
+        border: 1px solid rgba(235, 231, 223, 0.08);
+        border-radius: 2px;
+    }
+    .horiz-card-wall__fade {
+        width: 48px;
+    }
+    .horiz-card-wall__foot {
+        padding-top: 4px;
+    }
+
+    /* ── Home · experiment cards ── */
+    .experiments {
+        gap: 14px;
+    }
+
+    /* ── Exp1 · workbench ── */
+    #page-exp1 .lab-stage {
+        padding-bottom: 72px;
+    }
+    .wb2-header {
+        padding-top: 14px;
+        padding-bottom: 18px;
+    }
+    .wb2-meta {
+        font-size: 10px;
+        line-height: 1.5;
+        letter-spacing: 0.1em;
+    }
+    .wb2-stepper {
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+        padding-bottom: 4px;
+        margin-inline: -4px;
+        padding-inline: 4px;
+        scrollbar-width: none;
+    }
+    .wb2-stepper::-webkit-scrollbar {
+        display: none;
+    }
+    .wb2-step {
+        flex: 0 0 auto;
+        scroll-snap-align: center;
+    }
+    .wb2-step-line {
+        flex: 0 1 18px;
+        min-width: 10px;
+    }
+    .wb2-drop-zone {
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+    }
+    .wb2-upload {
+        min-height: unset;
+    }
+    .wb2-nav {
+        position: sticky;
+        bottom: 0;
+        z-index: 20;
+        background: linear-gradient(180deg, transparent 0%, rgba(10, 9, 8, 0.92) 24%, rgba(10, 9, 8, 0.98) 100%);
+        padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+    }
+    .wb2-nav-center {
+        width: 100%;
+        flex: none;
+        order: -1;
+        text-align: left;
+        white-space: normal;
+        line-height: 1.45;
+        margin-bottom: 4px;
+    }
+    .wb2-nav-right {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+        width: 100%;
+    }
+    .wb2-nav-right .lab-btn {
+        min-height: 44px;
+        padding-inline: 14px;
+    }
+    .wb2-nav-right .lab-btn.primary {
+        flex: 1 1 100%;
+        justify-content: center;
+    }
+    #exp1-playground:not([data-wb-stage="upload"]) #exp1-frame {
+        min-height: min(52svh, 420px);
+        height: min(calc(100svh - 280px), 520px);
+    }
+    .exp1-crop-topbar {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 12px;
+    }
+    .exp1-crop-topbar-hint {
+        font-size: 9px;
+        line-height: 1.4;
+    }
+    .exp1-crop-tip {
+        font-size: 10px;
+        padding: 8px 12px;
+        line-height: 1.45;
+    }
+    .exp1-tool-panel {
+        max-height: min(42svh, 320px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-direction: column !important;
+        gap: 10px;
+    }
+    .exp1-tool-section {
+        flex: none !important;
+        width: 100%;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--line);
+    }
+    .exp1-brush-btn,
+    .exp1-action-grid button,
+    .exp1-export-row .lab-btn {
+        min-height: 44px;
+    }
+    .lab-exp1-wb .lab-frame-hud {
+        max-width: calc(100% - 24px);
+        left: 10px;
+        bottom: 10px;
+        font-size: 9px;
+    }
+    .exp1-handoff {
+        width: 64px;
+        right: 10px;
+        bottom: 10px;
+    }
+
+    /* ── About ── */
+    .about-figure {
+        max-width: 100%;
+    }
+    .about-hero-tags {
+        gap: 10px 8px;
+    }
+    .about-hero-tag {
+        font-size: 10px;
+        padding: 10px 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-hero-tags {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+    .about-hero-tag {
+        text-align: center;
+    }
+    .wb2-step-name {
+        display: none;
+    }
+    .wb2-step-dot {
+        width: 36px;
+        height: 36px;
+    }
+    .chat-quick {
+        flex: 1 1 100%;
+    }
+    .exhibit-row {
+        grid-template-columns: 32px 1fr 56px;
+        gap: 10px;
+        padding: 18px 0;
+    }
+    .exhibit-num-roman {
+        font-size: 28px;
+    }
+    .exhibit-thumb {
+        width: 56px;
+    }
+    .story-card {
+        flex-basis: min(248px, 86vw);
+    }
+    .wb2-nav-left .lab-btn {
+        min-width: calc(50% - 4px);
+        justify-content: center;
+    }
+    .agent-hero-title {
+        font-size: clamp(40px, 12vw, 56px);
+    }
+    .display-1 {
+        font-size: clamp(44px, 14vw, 72px);
+    }
+}
+
+/* Touch devices · hover-free affordances (mobile/tablet touch only) */
+@media (max-width: 768px) and (hover: none) {
+    .exhibit-row:hover {
+        padding-left: 0;
+    }
+    .exhibit-row::before {
+        width: 0;
+    }
+    .exhibit-row:active {
+        padding-left: 10px;
+    }
+    .exhibit-row:active::before {
+        width: 2px;
+    }
+    .exhibit-row .exhibit-num-status {
+        opacity: 1;
+        transform: none;
+    }
+    .exhibit-row .exhibit-thumb {
+        transform: scale(1.06);
+        transform-origin: right center;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+    }
+    .exhibit-row:hover .exhibit-thumb {
+        transform: scale(1.06);
+    }
+    .ex-plate-video .ex-plate-hint {
+        opacity: 0.92;
+    }
+    .story-card:hover {
+        transform: none;
+    }
+    .exp-card:hover {
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nav-drawer__panel,
+    .nav-drawer__backdrop,
+    .nav-menu-toggle__bar {
+        transition: none;
+    }
+}
 </style>
 </head>
 <body>
@@ -5374,7 +6233,34 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
         <li><a class="nav-link" id="nav-about" href="#about">关于我们</a></li>
     </ul>
     <div class="nav-meta" id="nav-meta" aria-hidden="true">2026</div>
+    <button type="button" class="nav-menu-toggle" id="nav-menu-toggle" aria-expanded="false" aria-controls="nav-drawer" aria-label="打开导航菜单">
+        <span class="nav-menu-toggle__bar" aria-hidden="true"></span>
+        <span class="nav-menu-toggle__bar" aria-hidden="true"></span>
+        <span class="nav-menu-toggle__bar" aria-hidden="true"></span>
+    </button>
 </nav>
+
+<div class="nav-drawer" id="nav-drawer" aria-hidden="true" aria-label="站点导航">
+    <div class="nav-drawer__backdrop" tabindex="-1" aria-hidden="true"></div>
+    <nav class="nav-drawer__panel" aria-label="移动端导航">
+        <div class="nav-drawer__eyebrow">DanceNet.Lab · 导航</div>
+        <ul class="nav-drawer__links">
+            <li><a class="nav-drawer__link" data-nav-drawer href="#home">首页</a></li>
+            <li><a class="nav-drawer__link" data-nav-drawer href="#agent">智能导师</a></li>
+            <li class="nav-drawer__group">
+                <a class="nav-drawer__link" data-nav-drawer href="#art">光影为媒</a>
+                <ul class="nav-drawer__sublinks">
+                    <li><a class="nav-drawer__sublink" href="#art-flow">看见我们</a></li>
+                    <li><a class="nav-drawer__sublink" href="#art" data-scroll-to="plate-interactive-wrap">光影互动</a></li>
+                    <li><a class="nav-drawer__sublink" href="#art" data-scroll-to="plate-awaken" data-open-awaken="1">智能觉醒</a></li>
+                </ul>
+            </li>
+            <li><a class="nav-drawer__link" data-nav-drawer href="#mr">虚实之间</a></li>
+            <li><a class="nav-drawer__link" data-nav-drawer href="#aigc">The Synthesis</a></li>
+            <li><a class="nav-drawer__link" data-nav-drawer href="#about">关于我们</a></li>
+        </ul>
+    </nav>
+</div>
 
 <!-- ════════════════════════════════════════
      HOME PAGE
@@ -5672,7 +6558,7 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
     <section class="sec">
         <div class="sec-head">
             <div class="sec-head-num">005 / 实验<span>试试</span></div>
-            <h2 class="section-title">一些<em>小实验</em>。<br>请用鼠标随便玩。</h2>
+            <h2 class="section-title">一些<em>小实验</em>。<br><span class="only-desktop">请用鼠标随便玩。</span><span class="only-mobile">请随意探索。</span></h2>
         </div>
 
         <div class="experiments">
@@ -5734,9 +6620,10 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
                 </div>
             </div>
         </div>
-        <div class="footer-bottom">
-            <span>© 2026 DanceNet.Lab · 保留所有被观看的权利</span>
-            <span>第四期 · 实验室策展</span>
+        <div class="footer-bottom footer-bottom--home">
+            <span class="footer-bottom-left">© 2026 DanceNet.Lab · 保留所有被观看的权利</span>
+            <a class="footer-beian" href="http://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">渝ICP备2026009773</a>
+            <span class="footer-bottom-right">第四期 · 实验室策展</span>
         </div>
     </footer>
 </div>
@@ -6346,7 +7233,7 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
             <video id="exp1-cover-video"
                 data-src="assets/exp1-cover-hero.mp4"
                 muted loop playsinline autoplay
-                preload="metadata"></video>
+                preload="none"></video>
             <div class="ex-cover-vignette"></div>
             <a href="#exp1-playground" class="exp1-cover-hit" aria-label="前往工作台 · 上传作品并试玩"></a>
             <div class="ex-cover-content">
@@ -7205,16 +8092,49 @@ function resolveMediaUrl(relPath) {
 /** 当前 SPA 路由（与 `showPage('…')` / `#page-…` 一致）。 */
 let __dncActivePage = 'home';
 
+/** Hash 别名 → page id（如封面 CTA 指向 #exp1-playground） */
+function dncResolvePageHash(raw) {
+    if (!raw) return 'home';
+    if (document.getElementById('page-' + raw)) return raw;
+    const aliases = { 'exp1-playground': 'exp1' };
+    const mapped = aliases[raw];
+    if (mapped && document.getElementById('page-' + mapped)) return mapped;
+    return raw;
+}
+
 /**
  * 装饰性 canvas 循环：离页时不再链式 requestAnimationFrame，回页时统一 kick。
  * （实验台 exp1AnimateLoop / exp1 导出 / 模态动画等仍自行管理 rAF。）
  */
 const __dncDecorLoops = new Map();
+
+function dncIsMobileViewport() {
+    return typeof window.matchMedia === 'function'
+        && window.matchMedia('(max-width: 768px)').matches;
+}
+function dncEffectiveDpr() {
+    const dpr = window.devicePixelRatio || 1;
+    if (dncIsMobileViewport()) return Math.min(dpr, 1.5);
+    return dpr;
+}
+function dncPrefersReducedMotion() {
+    return typeof window.matchMedia === 'function'
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function dncRegisterDecorLoop(id, pageId, tick) {
-    const st = { raf: 0, pageId, tick };
+    const st = { raf: 0, pageId, tick, mobileSkip: false };
     function step() {
         st.raf = 0;
-        if (__dncActivePage !== st.pageId) return;
+        if (document.hidden || __dncActivePage !== st.pageId) return;
+        if (dncPrefersReducedMotion()) return;
+        if (dncIsMobileViewport()) {
+            st.mobileSkip = !st.mobileSkip;
+            if (st.mobileSkip) {
+                st.raf = requestAnimationFrame(step);
+                return;
+            }
+        }
         st.tick();
         st.raf = requestAnimationFrame(step);
     }
@@ -7253,23 +8173,115 @@ function hydrateStaticAssetUrls(root) {
  */
 function hydratePageMedia(pageEl) {
     if (!pageEl) return;
-    const touched = new Set();
-    pageEl.querySelectorAll('video[data-src]:not([data-hydrated]), img[data-src]:not([data-hydrated])').forEach((el) => {
+    pageEl.querySelectorAll('img[data-src]:not([data-hydrated])').forEach((el) => {
         const ds = el.getAttribute('data-src');
         const dp = el.getAttribute('data-poster');
         if (ds) el.src = /^(data:|https?:|blob:)/i.test(ds) ? ds : resolveMediaUrl(ds.replace(/^\.\//, ''));
         if (dp && 'poster' in el) el.poster = /^(data:|https?:|blob:)/i.test(dp) ? dp : resolveMediaUrl(dp.replace(/^\.\//, ''));
         el.setAttribute('data-hydrated', '1');
-        if (el.tagName === 'VIDEO') touched.add(el);
     });
-    pageEl.querySelectorAll('source[data-src]:not([data-hydrated])').forEach((s) => {
-        const ds = s.getAttribute('data-src');
-        if (ds) s.src = /^(data:|https?:|blob:)/i.test(ds) ? ds : resolveMediaUrl(ds.replace(/^\.\//, ''));
+    /* video：仅在进入视口时由 setupLazyViewportVideos → dncHydrateVideoEl 灌入 */
+    setupLazyViewportVideos(pageEl);
+}
+
+/** 仅写入 poster，不触发 video 下载 */
+function dncPrimeVideoPoster(v) {
+    if (!v || v.getAttribute('data-poster-primed') === '1') return;
+    const dp = v.getAttribute('data-poster');
+    if (dp && 'poster' in v) {
+        v.poster = /^(data:|https?:|blob:)/i.test(dp)
+            ? dp
+            : resolveMediaUrl(dp.replace(/^\.\//, ''));
+    }
+    v.setAttribute('data-poster-primed', '1');
+}
+
+/** 单条 video / source 延迟灌入（视口内才请求） */
+function dncHydrateVideoEl(v) {
+    if (!v || v.getAttribute('data-hydrated') === '1') return;
+    const ds = v.getAttribute('data-src');
+    const dp = v.getAttribute('data-poster');
+    if (ds) {
+        v.src = /^(data:|https?:|blob:)/i.test(ds)
+            ? ds
+            : resolveMediaUrl(ds.replace(/^\.\//, ''));
+    }
+    if (dp && 'poster' in v) {
+        v.poster = /^(data:|https?:|blob:)/i.test(dp)
+            ? dp
+            : resolveMediaUrl(dp.replace(/^\.\//, ''));
+    }
+    v.querySelectorAll('source[data-src]:not([data-hydrated])').forEach((s) => {
+        const sds = s.getAttribute('data-src');
+        if (sds) {
+            s.src = /^(data:|https?:|blob:)/i.test(sds)
+                ? sds
+                : resolveMediaUrl(sds.replace(/^\.\//, ''));
+        }
         s.setAttribute('data-hydrated', '1');
-        const v = s.closest('video');
-        if (v) touched.add(v);
     });
-    touched.forEach((v) => { try { v.load(); } catch (_) {} });
+    v.setAttribute('data-hydrated', '1');
+    try { v.load(); } catch (_) {}
+}
+
+function dncVideoPageActive(v) {
+    const pg = v.closest('.page');
+    return !pg || pg.classList.contains('active');
+}
+
+function dncShouldAutoPlayVideo(v) {
+    if (!v || v.id === 'exp2-video') return false;
+    if (v.hasAttribute('controls')) return false;
+    if (v.id === 'plate-awaken-video') return false;
+    return v.hasAttribute('autoplay')
+        || v.id === 'plate-interactive-video'
+        || v.classList.contains('ex-phases-video')
+        || !!v.closest('.art-flow-share-cover');
+}
+
+let __dncLazyVideoIO = null;
+
+function setupLazyViewportVideos(root) {
+    if (typeof IntersectionObserver === 'undefined') return;
+    if (!__dncLazyVideoIO) {
+        __dncLazyVideoIO = new IntersectionObserver((entries) => {
+            for (const e of entries) {
+                const v = e.target;
+                if (!dncVideoPageActive(v)) {
+                    v.pause();
+                    continue;
+                }
+                if (e.isIntersecting && e.intersectionRatio >= 0.06) {
+                    dncHydrateVideoEl(v);
+                    if (dncShouldAutoPlayVideo(v)) v.play().catch(() => {});
+                } else {
+                    v.pause();
+                }
+            }
+        }, { threshold: [0, 0.06, 0.12, 0.25] });
+    }
+    const scope = root || document;
+    scope.querySelectorAll('video').forEach((v) => {
+        if (v.id === 'exp2-video' || v.id === 'plate-awaken-video') return;
+        if (v.dataset.lazyVpObserved === '1') return;
+        dncPrimeVideoPoster(v);
+        v.dataset.lazyVpObserved = '1';
+        __dncLazyVideoIO.observe(v);
+    });
+}
+
+function dncResumeActivePageVideos() {
+    if (document.hidden) return;
+    const pg = document.getElementById('page-' + __dncActivePage);
+    if (!pg) return;
+    pg.querySelectorAll('video').forEach((v) => {
+        if (!dncShouldAutoPlayVideo(v)) return;
+        const r = v.getBoundingClientRect();
+        if (r.width > 0 && r.bottom > 0 && r.top < window.innerHeight) {
+            dncHydrateVideoEl(v);
+            v.play().catch(() => {});
+        }
+    });
 }
 
 /** 实验 01 封面视频播放速率（1 = 原速，越小越慢） */
@@ -7284,6 +8296,7 @@ function exp1ResumeCoverVideo() {
     if (!pg || !pg.classList.contains('active')) return;
     const v = document.getElementById('exp1-cover-video');
     if (!v) return;
+    dncHydrateVideoEl(v);
     v.playbackRate = EXP1_COVER_PLAYBACK_RATE;
     v.play().catch(() => {});
 }
@@ -7356,7 +8369,11 @@ const PAGE_HOOKS = {
     art: {
         lazyInit: () => initArtCanvases(),
         onEnter() {
-            document.getElementById('art-cover-video')?.play().catch(() => {});
+            const coverVid = document.getElementById('art-cover-video');
+            if (coverVid) {
+                dncHydrateVideoEl(coverVid);
+                coverVid.play().catch(() => {});
+            }
             const awakenPlate = document.getElementById('plate-awaken');
             const plateVid = document.getElementById('plate-awaken-video');
             if (plateVid) {
@@ -7428,6 +8445,21 @@ function showPage(name, opts) {
         if (artNav) { artNav.classList.add('active'); artNav.setAttribute('aria-current', 'page'); }
     }
 
+    document.querySelectorAll('[data-nav-drawer]').forEach(l => {
+        l.classList.remove('active');
+        l.removeAttribute('aria-current');
+    });
+    const drawerNav = document.querySelector('[data-nav-drawer][href="#' + name + '"]');
+    if (drawerNav) {
+        drawerNav.classList.add('active');
+        drawerNav.setAttribute('aria-current', 'page');
+    } else if (name === 'art-flow') {
+        const artDrawer = document.querySelector('[data-nav-drawer][href="#art"]');
+        if (artDrawer) { artDrawer.classList.add('active'); artDrawer.setAttribute('aria-current', 'page'); }
+    }
+
+    if (typeof closeMobileNavDrawer === 'function') closeMobileNavDrawer();
+
     __dncActivePage = name;
 
     // 更新 URL hash（不产生历史记录条目，仅更新地址栏 + 支持刷新直链）
@@ -7469,12 +8501,13 @@ function showPage(name, opts) {
 document.addEventListener('click', function(e) {
     const a = e.target.closest('a[href^="#"]');
     if (!a) return;
-    const name = a.getAttribute('href').slice(1);
+    const raw = a.getAttribute('href').slice(1);
+    const name = dncResolvePageHash(raw);
     if (!name || !document.getElementById('page-' + name)) return;
     e.preventDefault();
     const scrollHomeToTop = !!(a.classList.contains('nav-brand') && name === 'home');
     showPage(name, { scrollHomeToTop });
-    const scrollTarget = a.dataset.scrollTo;
+    const scrollTarget = a.dataset.scrollTo || (raw === 'exp1-playground' ? 'exp1-playground' : null);
     const openAwakenAfter = a.dataset.openAwaken === '1';
     const prefersReducedMotion = typeof window.matchMedia === 'function'
         && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -7493,7 +8526,7 @@ document.addEventListener('click', function(e) {
 
 /* ─────────── Hash 路由：hashchange + 初始化 ─────────── */
 window.addEventListener('hashchange', function() {
-    const name = location.hash.slice(1);
+    const name = dncResolvePageHash(location.hash.slice(1));
     if (name && document.getElementById('page-' + name)) showPage(name);
 });
 
@@ -7510,6 +8543,7 @@ function schedulePlateAwakenVideoPlay() {
         const vid = document.getElementById('plate-awaken-video');
         if (!vid || !p || !p.classList.contains('active')) return;
         if (pl && pl.classList.contains('ex-plate-sealed')) return;
+        dncHydrateVideoEl(vid);
         vid.play().catch(() => {});
     };
     go();
@@ -7530,8 +8564,10 @@ function setupPlateAwakenViewportPlay() {
             const pg = document.getElementById('page-art');
             if (!v || !pl || !pg || !pg.classList.contains('active')) continue;
             if (pl.classList.contains('ex-plate-sealed')) continue;
-            if (e.isIntersecting && e.intersectionRatio > 0.06) v.play().catch(() => {});
-            else if (!e.isIntersecting) v.pause();
+            if (e.isIntersecting && e.intersectionRatio > 0.06) {
+                dncHydrateVideoEl(v);
+                v.play().catch(() => {});
+            } else if (!e.isIntersecting) v.pause();
         }
     }, { threshold: [0, 0.08, 0.15, 0.3] });
     io.observe(plate);
@@ -7541,6 +8577,17 @@ window.addEventListener('scroll', () => {
     document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
 }, { passive: true });
 
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        document.querySelectorAll('video').forEach((v) => {
+            try { v.pause(); } catch (_) {}
+        });
+        return;
+    }
+    dncNotifyDecorLoops();
+    dncResumeActivePageVideos();
+});
+
 /* ═════════════════════════════════════════════════════════════
    CANVAS HELPERS
 ═════════════════════════════════════════════════════════════ */
@@ -7548,16 +8595,20 @@ function setupCanvas(canvas) {
     const ctx = canvas.getContext('2d');
     function resize() {
         const r = canvas.getBoundingClientRect();
-        canvas.width = Math.max(1, r.width * devicePixelRatio);
-        canvas.height = Math.max(1, r.height * devicePixelRatio);
+        const dpr = dncEffectiveDpr();
+        canvas.width = Math.max(1, Math.round(r.width * dpr));
+        canvas.height = Math.max(1, Math.round(r.height * dpr));
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.scale(devicePixelRatio, devicePixelRatio);
+        ctx.scale(dpr, dpr);
     }
     resize();
     window.addEventListener('resize', resize);
-    /* Use the stored canvas buffer size (÷ DPR) rather than live getBoundingClientRect,
-       so CSS transforms (e.g. scale on exhibit-thumb hover) don't distort drawing coords. */
-    return { ctx, getW: () => canvas.width / devicePixelRatio, getH: () => canvas.height / devicePixelRatio };
+    const dpr = () => dncEffectiveDpr();
+    return {
+        ctx,
+        getW: () => canvas.width / dpr(),
+        getH: () => canvas.height / dpr(),
+    };
 }
 
 const COCO_EDGES = [[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
@@ -7704,15 +8755,16 @@ function initHeroCanvas() {
     const { ctx, getW, getH } = setupCanvas(canvas);
     let t = 0;
     const trails = [];
-    const maxTrails = 65;
+    const maxTrails = dncIsMobileViewport() ? 34 : 65;
+    const mobileHero = dncIsMobileViewport();
 
     dncRegisterDecorLoop('hero', 'home', () => {
         const w = getW(), h = getH();
         // Soft fade — long exposure feel
-        ctx.fillStyle = 'rgba(10,9,8,0.04)';
+        ctx.fillStyle = mobileHero ? 'rgba(10,9,8,0.06)' : 'rgba(10,9,8,0.04)';
         ctx.fillRect(0, 0, w, h);
 
-        t += 0.0030;
+        t += mobileHero ? 0.0042 : 0.0030;
         const pts = lerpFrames(t);
         const cx = w * 0.5, cy = h * 0.07;
         const figureW = Math.min(w * 0.30, h * 0.50);
@@ -7744,13 +8796,15 @@ function initHeroCanvas() {
         });
 
         // 腕部粒子星尘
-        for (let i = 0; i < 4; i++) {
-            const idx = [9, 10, 7, 8][i];
-            const p = mapped[idx];
-            ctx.beginPath();
-            ctx.arc(p[0] + (Math.random()-.5)*32, p[1] + (Math.random()-.5)*32, Math.random()*1.3, 0, Math.PI*2);
-            ctx.fillStyle = `rgba(212,165,116,${Math.random()*0.55})`;
-            ctx.fill();
+        if (!mobileHero) {
+            for (let i = 0; i < 4; i++) {
+                const idx = [9, 10, 7, 8][i];
+                const p = mapped[idx];
+                ctx.beginPath();
+                ctx.arc(p[0] + (Math.random()-.5)*32, p[1] + (Math.random()-.5)*32, Math.random()*1.3, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(212,165,116,${Math.random()*0.55})`;
+                ctx.fill();
+            }
         }
     });
 }
@@ -7764,6 +8818,7 @@ function initTodayCanvas() {
     const { ctx, getW, getH } = setupCanvas(canvas);
     let t = 0;
     const trails = [];
+    const maxTodayTrails = dncIsMobileViewport() ? 18 : 30;
 
     dncRegisterDecorLoop('today', 'home', () => {
         const w = getW(), h = getH();
@@ -7777,7 +8832,7 @@ function initTodayCanvas() {
         const mapped = pts.map(p => [w*0.5 - figW/2 + p[0] * figW, h * 0.09 + p[1] * figH]);
 
         trails.push(mapped.map(p => [...p]));
-        if (trails.length > 30) trails.shift();
+        if (trails.length > maxTodayTrails) trails.shift();
         trails.forEach((fr, fi) => {
             const a = fi / trails.length * 0.26;
             BODY_EDGES.forEach(([i, j]) => {
@@ -8149,7 +9204,8 @@ function initAgentHero() {
     let t = 0, scanY = 0;
     let prevMapped = null;
 
-    const COLS = 44, ROWS = 62;
+    const COLS = dncIsMobileViewport() ? 28 : 44;
+    const ROWS = dncIsMobileViewport() ? 40 : 62;
     const field = new Float32Array(COLS * ROWS);
 
     /* 7 等高线等级 → 冷(paper) … 热(gold) */
@@ -8327,7 +9383,10 @@ function scheduleArtFlowShareVideosPlay() {
     const go = () => {
         const p = document.getElementById('page-art-flow');
         if (!p || !p.classList.contains('active')) return;
-        videos().forEach((v) => v.play().catch(() => {}));
+        videos().forEach((v) => {
+            dncHydrateVideoEl(v);
+            v.play().catch(() => {});
+        });
     };
     go();
     requestAnimationFrame(() => requestAnimationFrame(go));
@@ -8450,7 +9509,8 @@ function initArtFlowReel() {
             if (v) {
                 if (!isActive) {
                     v.pause();
-                } else if (state.hovered) {
+                } else if (state.hovered || (typeof window.matchMedia === 'function' && window.matchMedia('(hover: none)').matches)) {
+                    dncHydrateVideoEl(v);
                     v.play().catch(() => {});
                 }
             }
@@ -9379,6 +10439,12 @@ function exp1RenderStage() {
             seg.classList.toggle('is-current', i === cur);
             seg.classList.toggle('is-upcoming', i > cur);
         });
+        if (dncIsMobileViewport()) {
+            const curSeg = wbTrack.querySelector('.wb2-step.is-current');
+            if (curSeg) {
+                curSeg.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+            }
+        }
     }
 
     const back  = document.getElementById('exp1-back-btn');
@@ -13164,6 +14230,7 @@ function bindInteractivePlateHover() {
     const vid = document.getElementById('plate-interactive-video');
     if (!wrap || !vid || wrap.dataset.hoverBound === '1') return;
     wrap.dataset.hoverBound = '1';
+    if (typeof window.matchMedia === 'function' && window.matchMedia('(hover: none)').matches) return;
     wrap.addEventListener('mouseenter', () => {
         const pg = document.getElementById('page-art');
         if (pg && pg.classList.contains('active')) vid.play().catch(()=>{});
@@ -13254,9 +14321,68 @@ function initReelPlayer() {
     });
 }
 
+/* ─────────── Mobile drawer nav (Phase 1 · ≤768px only) ─────────── */
+const __dncMobileNavMQ = typeof window.matchMedia === 'function'
+    ? window.matchMedia('(max-width: 768px)')
+    : null;
+
+function closeMobileNavDrawer() {
+    if (!__dncMobileNavMQ || !__dncMobileNavMQ.matches) return;
+    document.body.classList.remove('nav-drawer-open');
+    const toggle = document.getElementById('nav-menu-toggle');
+    const drawer = document.getElementById('nav-drawer');
+    if (toggle) {
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', '打开导航菜单');
+    }
+    if (drawer) drawer.setAttribute('aria-hidden', 'true');
+}
+
+function openMobileNavDrawer() {
+    if (!__dncMobileNavMQ || !__dncMobileNavMQ.matches) return;
+    document.body.classList.add('nav-drawer-open');
+    const toggle = document.getElementById('nav-menu-toggle');
+    const drawer = document.getElementById('nav-drawer');
+    if (toggle) {
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', '关闭导航菜单');
+    }
+    if (drawer) drawer.setAttribute('aria-hidden', 'false');
+}
+
+(function setupMobileNavDrawer() {
+    const toggle = document.getElementById('nav-menu-toggle');
+    const drawer = document.getElementById('nav-drawer');
+    if (!toggle || !drawer) return;
+
+    toggle.addEventListener('click', function() {
+        if (document.body.classList.contains('nav-drawer-open')) closeMobileNavDrawer();
+        else openMobileNavDrawer();
+    });
+
+    drawer.querySelector('.nav-drawer__backdrop')?.addEventListener('click', closeMobileNavDrawer);
+
+    drawer.querySelectorAll('a[href^="#"]').forEach(function(a) {
+        a.addEventListener('click', closeMobileNavDrawer);
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && document.body.classList.contains('nav-drawer-open')) {
+            closeMobileNavDrawer();
+        }
+    });
+
+    if (__dncMobileNavMQ) {
+        __dncMobileNavMQ.addEventListener('change', function(e) {
+            if (!e.matches) closeMobileNavDrawer();
+        });
+    }
+})();
+
 /* ─────────── Initial init ─────────── */
 hydrateStaticAssetUrls();
 hydratePageMedia(document.querySelector('.page.active'));
+setupLazyViewportVideos(document);
 bindInteractivePlateHover();
 hydrateAwakenPlateFromStorage();
 setupPlateAwakenViewportPlay();
@@ -13264,15 +14390,32 @@ initReelPlayer();
 
 // Hash 路由初始化：刷新 / 直链 / 书签均可定位到正确页面
 (function() {
-    const initPage = location.hash.slice(1) || 'home';
+    const initPage = dncResolvePageHash(location.hash.slice(1));
+    const initHash = location.hash.slice(1);
     if (initPage !== 'home' && document.getElementById('page-' + initPage)) {
         showPage(initPage);
+        if (initHash === 'exp1-playground') {
+            requestAnimationFrame(() => {
+                const wb = document.getElementById('exp1-playground');
+                if (wb) {
+                    window.scrollTo({
+                        top: wb.getBoundingClientRect().top + window.scrollY - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'), 10) || 58) - 12,
+                        behavior: 'auto',
+                    });
+                }
+            });
+        }
     } else {
         // 默认首页：手动设置 hash 与 title，不重复触发完整 showPage 流程
         history.replaceState({ page: 'home' }, '', '#home');
         applyPageMeta('home');
         document.getElementById('nav-home').classList.add('active');
         document.getElementById('nav-home').setAttribute('aria-current', 'page');
+        const drawerHome = document.querySelector('[data-nav-drawer][href="#home"]');
+        if (drawerHome) {
+            drawerHome.classList.add('active');
+            drawerHome.setAttribute('aria-current', 'page');
+        }
         initHomeCanvases();
     }
 })();
