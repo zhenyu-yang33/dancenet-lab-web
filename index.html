@@ -1016,7 +1016,7 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
 }
 
 /* ═════════════════════════════════════════════════════════════
-   REEL · 番外 · 一分钟影像
+   REEL · 主舞台 · 一分钟影像
    Split-panel film card inspired by editorial "double frame" devices.
    Two rounded panels are joined by a circular notch holding a play head;
    a gold halo traces the silhouette via filter: drop-shadow.
@@ -1086,7 +1086,77 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
     isolation: isolate;
 }
 
-/* Card root — anchor that navigates to b23.tv */
+.reel-player {
+    position: relative;
+}
+.reel-card--preview {
+    cursor: pointer;
+    width: 100%;
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    text-align: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+}
+.reel-player.is-playing .reel-card--preview {
+    display: none;
+}
+.reel-embed {
+    display: none;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 28px;
+    overflow: hidden;
+    background: var(--ink-2);
+    filter:
+        drop-shadow(0 0 0.5px rgba(212,165,116,0.55))
+        drop-shadow(0 0 14px rgba(212,165,116,0.18))
+        drop-shadow(0 40px 80px rgba(0,0,0,0.55));
+}
+.reel-player.is-playing .reel-embed {
+    display: block;
+}
+.reel-embed iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+.reel-embed-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 8;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(235,231,223,0.35);
+    background: rgba(10,9,8,0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--paper-soft);
+    cursor: pointer;
+    transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+.reel-embed-close:hover {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--ink);
+}
+.reel-embed-close:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+}
+
+/* Card root — preview opens inline Bilibili player */
 .reel-card {
     --notch-r: 64px;
     display: block;
@@ -1347,13 +1417,20 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
     color: var(--paper);
     transition: color 0.3s, letter-spacing 0.3s;
 }
-.reel-caption .cta::after {
+.reel-caption .cta a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.reel-caption .cta a::after {
     content: ' →';
     transition: transform 0.3s;
     display: inline-block;
 }
-.reel-card:hover ~ .reel-caption .cta,
-.reel-card:focus-visible ~ .reel-caption .cta {
+.reel-stage:has(.reel-card--preview:hover) .reel-caption .cta,
+.reel-stage:has(.reel-card--preview:focus-visible) .reel-caption .cta,
+.reel-stage:has(.reel-card--preview:hover) .reel-caption .cta a,
+.reel-stage:has(.reel-card--preview:focus-visible) .reel-caption .cta a {
     color: var(--gold);
 }
 
@@ -1380,6 +1457,7 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 640px) {
     /* Stack panels vertically with the notch on top/bottom edge */
     .reel-card { --notch-r: 44px; }
+    .reel-embed { border-radius: 24px; }
     .reel-panels {
         grid-template-columns: 1fr;
         gap: 6px;
@@ -4078,13 +4156,16 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
 }
 .about-intro-body .about-intro-coda-cite {
     display: block;
-    margin-top: 0.7em;
-    font-family: var(--f-mono);
-    font-size: 10.5px;
+    margin-top: 0.9em;
+    font-family: var(--f-serif);
+    font-size: clamp(18px, 2.4vw, 24px);
     font-style: normal;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--paper-faint);
+    letter-spacing: 0.06em;
+    text-transform: none;
+    color: var(--gold);
+}
+.about-intro-body .about-intro-coda-cite em {
+    font-style: normal;
 }
 
 .about-intro-aux {
@@ -5342,51 +5423,58 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
         <div>阅读约 16 分钟</div>
     </div>
 
-    <!-- REEL · 番外 · 一分钟影像（外链 Bilibili） -->
+    <!-- REEL · 主舞台 · 一分钟影像（内嵌 Bilibili 播放器） -->
     <section class="reel-sec" aria-labelledby="reel-tagline">
         <div class="reel-head">
-            <div class="reel-head-num">番外 · REEL<span>影像 · 一分钟介绍</span></div>
+            <div class="reel-head-num">主舞台 · LOOK<span>影像 · 一分钟介绍</span></div>
             <h2 class="reel-tagline" id="reel-tagline">
                 想用一分钟看懂<br>
                 这间实验室<em>在做什么</em>？
             </h2>
             <div class="reel-head-link">
-                <span>外链 · Bilibili</span>
-                <b>b23.tv / 2ivLtxA</b>
+                <span>内嵌 · Bilibili</span>
+                <b>DanceNet.tv / No.001</b>
             </div>
         </div>
 
         <div class="reel-stage">
-            <a class="reel-card"
-               href="https://b23.tv/2ivLtxA"
-               target="_blank"
-               rel="noopener noreferrer"
-               aria-label="播放 DanceNet.Lab 一分钟介绍影像（在 Bilibili 打开）">
-                <div class="reel-panels">
-                    <div class="reel-panel reel-panel--left"
-                         style="background-image:url('assets/reel-mocap.png');">
-                        <div class="reel-tag">现场 · 街舞 × 姿态</div>
-                        <div class="reel-mark">REC · 01</div>
+            <div class="reel-player" id="reel-player" data-bvid="BV12369YiEu1">
+                <button type="button"
+                        class="reel-card reel-card--preview"
+                        aria-label="播放 DanceNet.Lab 一分钟介绍影像">
+                    <div class="reel-panels">
+                        <div class="reel-panel reel-panel--left"
+                             style="background-image:url('assets/reel-mocap.png');">
+                            <div class="reel-tag">现场 · 街舞 × 姿态</div>
+                            <div class="reel-mark">REC · 01</div>
+                        </div>
+                        <div class="reel-panel reel-panel--right"
+                             style="background-image:url('assets/reel-identity.png');">
+                            <div class="reel-grid" aria-hidden="true"></div>
+                            <div class="reel-foot-label">FRAME · 02</div>
+                            <div class="reel-brand">DanceNet<span class="dot"></span>Lab</div>
+                        </div>
                     </div>
-                    <div class="reel-panel reel-panel--right"
-                         style="background-image:url('assets/reel-identity.png');">
-                        <div class="reel-grid" aria-hidden="true"></div>
-                        <div class="reel-foot-label">FRAME · 02</div>
-                        <div class="reel-brand">DanceNet<span class="dot"></span>Lab</div>
+                    <div class="reel-notch" aria-hidden="true">
+                        <span class="reel-play">
+                            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3l12 7-12 7V3z"/></svg>
+                        </span>
                     </div>
+                </button>
+
+                <div class="reel-embed" aria-hidden="true">
+                    <iframe title="DanceNet.Lab 一分钟介绍影像"
+                            allow="autoplay; fullscreen"
+                            allowfullscreen></iframe>
+                    <button type="button" class="reel-embed-close">关闭</button>
                 </div>
-                <div class="reel-notch" aria-hidden="true">
-                    <span class="reel-play">
-                        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3l12 7-12 7V3z"/></svg>
-                    </span>
-                </div>
-            </a>
+            </div>
 
             <div class="reel-caption">
                 <span class="lead">REEL · 01</span>
                 <span class="stretch" aria-hidden="true"></span>
                 <span>约 1 分钟 · 中文 / 英文字幕</span>
-                <span class="cta">在 Bilibili 打开</span>
+                <span class="cta"><a href="https://www.bilibili.com/video/BV12369YiEu1" target="_blank" rel="noopener noreferrer">在 Bilibili 打开</a></span>
             </div>
         </div>
     </section>
@@ -6753,7 +6841,7 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
             </p>
             <p class="about-intro-coda">
                 「我不能创造的， 我就尚未真正理解。」
-                <span class="about-intro-coda-cite">理查德·费曼</span>
+                <span class="about-intro-coda-cite"><em>理查德·费曼</em></span>
             </p>
         </article>
 
@@ -13129,12 +13217,50 @@ function bindInteractivePlateHover() {
     };
 })();
 
+function initReelPlayer() {
+    const player = document.getElementById('reel-player');
+    if (!player) return;
+
+    const preview = player.querySelector('.reel-card--preview');
+    const embed = player.querySelector('.reel-embed');
+    const iframe = embed?.querySelector('iframe');
+    const closeBtn = embed?.querySelector('.reel-embed-close');
+    const bvid = player.dataset.bvid;
+    if (!preview || !embed || !iframe || !bvid) return;
+
+    function openPlayer() {
+        if (!iframe.src) {
+            iframe.src = `https://player.bilibili.com/player.html?bvid=${encodeURIComponent(bvid)}&autoplay=1&high_quality=1`;
+        }
+        player.classList.add('is-playing');
+        embed.removeAttribute('aria-hidden');
+        closeBtn?.focus();
+    }
+
+    function closePlayer() {
+        player.classList.remove('is-playing');
+        embed.setAttribute('aria-hidden', 'true');
+        iframe.removeAttribute('src');
+        preview.focus();
+    }
+
+    preview.addEventListener('click', openPlayer);
+    closeBtn?.addEventListener('click', closePlayer);
+    player.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && player.classList.contains('is-playing')) {
+            e.preventDefault();
+            closePlayer();
+        }
+    });
+}
+
 /* ─────────── Initial init ─────────── */
 hydrateStaticAssetUrls();
 hydratePageMedia(document.querySelector('.page.active'));
 bindInteractivePlateHover();
 hydrateAwakenPlateFromStorage();
 setupPlateAwakenViewportPlay();
+initReelPlayer();
 
 // Hash 路由初始化：刷新 / 直链 / 书签均可定位到正确页面
 (function() {
