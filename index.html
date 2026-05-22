@@ -3,7 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
 <title>DanceNet.Lab — 身体、运动与人工智能</title>
+<meta name="description" content="DanceNet.Lab 是一所为身体语言而建的实验室。以姿态、音乐与表达为材料，让人工智能成为新的舞蹈合作者——不是取代肉身，而是延伸它。">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0a0908">
+<!-- Open Graph / Twitter Card -->
+<meta property="og:type"        content="website">
+<meta property="og:site_name"   content="DanceNet.Lab">
+<meta property="og:locale"      content="zh_CN">
+<meta property="og:title"       content="DanceNet.Lab — 身体、运动与人工智能">
+<meta property="og:description" content="DanceNet.Lab 是一所为身体语言而建的实验室。我们以姿态、音乐与表达为材料，让人工智能成为新的舞蹈合作者。">
+<meta property="og:image"       content="assets/og-home.jpg">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card"       content="summary_large_image">
+<meta name="twitter:title"      content="DanceNet.Lab — 身体、运动与人工智能">
+<meta name="twitter:description" content="DanceNet.Lab 是一所为身体语言而建的实验室。我们以姿态、音乐与表达为材料，让人工智能成为新的舞蹈合作者。">
+<meta name="twitter:image"      content="assets/og-home.jpg">
+<!-- Favicon -->
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<!-- manifest omitted: requires HTTP server -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -168,6 +190,11 @@ body {
     user-select: none;
     display: flex; align-items: baseline; gap: 8px;
 }
+.nav-brand:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 4px;
+    border-radius: 2px;
+}
 .nav-brand-mark {
     width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
     display: inline-block; transform: translateY(-3px);
@@ -176,9 +203,16 @@ body {
 
 .nav-spacer { flex: 1; }
 
-.nav-links { display: flex; gap: 4px; }
+.nav-links {
+    display: flex; gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.nav-links > li { margin: 0; padding: 0; }
 
 .nav-link {
+    display: inline-block;
     background: none; border: none; cursor: pointer;
     font-family: var(--f-mono);
     font-size: 11px; letter-spacing: 0.16em;
@@ -187,6 +221,7 @@ body {
     padding: 8px 14px;
     transition: color 0.2s;
     position: relative;
+    text-decoration: none;
 }
 .nav-link:hover { color: var(--paper); }
 .nav-link.active { color: var(--gold); }
@@ -194,6 +229,10 @@ body {
     content: ''; position: absolute;
     left: 14px; right: 14px; bottom: 2px;
     height: 1px; background: var(--gold);
+}
+.nav-link:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 3px;
 }
 
 .nav-meta {
@@ -203,11 +242,138 @@ body {
     text-transform: uppercase;
 }
 
+/* ── 光影为媒 · hover / focus-within 子菜单 ── */
+.nav-item-has-submenu {
+    position: relative;
+    align-self: stretch;
+    display: flex;
+    align-items: stretch;
+}
+.nav-item-has-submenu > .nav-link {
+    align-self: center;
+}
+.nav-submenu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    z-index: 110;
+    width: max-content;
+    max-width: min(260px, calc(100vw - var(--gutter) * 2));
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    background: rgba(10, 9, 8, 0.38);
+    backdrop-filter: blur(28px) saturate(1.12);
+    -webkit-backdrop-filter: blur(28px) saturate(1.12);
+    border: 1px solid rgba(235, 231, 223, 0.06);
+    border-radius: 3px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(235, 231, 223, 0.04);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity 0.32s cubic-bezier(.2, .85, .2, 1),
+        visibility 0.32s,
+        transform 0.32s cubic-bezier(.2, .85, .2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+    .nav-submenu {
+        transition: opacity 0.18s ease, visibility 0.18s;
+        transform: translateX(-50%);
+    }
+}
+/* 消除触发器与子菜单之间的间隙导致的闪烁 */
+.nav-submenu::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    height: 12px;
+}
+.nav-item-has-submenu:hover .nav-submenu,
+.nav-item-has-submenu:focus-within .nav-submenu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+    .nav-item-has-submenu:hover .nav-submenu,
+    .nav-item-has-submenu:focus-within .nav-submenu {
+        transform: translateX(-50%);
+    }
+}
+@media not all and (hover: hover) {
+    /* 触屏设备无 hover：仅靠点击进入光影页；三项仍可从此页的图版入口抵达 */
+    .nav-submenu { display: none; }
+}
+.nav-submenu-link {
+    display: block;
+    padding: 6px 14px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--paper-soft);
+    text-decoration: none;
+    text-wrap: pretty;
+    white-space: nowrap;
+    transition: color 0.22s ease, background 0.22s ease;
+}
+.nav-submenu-link:hover {
+    color: var(--gold);
+    background: rgba(212, 165, 116, 0.07);
+}
+.nav-submenu-link:focus-visible {
+    outline: none;
+    color: var(--gold);
+    background: rgba(212, 165, 116, 0.09);
+}
+@media (max-width: 900px) {
+    .nav-submenu {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%) translateY(-6px);
+    }
+    .nav-item-has-submenu:hover .nav-submenu,
+    .nav-item-has-submenu:focus-within .nav-submenu {
+        transform: translateX(-50%) translateY(0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .nav-submenu { transform: translateX(-50%); }
+        .nav-item-has-submenu:hover .nav-submenu,
+        .nav-item-has-submenu:focus-within .nav-submenu {
+            transform: translateX(-50%);
+        }
+    }
+}
+
 /* ═════════════════════════════════════════════════════════════
    PAGE SYSTEM
 ═════════════════════════════════════════════════════════════ */
+@keyframes dnl-fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
 .page { display: none; }
-.page.active { display: block; }
+.page.active {
+    display: block;
+    animation: dnl-fade-in 0.35s cubic-bezier(.2,.8,.2,1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+    .page.active { animation: none; }
+}
+
+/* SPA 导航链接：消除 <a> 默认样式，保持原有视觉不变 */
+a.exhibit-row, a.story-card, a.exp-card, a.today-image {
+    color: inherit;
+    text-decoration: none;
+}
+a.nav-link,
+a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
 
 /* ═════════════════════════════════════════════════════════════
    HOME · HERO
@@ -224,7 +390,11 @@ body {
 }
 .hero-vignette {
     position: absolute; inset: 0;
-    background: radial-gradient(ellipse at center, transparent 30%, rgba(10,9,8,0.55) 75%, rgba(10,9,8,0.92) 100%);
+    background:
+        /* 顶边保护 — 骨架肩/肘与元数据文字共用区，需 78%→透明 渐变压制 */
+        linear-gradient(180deg, rgba(10,9,8,0.78) 0%, rgba(10,9,8,0.30) 15%, transparent 30%),
+        /* 底边 + 四角暗角 */
+        radial-gradient(ellipse at center, transparent 26%, rgba(10,9,8,0.38) 65%, rgba(10,9,8,0.88) 100%);
     pointer-events: none;
 }
 .hero-meta-top {
@@ -236,8 +406,9 @@ body {
 .hero-meta-top .right {
     font-family: var(--f-mono);
     font-size: 10.5px; letter-spacing: 0.16em;
-    color: var(--paper-faint);
+    color: var(--paper-soft);
     text-transform: uppercase;
+    text-shadow: 0 1px 10px rgba(10,9,8,1), 0 0 2px rgba(10,9,8,1);
 }
 .hero-content {
     position: absolute; left: var(--gutter); right: var(--gutter); bottom: 9vh;
@@ -271,18 +442,48 @@ body {
     display: flex; justify-content: space-between;
 }
 
+/* 会跳的箭头：4s 静止 → 0.6s 横向轻弹 */
+@keyframes cta-nudge {
+    0%, 85%  { transform: translateX(0); }
+    91%       { transform: translateX(8px); }
+    96%       { transform: translateX(-1px); }
+    100%      { transform: translateX(0); }
+}
+
 .hero-cta {
     display: inline-flex; align-items: center; gap: 14px;
     font-family: var(--f-mono); font-size: 11px;
     letter-spacing: 0.2em; text-transform: uppercase;
     color: var(--paper); cursor: pointer;
-    background: none; border: none;
-    padding: 14px 0;
-    transition: color 0.2s;
+    background: none;
+    border: 1px solid rgba(212,165,116,0.28);
+    padding: 13px 22px;
+    position: relative;
+    transition: color 0.25s, border-color 0.35s;
+    text-decoration: none;
+    box-sizing: border-box;
 }
+/* 金箔下划线：hover 时从左向右展开 */
+.hero-cta::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%; height: 1px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s cubic-bezier(.2,.8,.2,1);
+}
+.hero-cta:hover { color: var(--gold); border-color: rgba(212,165,116,0.6); }
+.hero-cta:hover::after { transform: scaleX(1); }
+
 .hero-cta-arrow {
     width: 36px; height: 1px; background: var(--paper);
-    position: relative; transition: width 0.3s, background 0.2s;
+    position: relative;
+    transition: width 0.3s, background 0.25s;
+    /* 4.6s = 4s 静止 + 0.6s 弹动 */
+    animation: cta-nudge 4.6s ease-in-out infinite;
+    flex-shrink: 0;
 }
 .hero-cta-arrow::after {
     content: ''; position: absolute; right: 0; top: -3px;
@@ -290,11 +491,22 @@ body {
     border-top: 1px solid var(--paper);
     border-right: 1px solid var(--paper);
     transform: rotate(45deg);
+    transition: border-color 0.25s;
 }
-.hero-cta:hover { color: var(--gold); }
-.hero-cta:hover .hero-cta-arrow { background: var(--gold); width: 56px; }
+/* hover 时暂停弹动，执行展宽 */
+.hero-cta:hover .hero-cta-arrow {
+    background: var(--gold);
+    width: 56px;
+    animation-play-state: paused;
+}
 .hero-cta:hover .hero-cta-arrow::after {
     border-top-color: var(--gold); border-right-color: var(--gold);
+}
+.hero-cta:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 4px;
+    border-radius: 2px;
+    border-color: var(--gold);
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -360,6 +572,7 @@ body {
 }
 .today-image {
     /* 限制可视高度，避免人物区过高、整屏无法一屏看完，右侧被撑出大块留白 */
+    display: block;
     width: 100%;
     max-height: min(58vh, 520px);
     aspect-ratio: 4 / 5;
@@ -369,6 +582,7 @@ body {
     position: relative;
     overflow: hidden;
     cursor: pointer;
+    color: inherit; text-decoration: none;
     transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
 }
 .today-image:hover { transform: translateY(-4px); }
@@ -441,14 +655,16 @@ body {
 
 .exhibit-row {
     display: grid;
-    grid-template-columns: 80px 1fr 1.2fr 100px;
+    grid-template-columns: 80px 1fr 1.2fr 72px 100px;
     gap: 40px;
     padding: 36px 0;
     border-top: 1px solid var(--line);
     cursor: pointer;
+    color: inherit; text-decoration: none;
     transition: padding 0.4s cubic-bezier(.2,.8,.2,1);
     align-items: center;
     position: relative;
+    isolation: isolate;
 }
 .exhibit-row:last-child { border-bottom: 1px solid var(--line); }
 .exhibit-row:hover { padding-left: 16px; }
@@ -457,16 +673,35 @@ body {
     left: 0; top: 0; height: 100%; width: 0;
     background: var(--gold);
     transition: width 0.4s cubic-bezier(.2,.8,.2,1);
+    z-index: 0;
 }
 .exhibit-row:hover::before { width: 2px; }
 
+/* ── numeral column ── */
 .exhibit-num {
+    display: flex; flex-direction: column;
+    gap: 10px; justify-content: center;
+    min-height: 76px;
+}
+.exhibit-num-roman {
     font-family: var(--f-serif); font-style: italic;
     font-size: 64px; line-height: 1;
     color: var(--paper-faint);
     transition: color 0.3s;
+    display: block;
 }
-.exhibit-row:hover .exhibit-num { color: var(--gold); }
+.exhibit-row:hover .exhibit-num-roman { color: var(--gold); }
+.exhibit-num-status {
+    font-family: var(--f-mono); font-size: 9px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--paper-faint);
+    white-space: nowrap;
+    opacity: 0; transform: translateY(5px);
+    transition: opacity 0.35s 0.05s, transform 0.35s 0.05s;
+}
+.exhibit-row:hover .exhibit-num-status {
+    opacity: 1; transform: translateY(0);
+}
 
 .exhibit-info { display: flex; flex-direction: column; gap: 8px; }
 .exhibit-info-tag {
@@ -495,32 +730,142 @@ body {
     max-width: 44ch;
 }
 
+/* ── progress / status bar column ── */
+.exhibit-progress {
+    display: flex; flex-direction: column;
+    gap: 9px; align-self: center;
+}
+.exhibit-progress-label {
+    font-family: var(--f-mono); font-size: 9px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    transition: color 0.3s;
+}
+.exhibit-progress-bar {
+    width: 48px; height: 2px; background: var(--line-mid);
+    position: relative; overflow: hidden;
+}
+.exhibit-progress-fill {
+    position: absolute; left: 0; top: 0; height: 100%;
+    transition: background 0.3s;
+}
+
+/* status variants */
+.exhibit-progress[data-status="live"]  .exhibit-progress-label { color: var(--gold); }
+.exhibit-progress[data-status="proto"] .exhibit-progress-label { color: var(--paper-soft); }
+.exhibit-progress[data-status="soon"]  .exhibit-progress-label { color: var(--paper-faint); }
+
+.exhibit-progress[data-status="live"]  .exhibit-progress-fill { width: 100%; background: var(--gold); }
+.exhibit-progress[data-status="proto"] .exhibit-progress-fill { width: 60%;  background: var(--paper-soft); }
+.exhibit-progress[data-status="soon"]  .exhibit-progress-fill { width: 18%;  background: var(--paper-trace); }
+
+/* ── thumbnail column — expands on hover ── */
 .exhibit-thumb {
     aspect-ratio: 1; width: 100px; background: var(--ink-2);
     overflow: hidden; position: relative;
-    transition: transform 0.4s cubic-bezier(.2,.8,.2,1);
     align-self: center;
+    transition:
+        transform 0.55s cubic-bezier(.2,.8,.2,1),
+        box-shadow 0.55s cubic-bezier(.2,.8,.2,1),
+        z-index 0s;
+    z-index: 1;
+    will-change: transform;
 }
 .exhibit-thumb canvas { width: 100%; height: 100%; display: block; }
-.exhibit-row:hover .exhibit-thumb { transform: scale(1.06); }
+
+/* spotlight glow layer — hidden by default */
+.exhibit-thumb::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 50%,
+        rgba(212,165,116,0.22) 0%,
+        transparent 68%);
+    opacity: 0;
+    transition: opacity 0.55s;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.exhibit-row:hover .exhibit-thumb {
+    transform: scale(2.4);
+    transform-origin: right center;
+    z-index: 10;
+    box-shadow:
+        0 0 0 1px rgba(212,165,116,0.28),
+        0 24px 64px -8px rgba(0,0,0,0.85),
+        0 0 80px 20px rgba(0,0,0,0.5);
+}
+.exhibit-row:hover .exhibit-thumb::after { opacity: 1; }
 
 /* ═════════════════════════════════════════════════════════════
-   STORIES · horizontal scroll
+   STORIES · horizontal scroll (+ shared “card wall” chrome)
 ═════════════════════════════════════════════════════════════ */
+.horiz-card-wall {
+    margin: 0 calc(-1 * var(--gutter));
+}
+.horiz-card-wall__viewport {
+    position: relative;
+}
+.horiz-card-wall__fade {
+    position: absolute;
+    top: 8px;
+    right: 0;
+    width: 80px;
+    bottom: 20px;
+    pointer-events: none;
+    z-index: 2;
+    background: linear-gradient(to right, transparent, var(--ink) 90%);
+}
+.horiz-card-wall__hint {
+    position: absolute;
+    top: 50%;
+    right: max(10px, calc(var(--gutter) - 6px));
+    transform: translateY(-50%);
+    z-index: 3;
+    pointer-events: none;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--paper-soft);
+    white-space: nowrap;
+    text-shadow: 0 1px 12px var(--ink);
+}
+.horiz-card-wall__foot {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px var(--gutter) clamp(32px, 5vw, 56px);
+}
+.horiz-card-wall__count {
+    display: none;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--paper-faint);
+}
+/* 至少 5 张卡片时显示 mono 计数 */
+.horiz-card-wall:has(.horiz-card-wall__track > :nth-child(5)) .horiz-card-wall__count {
+    display: block;
+}
+
 .stories-scroll {
     display: flex; gap: 24px;
     overflow-x: auto;
-    padding: 8px var(--gutter) 60px;
+    padding: 8px var(--gutter) 28px;
     scroll-snap-type: x mandatory;
-    margin: 0 calc(-1 * var(--gutter));
+    margin: 0;
+}
+.horiz-card-wall .stories-scroll {
+    padding-bottom: 20px;
 }
 .stories-scroll::-webkit-scrollbar { display: none; }
 .stories-scroll { scrollbar-width: none; }
 
 .story-card {
+    display: block;
     flex: 0 0 360px;
     cursor: pointer;
     scroll-snap-align: start;
+    color: inherit; text-decoration: none;
     transition: transform 0.5s cubic-bezier(.2,.8,.2,1);
 }
 .story-card:hover { transform: translateY(-6px); }
@@ -626,12 +971,14 @@ body {
     gap: 24px;
 }
 .exp-card {
+    display: block;
     aspect-ratio: 4 / 5;
     background: var(--ink-2);
     border: 1px solid var(--line);
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    color: inherit; text-decoration: none;
     transition: border-color 0.3s;
 }
 .exp-card:hover { border-color: var(--gold-soft); }
@@ -641,7 +988,12 @@ body {
     padding: 32px;
     display: flex; flex-direction: column;
     justify-content: space-between;
-    background: linear-gradient(180deg, rgba(10,9,8,0.4) 0%, transparent 30%, transparent 60%, rgba(10,9,8,0.92) 100%);
+    background: linear-gradient(180deg,
+        rgba(10,9,8,0.70) 0%,
+        rgba(10,9,8,0.28) 26%,
+        transparent 44%,
+        transparent 60%,
+        rgba(10,9,8,0.92) 100%);
 }
 .exp-tag {
     font-family: var(--f-mono); font-size: 10.5px;
@@ -661,6 +1013,484 @@ body {
     font-size: 13.5px; font-weight: 300;
     line-height: 1.6; color: var(--paper-soft);
     max-width: 38ch;
+}
+
+/* ═════════════════════════════════════════════════════════════
+   REEL · 主舞台 · 一分钟影像
+   Split-panel film card inspired by editorial "double frame" devices.
+   Two rounded panels are joined by a circular notch holding a play head;
+   a gold halo traces the silhouette via filter: drop-shadow.
+═════════════════════════════════════════════════════════════ */
+.reel-sec {
+    padding: clamp(48px, 9vh, 110px) var(--gutter) clamp(48px, 9vh, 110px);
+    position: relative;
+    background:
+        radial-gradient(ellipse at 50% 30%, rgba(212,165,116,0.05), transparent 55%),
+        var(--ink);
+}
+
+.reel-head {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 60px;
+    align-items: end;
+    margin-bottom: 56px;
+}
+.reel-head-num {
+    font-family: var(--f-mono);
+    font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border-top: 1px solid var(--gold);
+    padding-top: 12px;
+}
+.reel-head-num span {
+    display: block; margin-top: 4px;
+    color: var(--paper-faint);
+    font-size: 10.5px;
+}
+.reel-tagline {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(28px, 3vw, 44px);
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    color: var(--paper);
+    text-wrap: pretty;
+    max-width: 22ch;
+}
+.reel-tagline em {
+    font-style: italic;
+    color: var(--gold);
+}
+.reel-head-link {
+    align-self: end;
+    display: flex; flex-direction: column; gap: 6px;
+    font-family: var(--f-mono);
+    font-size: 10.5px; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+    text-align: right;
+    white-space: nowrap;
+}
+.reel-head-link b {
+    color: var(--paper-soft);
+    font-weight: 400;
+    letter-spacing: 0.18em;
+}
+
+.reel-stage {
+    max-width: 1080px;
+    margin: 0 auto;
+    position: relative;
+    isolation: isolate;
+}
+
+.reel-player {
+    position: relative;
+}
+.reel-card--preview {
+    cursor: pointer;
+    width: 100%;
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    text-align: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+}
+.reel-player.is-playing .reel-card--preview {
+    display: none;
+}
+.reel-embed {
+    display: none;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 28px;
+    overflow: hidden;
+    background: var(--ink-2);
+    filter:
+        drop-shadow(0 0 0.5px rgba(212,165,116,0.55))
+        drop-shadow(0 0 14px rgba(212,165,116,0.18))
+        drop-shadow(0 40px 80px rgba(0,0,0,0.55));
+}
+.reel-player.is-playing .reel-embed {
+    display: block;
+}
+.reel-embed iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+.reel-embed-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 8;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(235,231,223,0.35);
+    background: rgba(10,9,8,0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--paper-soft);
+    cursor: pointer;
+    transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+.reel-embed-close:hover {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--ink);
+}
+.reel-embed-close:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+}
+
+/* Card root — preview opens inline Bilibili player */
+.reel-card {
+    --notch-r: 64px;
+    display: block;
+    position: relative;
+    color: inherit;
+    text-decoration: none;
+    transition:
+        transform 0.6s cubic-bezier(.2,.8,.2,1),
+        filter 0.6s cubic-bezier(.2,.8,.2,1);
+    /* Halo + thin gold edge that follow the dumbbell silhouette */
+    filter:
+        drop-shadow(0 0 0.5px rgba(212,165,116,0.55))
+        drop-shadow(0 0 14px rgba(212,165,116,0.18))
+        drop-shadow(0 40px 80px rgba(0,0,0,0.55));
+}
+.reel-card:hover {
+    transform: translateY(-6px);
+    filter:
+        drop-shadow(0 0 0.5px rgba(212,165,116,0.85))
+        drop-shadow(0 0 22px rgba(212,165,116,0.32))
+        drop-shadow(0 60px 100px rgba(0,0,0,0.6));
+}
+.reel-card:focus-visible {
+    outline: none;
+}
+.reel-card:focus-visible .reel-panels {
+    outline: 2px solid var(--gold);
+    outline-offset: 8px;
+    border-radius: 30px;
+}
+
+/* Two side-by-side panels, each masked with a circular indent toward the center */
+.reel-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+.reel-panel {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background-color: var(--ink-2);
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    isolation: isolate;
+}
+/* radial-gradient mask gives a true circular notch independent of panel aspect */
+.reel-panel--left {
+    border-radius: 28px 10px 10px 28px;
+    -webkit-mask: radial-gradient(circle var(--notch-r) at 100% 50%,
+        transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+    mask: radial-gradient(circle var(--notch-r) at 100% 50%,
+        transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+}
+.reel-panel--right {
+    border-radius: 10px 28px 28px 10px;
+    -webkit-mask: radial-gradient(circle var(--notch-r) at 0% 50%,
+        transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+    mask: radial-gradient(circle var(--notch-r) at 0% 50%,
+        transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+}
+
+/* faint editorial grid laid over the right "lab" panel, like blueprint paper */
+.reel-grid {
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(212,165,116,0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212,165,116,0.10) 1px, transparent 1px);
+    background-size: 36px 36px;
+    mix-blend-mode: screen;
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+/* vignetted darkening: at the inner edge (notch read) and along the bottom (brand legibility) */
+.reel-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+.reel-panel--left::after {
+    background:
+        /* deep bottom darken — suppresses original image's watermark */
+        linear-gradient(180deg, transparent 50%, rgba(10,9,8,0.55) 78%, rgba(10,9,8,1) 100%),
+        /* inner-edge darken so the notch reads against the imagery */
+        linear-gradient(270deg, rgba(10,9,8,0.78) 0%, rgba(10,9,8,0.0) 35%, transparent 50%);
+}
+.reel-panel--right::after {
+    background:
+        linear-gradient(180deg, transparent 55%, rgba(10,9,8,0.78) 100%),
+        linear-gradient(90deg,  rgba(10,9,8,0.78) 0%, rgba(10,9,8,0.0) 35%, transparent 50%);
+}
+
+/* corner labels */
+.reel-tag {
+    position: absolute; top: 18px; left: 18px;
+    padding: 6px 11px;
+    background: rgba(10,9,8,0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--line-mid);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    z-index: 2;
+}
+.reel-mark {
+    position: absolute; top: 18px; right: 18px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 11px;
+    background: rgba(10,9,8,0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--line-mid);
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--paper-soft);
+    z-index: 2;
+}
+.reel-mark::before {
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--ember);
+    box-shadow: 0 0 10px rgba(181,67,56,0.7);
+    animation: reelRecBlink 1.6s ease-in-out infinite;
+}
+@keyframes reelRecBlink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.35; }
+}
+
+.reel-brand {
+    position: absolute; bottom: 18px; right: 18px;
+    padding: 8px 13px;
+    background: rgba(10,9,8,0.78);
+    border: 1px solid var(--line-mid);
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: var(--paper);
+    z-index: 2;
+}
+.reel-brand .dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin: 0 6px;
+    transform: translateY(-3px);
+}
+
+.reel-foot-label {
+    position: absolute; bottom: 18px; left: 18px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+    z-index: 2;
+}
+
+/* ── Center notch / play head ── */
+.reel-notch {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(var(--notch-r) * 2);
+    height: calc(var(--notch-r) * 2);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 4;
+}
+.reel-notch::before {
+    /* faint inner ring tracing the notch boundary */
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(212,165,116,0.22);
+}
+.reel-play {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 76px; height: 76px;
+    border-radius: 50%;
+    background: rgba(10,9,8,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(235,231,223,0.35);
+    display: grid; place-items: center;
+    z-index: 6;
+    transition:
+        transform 0.4s cubic-bezier(.2,.8,.2,1),
+        background 0.3s,
+        border-color 0.3s;
+}
+.reel-play::before {
+    /* breathing pulse ring */
+    content: '';
+    position: absolute; inset: -1px;
+    border-radius: 50%;
+    border: 1px solid rgba(212,165,116,0.4);
+    animation: reelPulse 2.6s ease-out infinite;
+    pointer-events: none;
+}
+.reel-play svg {
+    width: 22px; height: 22px;
+    fill: var(--paper);
+    margin-left: 3px;
+    transition: fill 0.3s;
+}
+.reel-card:hover .reel-play {
+    background: var(--gold);
+    border-color: var(--gold);
+    transform: translate(-50%, -50%) scale(1.08);
+}
+.reel-card:hover .reel-play svg {
+    fill: var(--ink);
+}
+@keyframes reelPulse {
+    0%   { transform: scale(1);   opacity: 0.7; }
+    80%  { transform: scale(1.55); opacity: 0;   }
+    100% { transform: scale(1.55); opacity: 0;   }
+}
+
+/* ── Caption strip beneath the card ── */
+.reel-caption {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 28px;
+    align-items: baseline;
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+}
+.reel-caption .lead {
+    color: var(--gold);
+    letter-spacing: 0.22em;
+}
+.reel-caption .stretch {
+    height: 1px;
+    background: var(--line);
+    align-self: center;
+    transform: translateY(-2px);
+}
+.reel-caption .cta {
+    color: var(--paper);
+    transition: color 0.3s, letter-spacing 0.3s;
+}
+.reel-caption .cta a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.reel-caption .cta a::after {
+    content: ' →';
+    transition: transform 0.3s;
+    display: inline-block;
+}
+.reel-stage:has(.reel-card--preview:hover) .reel-caption .cta,
+.reel-stage:has(.reel-card--preview:focus-visible) .reel-caption .cta,
+.reel-stage:has(.reel-card--preview:hover) .reel-caption .cta a,
+.reel-stage:has(.reel-card--preview:focus-visible) .reel-caption .cta a {
+    color: var(--gold);
+}
+
+@media (max-width: 900px) {
+    .reel-head {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        margin-bottom: 36px;
+    }
+    .reel-head-link {
+        text-align: left;
+        white-space: normal;
+    }
+    .reel-card { --notch-r: 48px; }
+    .reel-play { width: 64px; height: 64px; }
+    .reel-play svg { width: 18px; height: 18px; }
+    .reel-caption {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    .reel-caption .stretch { display: none; }
+}
+
+@media (max-width: 640px) {
+    /* Stack panels vertically with the notch on top/bottom edge */
+    .reel-card { --notch-r: 44px; }
+    .reel-embed { border-radius: 24px; }
+    .reel-panels {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+    .reel-panel {
+        aspect-ratio: 16 / 11;
+    }
+    .reel-panel--left {
+        border-radius: 24px 24px 8px 8px;
+        -webkit-mask: radial-gradient(circle var(--notch-r) at 50% 100%,
+            transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+        mask: radial-gradient(circle var(--notch-r) at 50% 100%,
+            transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+    }
+    .reel-panel--right {
+        border-radius: 8px 8px 24px 24px;
+        -webkit-mask: radial-gradient(circle var(--notch-r) at 50% 0%,
+            transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+        mask: radial-gradient(circle var(--notch-r) at 50% 0%,
+            transparent calc(var(--notch-r) - 1px), #000 var(--notch-r));
+    }
+    .reel-panel--left::after,
+    .reel-panel--right::after { display: none; }
+    .reel-tag, .reel-mark { top: 14px; }
+    .reel-brand, .reel-foot-label { bottom: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reel-play::before,
+    .reel-mark::before { animation: none; }
+    .reel-card,
+    .reel-card:hover { transform: none; transition: filter 0.3s ease; }
+    .reel-card:hover .reel-play { transform: translate(-50%, -50%); }
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -1527,6 +2357,7 @@ body {
     font-family: var(--f-mono); font-size: 10.5px;
     letter-spacing: 0.22em; text-transform: uppercase;
     color: var(--paper-soft);
+    text-shadow: 0 1px 10px rgba(10,9,8,1), 0 0 2px rgba(10,9,8,1);
     cursor: pointer;
     z-index: 5;
     transition: color 0.25s, transform 0.25s;
@@ -1626,18 +2457,19 @@ body {
    AGENT PAGE · 智能导师
 ═════════════════════════════════════════════════════════════ */
 .agent-hero {
-    padding: calc(var(--nav-h) + 80px) var(--gutter) 80px;
+    padding: calc(var(--nav-h) + 96px) var(--gutter) 88px;
     border-bottom: 1px solid var(--line);
     position: relative; overflow: hidden;
 }
 #agent-hero-canvas {
-    position: absolute; right: -10%; top: 0; bottom: 0;
-    width: 60%; opacity: 0.6;
+    position: absolute; right: -8%;
+    top: calc(var(--nav-h) + 32px); bottom: 0;
+    width: 62%; opacity: 0.94;
     pointer-events: none;
 }
 .agent-hero-mask {
     position: absolute; inset: 0;
-    background: linear-gradient(90deg, var(--ink) 30%, rgba(10,9,8,0.4) 60%, transparent 100%);
+    background: linear-gradient(90deg, var(--ink) 38%, rgba(10,9,8,0.28) 65%, transparent 100%);
     pointer-events: none;
 }
 .agent-hero-inner { position: relative; z-index: 1; max-width: 880px; }
@@ -2207,6 +3039,12 @@ body {
     pointer-events: none;
     z-index: 2;
 }
+/* 梵高之眼 — canvas 笔触极繁杂，左侧加半透明色块保护序号 + 标题落点 */
+#page-exp2 .ex-cover-vignette {
+    background:
+        linear-gradient(90deg, rgba(10,9,8,0.70) 0%, rgba(10,9,8,0.42) 28%, transparent 54%),
+        linear-gradient(180deg, rgba(10,9,8,0.46) 0%, transparent 32%, transparent 50%, rgba(10,9,8,0.95) 100%);
+}
 
 /* ── 光影为媒 hero 专属 ── */
 .art-cover #art-cover-video {
@@ -2250,6 +3088,7 @@ body {
     color: var(--gold); margin-bottom: 22px;
     border-top: 1px solid var(--gold); padding-top: 14px;
     width: fit-content;
+    text-shadow: 0 1px 12px rgba(10,9,8,0.95), 0 0 2px rgba(10,9,8,1);
 }
 .ex-cover-meta .num {
     font-family: var(--f-serif); font-style: italic;
@@ -2369,9 +3208,11 @@ body {
     gap: 30px;
 }
 .ex-plate {
+    display: block;
     aspect-ratio: 3 / 4;
     background: var(--ink-2);
     position: relative; overflow: hidden;
+    color: inherit; text-decoration: none;
 }
 .ex-plate canvas { width: 100%; height: 100%; display: block; }
 .ex-plate-cap {
@@ -2490,6 +3331,354 @@ body {
 .ex-phase-status.proto::before { background: var(--gold); }
 .ex-phase-status.plan { color: var(--paper-faint); }
 .ex-phase-status.plan::before { background: var(--paper-faint); }
+
+/* ── MR · 虚实之间 · 阶段区块视频背景 + 毛玻璃 ── */
+#page-mr .ex-phases {
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+    border-top: none;
+    padding: 120px var(--gutter);
+}
+.ex-phases-video {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.88;
+    filter: brightness(0.92) saturate(1.1);
+}
+.ex-phases-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg,
+        rgba(10,9,8,0.48) 0%,
+        rgba(10,9,8,0.18) 45%,
+        rgba(10,9,8,0.42) 100%);
+    z-index: 1;
+}
+#page-mr .ex-phases > .sec-head,
+#page-mr .ex-phases > .ex-phase-list {
+    position: relative;
+    z-index: 2;
+}
+#page-mr .ex-phase {
+    background: rgba(10, 9, 8, 0.045);
+    backdrop-filter: blur(38px) saturate(155%);
+    -webkit-backdrop-filter: blur(38px) saturate(155%);
+    border: 1px solid rgba(235, 231, 223, 0.15);
+    box-shadow: inset 0 1px 0 rgba(235,231,223,0.06), 0 8px 28px rgba(0,0,0,0.18);
+    transition: background 0.35s ease, border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
+}
+#page-mr .ex-phase:hover {
+    background: rgba(235, 231, 223, 0.055);
+    border-color: rgba(212, 165, 116, 0.38);
+    box-shadow: inset 0 1px 0 rgba(235,231,223,0.12), 0 16px 44px rgba(0,0,0,0.22);
+    transform: translateY(-4px);
+}
+#page-mr .ex-phase-status {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 8px;
+    display: inline-flex;
+    width: fit-content;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(235,231,223,0.18);
+    border-radius: 24px;
+    padding: 6px 16px 6px 11px;
+    transition: background 0.2s, border-color 0.2s;
+}
+#page-mr .ex-phase-status.live {
+    color: var(--moss);
+    background: rgba(107, 128, 98, 0.14);
+    border-color: rgba(107, 128, 98, 0.38);
+}
+#page-mr .ex-phase-status.live::before {
+    background: var(--moss);
+    box-shadow: 0 0 8px var(--moss);
+}
+#page-mr .ex-phase-status.proto {
+    color: var(--gold);
+    background: rgba(212, 165, 116, 0.11);
+    border-color: rgba(212, 165, 116, 0.35);
+}
+#page-mr .ex-phase-status.proto::before {
+    background: var(--gold);
+    box-shadow: 0 0 8px rgba(212,165,116,0.55);
+}
+#page-mr .ex-phase-status.plan {
+    color: var(--paper-faint);
+    background: rgba(235,231,223,0.05);
+    border-color: rgba(235,231,223,0.12);
+}
+#page-mr .ex-phase-status.plan::before {
+    background: var(--paper-faint);
+}
+#page-mr .footer {
+    background: rgba(10,9,8,0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(235,231,223,0.08);
+}
+.mr-back-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper-soft);
+    cursor: pointer; text-decoration: none;
+    background: rgba(235,231,223,0.07);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(235,231,223,0.18);
+    border-radius: 24px;
+    padding: 8px 20px;
+    transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+.mr-back-btn:hover {
+    background: rgba(212,165,116,0.12);
+    border-color: rgba(212,165,116,0.38);
+    color: var(--gold);
+}
+
+/* ── X · 未来的课 ── */
+.ex-future {
+    padding: 100px var(--gutter) 120px;
+    border-top: 1px solid var(--line);
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+}
+.ex-future-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.85fr;
+    gap: 56px 72px;
+    align-items: start;
+    position: relative;
+}
+
+/* ── 左：视频占位卡 ── */
+.ex-future-video-slot {
+    position: relative;
+    background: var(--ink-2);
+    border: 1px dashed rgba(212,165,116,0.2);
+    aspect-ratio: 3 / 4;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 18px;
+    cursor: pointer;
+    transition: border-color 0.35s, background 0.35s;
+    overflow: hidden;
+}
+.ex-future-video-slot:hover {
+    border-color: rgba(212,165,116,0.45);
+    background: var(--ink-3);
+}
+.ex-future-video-slot::after {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent 0, transparent 22px,
+        rgba(212,165,116,0.025) 22px, rgba(212,165,116,0.025) 23px
+    );
+}
+.ex-fvs-play {
+    width: 52px; height: 52px;
+    border: 1px solid rgba(212,165,116,0.3);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative; z-index: 1;
+}
+.ex-future-video-slot:hover .ex-fvs-play {
+    border-color: rgba(212,165,116,0.65);
+    transform: scale(1.1);
+}
+.ex-fvs-play svg { width: 16px; height: 16px; fill: var(--gold); opacity: 0.65; margin-left: 3px; }
+.ex-fvs-label {
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--paper-faint); position: relative; z-index: 1;
+}
+.ex-fvs-sub {
+    font-family: var(--f-mono); font-size: 9px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper-faint); opacity: 0.45; position: relative; z-index: 1;
+}
+
+/* ── 右：整体列 ── */
+.ex-future-right {
+    display: flex; flex-direction: column; gap: 44px;
+}
+
+/* ── 右列整体 ── */
+.ex-future-right { display: flex; flex-direction: column; }
+
+/* ── 同行行：标题（左）＋ X+元信息（右） ── */
+.ex-future-header {
+    display: grid;
+    grid-template-columns: 1fr 190px;
+    gap: 20px 52px;
+    align-items: center;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 44px;
+}
+
+/* ── X + 元信息纵列 ── */
+.ex-future-meta {
+    display: flex; flex-direction: column; gap: 20px;
+}
+.ex-future-meta-text {
+    display: flex; flex-direction: column; gap: 12px;
+}
+.ex-future-eyebrow {
+    font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--paper-faint);
+}
+.ex-future-divider {
+    width: 40px; height: 1px;
+    background: var(--gold-deep); opacity: 0.6;
+}
+.ex-future-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper-faint);
+    border: 1px solid var(--line); padding: 6px 14px;
+    width: fit-content;
+}
+.ex-future-badge::before {
+    content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--paper-faint);
+}
+
+/* ── 主体内容 ── */
+.ex-future-body { display: flex; flex-direction: column; gap: 32px; }
+.ex-future-title {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: clamp(30px, 3.2vw, 50px);
+    color: var(--paper); line-height: 1.05;
+    letter-spacing: -0.015em;
+}
+.ex-future-title em { color: var(--gold); font-style: inherit; }
+.ex-future-lede {
+    font-size: 15px; line-height: 1.85;
+    color: var(--paper-soft); max-width: 52ch;
+}
+.ex-future-pillars {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1px; background: var(--line);
+    border: 1px solid var(--line);
+}
+.ex-future-pillar {
+    background: var(--ink-2);
+    padding: 28px 24px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: background 0.25s;
+}
+.ex-future-pillar:hover { background: var(--ink-3); }
+.ex-future-pillar-icon {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 22px; color: var(--gold); line-height: 1;
+}
+.ex-future-pillar-label {
+    font-family: var(--f-mono); font-size: 9.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--paper-faint);
+}
+.ex-future-pillar-text {
+    font-size: 13.5px; line-height: 1.65;
+    color: var(--paper-soft);
+}
+.ex-future-quote {
+    border-left: 2px solid var(--gold-deep);
+    padding-left: 20px;
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 18px; color: var(--paper-soft);
+    line-height: 1.55;
+}
+
+/* ══ 动态 X ── 与 β / γ 同款字型，专属光效 ══ */
+
+/* 外层：负责呼吸光晕 */
+.vision-x-wrap {
+    flex-shrink: 0;
+    display: inline-block;
+    position: relative;
+    animation: vx-halo 3.8s ease-in-out 1.5s infinite;
+}
+@keyframes vx-halo {
+    0%, 100% {
+        filter:
+            drop-shadow(0 0  6px rgba(212,165,116,0.28))
+            drop-shadow(0 0 18px rgba(212,165,116,0.08));
+    }
+    50% {
+        filter:
+            drop-shadow(0 0 20px rgba(245,200, 80,0.62))
+            drop-shadow(0 0 50px rgba(212,165,116,0.20));
+    }
+}
+
+/* 字符本体：serif italic，同 β / γ，但稍大 + 金渐变 + 扫光 + 漂浮 */
+.vision-x-char {
+    font-family: var(--f-serif); font-style: italic;
+    font-size: 88px; line-height: 0.8;
+    display: block;
+
+    /* 多段金渐变（从暗到亮再暗，模拟铸金质感） */
+    background: linear-gradient(
+        128deg,
+        #6a3e10 0%,
+        #c88828 18%,
+        #f0be48 36%,
+        #fdf4b8 52%,
+        #f0be48 68%,
+        #c88828 84%,
+        #6a3e10 100%
+    );
+    background-size: 260% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    opacity: 0;
+    animation:
+        vx-char-in  0.65s cubic-bezier(.2,.8,.2,1) 0.18s forwards,
+        vx-sweep    5.2s  linear                   1.0s  infinite,
+        vx-float    5.8s  ease-in-out              2.2s  infinite;
+}
+
+/* 入场：模糊→清晰，缩放弹入 */
+@keyframes vx-char-in {
+    from { opacity: 0; filter: blur(18px); transform: scale(0.78) translateY(12px); }
+    to   { opacity: 1; filter: blur(0);    transform: scale(1)    translateY(0); }
+}
+
+/* 光带扫过：background-position 左→右循环 */
+@keyframes vx-sweep {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -60% 0; }
+}
+
+/* 漂浮 + 轻微转角（比 β/γ 更活泼） */
+@keyframes vx-float {
+    0%, 100% { transform: translateY(0)    rotate(0deg);   }
+    32%      { transform: translateY(-5px) rotate(0.6deg); }
+    68%      { transform: translateY(3px)  rotate(-0.4deg); }
+}
+
+@media (max-width: 800px) {
+    .ex-future-inner  { grid-template-columns: 1fr; gap: 40px; }
+    .ex-future-header { grid-template-columns: 1fr; gap: 28px; }
+    .ex-future-video-slot { aspect-ratio: 16 / 9; }
+    .ex-future-pillars { grid-template-columns: 1fr; }
+    .vision-x-char { font-size: 68px; }
+}
 
 /* Modal video */
 .video-modal {
@@ -2942,6 +4131,42 @@ body {
     font-size: 22px; line-height: 1.6;
     color: var(--paper);
 }
+.about-intro-body .about-intro-coda {
+    position: relative;
+    margin-top: 1.85em;
+    padding-top: 1.35em;
+    font-size: 0.93em;
+    line-height: 1.72;
+    font-style: italic;
+    color: var(--paper-soft);
+}
+.about-intro-body .about-intro-coda::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 10px;
+    pointer-events: none;
+    opacity: 0.4;
+    background:
+        linear-gradient(var(--gold), var(--gold)) 0 0 / 1px 10px no-repeat,
+        linear-gradient(var(--gold), var(--gold)) 100% 0 / 1px 10px no-repeat,
+        linear-gradient(90deg, var(--gold), var(--gold)) 0 0 / 100% 1px no-repeat;
+}
+.about-intro-body .about-intro-coda-cite {
+    display: block;
+    margin-top: 0.9em;
+    font-family: var(--f-serif);
+    font-size: clamp(18px, 2.4vw, 24px);
+    font-style: normal;
+    letter-spacing: 0.06em;
+    text-transform: none;
+    color: var(--gold);
+}
+.about-intro-body .about-intro-coda-cite em {
+    font-style: normal;
+}
 
 .about-intro-aux {
     position: sticky; top: calc(var(--nav-h) + 24px);
@@ -3385,13 +4610,10 @@ body {
     overflow: hidden;
     cursor: grab;
     transform-origin: 50% 50%;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
     transition:
         transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
         opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
         filter 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
-        visibility 0s linear 0.35s,
         box-shadow 0.5s,
         border-color 0.3s;
     will-change: transform, opacity, filter;
@@ -3628,6 +4850,54 @@ body {
     margin-top: 4px;
 }
 
+/* art-flow §03 · 与首页笔记墙同款横向提示（覆盖默认纵向 list） */
+.horiz-card-wall .art-flow-share-list.horiz-card-wall__track {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 8px var(--gutter) 20px;
+    margin-top: 30px;
+    margin-left: 0;
+    margin-right: 0;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+.horiz-card-wall .art-flow-share-list.horiz-card-wall__track::-webkit-scrollbar {
+    display: none;
+}
+.horiz-card-wall .art-flow-share-item {
+    flex: 0 0 min(440px, 86vw);
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: none;
+    padding-top: 0;
+    border: 1px solid var(--line);
+    background: var(--ink-2);
+    direction: ltr;
+    min-height: 0;
+}
+.horiz-card-wall .art-flow-share-item > * {
+    direction: ltr;
+}
+.horiz-card-wall .art-flow-share-cover {
+    flex-shrink: 0;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+}
+.horiz-card-wall .art-flow-share-text {
+    padding: 22px 24px 26px;
+    flex: 1;
+}
+.horiz-card-wall .art-flow-share-meta {
+    flex-wrap: wrap;
+    row-gap: 8px;
+}
+
 @media (max-width: 1100px) {
     .art-flow-hero-grid { grid-template-columns: 1fr; }
     .art-flow-principle-head { grid-template-columns: 1fr; gap: 22px; }
@@ -3664,9 +4934,11 @@ body {
     .ex-cover-content { grid-template-columns: 1fr; gap: 30px; }
     .ex-plates { grid-template-columns: repeat(2, 1fr); }
     .ex-phase-list { grid-template-columns: 1fr; }
-    .exhibit-row { grid-template-columns: 50px 1fr 90px; gap: 20px; }
-    .exhibit-row .exhibit-desc { display: none; }
-    .exhibit-num { font-size: 42px; }
+    .exhibit-row { grid-template-columns: 50px 1fr 80px; gap: 20px; }
+    .exhibit-row .exhibit-desc,
+    .exhibit-row .exhibit-progress { display: none; }
+    .exhibit-num-roman { font-size: 42px; }
+    .exhibit-row:hover .exhibit-thumb { transform: scale(1.5); }
     .result-metrics { grid-template-columns: repeat(2, 1fr); }
     .r-metric:nth-child(2) { border-right: none; }
     .field-row { grid-template-columns: 1fr; gap: 12px; }
@@ -3680,6 +4952,10 @@ body {
     .nav-links { gap: 0; }
     .nav-link { padding: 8px 8px; font-size: 10px; letter-spacing: 0.12em; }
     .stories-scroll { padding-left: 24px; padding-right: 24px; }
+    .horiz-card-wall__foot {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
     .story-card { flex: 0 0 280px; }
     .footer-grid { grid-template-columns: 1fr; }
 }
@@ -3982,6 +5258,92 @@ body {
     .wb2-nav-center { width: 100%; flex: none; text-align: left; order: 3; }
     .wb2-nav-right { margin-left: 0; }
 }
+
+/* ═════════════════════════════════════════════════════════════
+   TOAST NOTIFICATION SYSTEM
+═════════════════════════════════════════════════════════════ */
+#dnl-toast-host {
+    position: fixed;
+    top: calc(var(--nav-h) + 12px);
+    right: 20px;
+    z-index: 9900;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    max-width: min(360px, calc(100vw - 40px));
+}
+.dnl-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 4px;
+    background: rgba(24, 22, 19, 0.96);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--line-mid);
+    border-left-width: 3px;
+    color: var(--paper);
+    font-family: var(--f-sans);
+    font-size: 13.5px;
+    line-height: 1.45;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.55);
+    animation: toastIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+    will-change: transform, opacity;
+}
+.dnl-toast.is-exiting {
+    animation: toastOut 0.22s ease-in both;
+}
+.dnl-toast--error { border-left-color: var(--ember); }
+.dnl-toast--warn  { border-left-color: var(--gold); }
+.dnl-toast--ok    { border-left-color: var(--moss); }
+.dnl-toast__icon {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-style: normal;
+}
+.dnl-toast--error .dnl-toast__icon { background: var(--ember); color: #fff; }
+.dnl-toast--warn  .dnl-toast__icon { background: var(--gold);  color: var(--ink); }
+.dnl-toast--ok    .dnl-toast__icon { background: var(--moss);  color: #fff; }
+.dnl-toast__body { flex: 1; min-width: 0; }
+.dnl-toast__title {
+    font-weight: 500;
+    margin-bottom: 2px;
+    color: var(--paper);
+}
+.dnl-toast__msg { color: var(--paper-soft); font-size: 13px; }
+.dnl-toast__close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: var(--paper-faint);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    font-size: 16px;
+    margin-top: -1px;
+    transition: color 0.15s;
+}
+.dnl-toast__close:hover { color: var(--paper); }
+@keyframes toastIn {
+    from { opacity: 0; transform: translateX(18px) scale(0.97); }
+    to   { opacity: 1; transform: translateX(0)    scale(1); }
+}
+@keyframes toastOut {
+    from { opacity: 1; transform: translateX(0); max-height: 120px; margin-top: 0; }
+    to   { opacity: 0; transform: translateX(18px); max-height: 0;   margin-top: -10px; }
+}
+@media (max-width: 480px) {
+    #dnl-toast-host { right: 12px; left: 12px; max-width: none; }
+}
 </style>
 </head>
 <body>
@@ -3990,20 +5352,28 @@ body {
 <!-- ════════════════════════════════════════
      NAVIGATION
 ════════════════════════════════════════ -->
-<nav class="nav" id="nav">
-    <a class="nav-brand" onclick="showPage('home')">
-        <span class="nav-brand-mark"></span>
+<nav class="nav" id="nav" aria-label="主导航">
+    <a class="nav-brand" href="#home" aria-label="返回 DanceNet.Lab 首页">
+        <span class="nav-brand-mark" aria-hidden="true"></span>
         DanceNet<span style="opacity:.5">.Lab</span>
     </a>
     <div class="nav-spacer"></div>
-    <div class="nav-links">
-        <button class="nav-link" id="nav-home" onclick="showPage('home')">首页</button>
-        <button class="nav-link" id="nav-agent" onclick="showPage('agent')">智能导师</button>
-        <button class="nav-link" id="nav-art" onclick="showPage('art')">光影为媒</button>
-        <button class="nav-link" id="nav-mr" onclick="showPage('mr')">虚实之间</button>
-        <button class="nav-link" id="nav-aigc" onclick="showPage('aigc')">The Synthesis</button>
-    </div>
-    <div class="nav-meta" id="nav-meta">第 04 期 · 2026</div>
+    <ul class="nav-links">
+        <li><a class="nav-link" id="nav-home"  href="#home">首页</a></li>
+        <li><a class="nav-link" id="nav-agent" href="#agent">智能导师</a></li>
+        <li class="nav-item-has-submenu">
+            <a class="nav-link" id="nav-art" href="#art" aria-haspopup="true" aria-controls="nav-art-submenu">光影为媒</a>
+            <ul class="nav-submenu" id="nav-art-submenu" aria-label="光影为媒 · 图版">
+                <li><a class="nav-submenu-link" href="#art-flow">看见我们</a></li>
+                <li><a class="nav-submenu-link" href="#art" data-scroll-to="plate-interactive-wrap">光影互动</a></li>
+                <li><a class="nav-submenu-link" href="#art" data-scroll-to="plate-awaken" data-open-awaken="1">智能觉醒</a></li>
+            </ul>
+        </li>
+        <li><a class="nav-link" id="nav-mr"    href="#mr">虚实之间</a></li>
+        <li><a class="nav-link" id="nav-aigc"  href="#aigc">The Synthesis</a></li>
+        <li><a class="nav-link" id="nav-about" href="#about">关于我们</a></li>
+    </ul>
+    <div class="nav-meta" id="nav-meta" aria-hidden="true">2026</div>
 </nav>
 
 <!-- ════════════════════════════════════════
@@ -4013,7 +5383,7 @@ body {
 
     <!-- HERO -->
     <section class="hero">
-        <canvas id="hero-canvas"></canvas>
+        <canvas id="hero-canvas" aria-hidden="true"></canvas>
         <div class="hero-vignette"></div>
         <div class="hero-meta-top">
             <div class="left">DanceNet.Lab · 身体、运动与人工智能</div>
@@ -4026,10 +5396,10 @@ body {
             </div>
             <div class="hero-pull">
                 <p class="lede">DanceNet.Lab 是一所为身体语言而建的实验室。我们以姿态、音乐与表达为材料，让人工智能成为新的舞蹈合作者——不是取代肉身，而是延伸它。</p>
-                <button class="hero-cta" onclick="showPage('agent')">
+                <a class="hero-cta" href="#agent">
                     进入AI导师互动
                     <span class="hero-cta-arrow"></span>
-                </button>
+                </a>
                 <div class="hero-pull-meta">
                     <span>春 · 2026</span>
                     <span>卷四</span>
@@ -4053,6 +5423,62 @@ body {
         <div>阅读约 16 分钟</div>
     </div>
 
+    <!-- REEL · 主舞台 · 一分钟影像（内嵌 Bilibili 播放器） -->
+    <section class="reel-sec" aria-labelledby="reel-tagline">
+        <div class="reel-head">
+            <div class="reel-head-num">主舞台 · LOOK<span>影像 · 一分钟介绍</span></div>
+            <h2 class="reel-tagline" id="reel-tagline">
+                想用一分钟看懂<br>
+                这间实验室<em>在做什么</em>？
+            </h2>
+            <div class="reel-head-link">
+                <span>内嵌 · Bilibili</span>
+                <b>DanceNet.tv / No.001</b>
+            </div>
+        </div>
+
+        <div class="reel-stage">
+            <div class="reel-player" id="reel-player" data-bvid="BV12369YiEu1">
+                <button type="button"
+                        class="reel-card reel-card--preview"
+                        aria-label="播放 DanceNet.Lab 一分钟介绍影像">
+                    <div class="reel-panels">
+                        <div class="reel-panel reel-panel--left"
+                             style="background-image:url('assets/reel-mocap.png');">
+                            <div class="reel-tag">现场 · 街舞 × 姿态</div>
+                            <div class="reel-mark">REC · 01</div>
+                        </div>
+                        <div class="reel-panel reel-panel--right"
+                             style="background-image:url('assets/reel-identity.png');">
+                            <div class="reel-grid" aria-hidden="true"></div>
+                            <div class="reel-foot-label">FRAME · 02</div>
+                            <div class="reel-brand">DanceNet<span class="dot"></span>Lab</div>
+                        </div>
+                    </div>
+                    <div class="reel-notch" aria-hidden="true">
+                        <span class="reel-play">
+                            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3l12 7-12 7V3z"/></svg>
+                        </span>
+                    </div>
+                </button>
+
+                <div class="reel-embed" aria-hidden="true">
+                    <iframe title="DanceNet.Lab 一分钟介绍影像"
+                            allow="autoplay; fullscreen"
+                            allowfullscreen></iframe>
+                    <button type="button" class="reel-embed-close">关闭</button>
+                </div>
+            </div>
+
+            <div class="reel-caption">
+                <span class="lead">REEL · 01</span>
+                <span class="stretch" aria-hidden="true"></span>
+                <span>约 1 分钟 · 中文 / 英文字幕</span>
+                <span class="cta"><a href="https://www.bilibili.com/video/BV12369YiEu1" target="_blank" rel="noopener noreferrer">在 Bilibili 打开</a></span>
+            </div>
+        </div>
+    </section>
+
     <!-- TODAY · FEATURED -->
     <section class="sec">
         <div class="sec-head">
@@ -4061,14 +5487,14 @@ body {
         </div>
 
         <div class="today">
-            <div class="today-image" onclick="showPage('agent')">
-                <canvas id="today-canvas"></canvas>
+            <a class="today-image" href="#agent">
+                <canvas id="today-canvas" aria-hidden="true"></canvas>
                 <div class="today-image-tag">正在呈现</div>
                 <div class="today-image-caption">
                     <span>姿态 · 音乐 · 表达 · 知识</span>
                     <span>实时</span>
                 </div>
-            </div>
+            </a>
             <div class="today-text">
                 <div>
                     <div class="today-eyebrow">展览 I · AI agent 智能导师</div>
@@ -4086,10 +5512,10 @@ body {
                         <div class="today-meta-item"><span class="k">参考时长</span><span class="v">约 2 分钟 / 段</span></div>
                         <div class="today-meta-item"><span class="k">模型</span><span class="v">MediaPipe · Qwen3.6</span></div>
                     </div>
-                    <button class="hero-cta" style="margin-top:24px;" onclick="showPage('agent')">
+                    <a class="hero-cta" href="#agent" style="margin-top:24px;">
                         进入智能导师
                         <span class="hero-cta-arrow"></span>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -4103,49 +5529,77 @@ body {
         </div>
 
         <div class="exhibits-list">
-            <div class="exhibit-row" onclick="showPage('agent')">
-                <div class="exhibit-num">I</div>
+            <a class="exhibit-row" href="#agent">
+                <div class="exhibit-num">
+                    <span class="exhibit-num-roman">I</span>
+                    <span class="exhibit-num-status">Open Now · 2026.05</span>
+                </div>
                 <div class="exhibit-info">
                     <div class="exhibit-info-tag">展览 · 线上 · 互动</div>
                     <div class="exhibit-info-title">智能<em>导师</em></div>
                     <div class="exhibit-info-zh">AI Agent 教练 · 一位会看你跳舞的算法</div>
                 </div>
                 <div class="exhibit-desc">从视频到诊断的完整工作流：感知层 → 运动学 → 认知 → RAG → 报告。可上传、可追问、可下载。</div>
-                <div class="exhibit-thumb"><canvas data-thumb="studio"></canvas></div>
-            </div>
+                <div class="exhibit-progress" data-status="live">
+                    <span class="exhibit-progress-label">Live</span>
+                    <div class="exhibit-progress-bar"><div class="exhibit-progress-fill"></div></div>
+                </div>
+                <div class="exhibit-thumb"><canvas data-thumb="studio" aria-hidden="true"></canvas></div>
+            </a>
 
-            <div class="exhibit-row" onclick="showPage('art')">
-                <div class="exhibit-num">II</div>
+            <a class="exhibit-row" href="#art">
+                <div class="exhibit-num">
+                    <span class="exhibit-num-roman">II</span>
+                    <span class="exhibit-num-status">Open Now · 2026.05</span>
+                </div>
                 <div class="exhibit-info">
                     <div class="exhibit-info-tag">展览 · 研究 · 生成</div>
                     <div class="exhibit-info-title">光影<em>为媒</em></div>
                     <div class="exhibit-info-zh">舞蹈与艺术 · 让动作本身成为材料</div>
                 </div>
                 <div class="exhibit-desc">把 33 个关键点的时序数据当作画笔，让算法画出一支舞的形状、能量场与频谱。</div>
-                <div class="exhibit-thumb"><canvas data-thumb="medium"></canvas></div>
-            </div>
+                <div class="exhibit-progress" data-status="live">
+                    <span class="exhibit-progress-label">Live</span>
+                    <div class="exhibit-progress-bar"><div class="exhibit-progress-fill"></div></div>
+                </div>
+                <div class="exhibit-thumb"><canvas data-thumb="medium" aria-hidden="true"></canvas></div>
+            </a>
 
-            <div class="exhibit-row" onclick="showPage('mr')">
-                <div class="exhibit-num">III</div>
+            <a class="exhibit-row" href="#mr">
+                <div class="exhibit-num">
+                    <span class="exhibit-num-roman">III</span>
+                    <span class="exhibit-num-status">In Progress</span>
+                </div>
                 <div class="exhibit-info">
                     <div class="exhibit-info-tag">展览 · 原型 · 空间</div>
                     <div class="exhibit-info-title">虚实<em>之间</em></div>
                     <div class="exhibit-info-zh">舞蹈与 MR · 在空间中重写身体</div>
                 </div>
                 <div class="exhibit-desc">把 AI 教练搬进混合现实——3D 骨架、运动残影、关节级标注，悬浮于真实空间之中。</div>
-                <div class="exhibit-thumb"><canvas data-thumb="spaces"></canvas></div>
-            </div>
+                <div class="exhibit-progress" data-status="proto">
+                    <span class="exhibit-progress-label">Proto</span>
+                    <div class="exhibit-progress-bar"><div class="exhibit-progress-fill"></div></div>
+                </div>
+                <div class="exhibit-thumb"><canvas data-thumb="spaces" aria-hidden="true"></canvas></div>
+            </a>
 
-            <div class="exhibit-row" onclick="showPage('aigc')">
-                <div class="exhibit-num">IV</div>
+            <a class="exhibit-row" href="#aigc">
+                <div class="exhibit-num">
+                    <span class="exhibit-num-roman">IV</span>
+                    <span class="exhibit-num-status">Coming Soon</span>
+                </div>
                 <div class="exhibit-info">
                     <div class="exhibit-info-tag">展览 · 即将 · 生成</div>
                     <div class="exhibit-info-title">The <em>Synthesis</em></div>
                     <div class="exhibit-info-zh">AIGC · 让 AI 成为编舞者</div>
                 </div>
                 <div class="exhibit-desc">从一句话到一段编排：文本驱动动作生成、音乐到编舞作品、风格之间的迁移。</div>
-                <div class="exhibit-thumb"><canvas data-thumb="synthesis"></canvas></div>
-            </div>
+                <div class="exhibit-progress" data-status="soon">
+                    <span class="exhibit-progress-label">Soon</span>
+                    <div class="exhibit-progress-bar"><div class="exhibit-progress-fill"></div></div>
+                </div>
+                <div class="exhibit-thumb"><canvas data-thumb="synthesis" aria-hidden="true"></canvas></div>
+            </a>
         </div>
     </section>
 
@@ -4155,35 +5609,44 @@ body {
             <div class="sec-head-num">003 / 故事<span>读与看</span></div>
             <h2 class="section-title">关于舞蹈与人工智能的,<br>一些<em>笔记</em>。</h2>
         </div>
-    </section>
 
-    <div class="stories-scroll">
-        <div class="story-card" onclick="showPage('art')">
-            <div class="story-image"><canvas data-thumb="story1"></canvas><div class="story-tag">随笔</div></div>
+        <div class="horiz-card-wall">
+            <div class="horiz-card-wall__viewport">
+                <div class="stories-scroll horiz-card-wall__track">
+        <a class="story-card" href="#art">
+            <div class="story-image"><canvas data-thumb="story1" aria-hidden="true"></canvas><div class="story-tag">随笔</div></div>
             <div class="story-meta"><span>社论 · 04.27</span><span>约 7 分钟</span></div>
             <h3 class="story-title">为什么 AI 永远学不会<em>那一秒</em>的停顿。</h3>
-        </div>
-        <div class="story-card" onclick="showPage('agent')">
-            <div class="story-image"><canvas data-thumb="story2"></canvas><div class="story-tag">札记</div></div>
+        </a>
+        <a class="story-card" href="#agent">
+            <div class="story-image"><canvas data-thumb="story2" aria-hidden="true"></canvas><div class="story-tag">札记</div></div>
             <div class="story-meta"><span>实验札记 · 04.21</span><span>约 5 分钟</span></div>
-            <h3 class="story-title">33 个关键点能描述一支舞的<em>多少</em>？</h3>
-        </div>
-        <div class="story-card" onclick="showPage('mr')">
-            <div class="story-image"><canvas data-thumb="story3"></canvas><div class="story-tag">档案</div></div>
+            <h3 class="story-title">33 个关键点能描述一支舞的<em>多少动作</em>？</h3>
+        </a>
+        <a class="story-card" href="#mr">
+            <div class="story-image"><canvas data-thumb="story3" aria-hidden="true"></canvas><div class="story-tag">档案</div></div>
             <div class="story-meta"><span>现场 · 04.14</span><span>约 9 分钟</span></div>
-            <h3 class="story-title">混合现实里, 肌肉<em>记得</em>路径。</h3>
-        </div>
-        <div class="story-card" onclick="showPage('aigc')">
-            <div class="story-image"><canvas data-thumb="story4"></canvas><div class="story-tag">实验</div></div>
+            <h3 class="story-title">现实训练里, 肌肉<em>记忆</em>动作路径。</h3>
+        </a>
+        <a class="story-card" href="#aigc">
+            <div class="story-image"><canvas data-thumb="story4" aria-hidden="true"></canvas><div class="story-tag">实验</div></div>
             <div class="story-meta"><span>研究 · 04.07</span><span>约 6 分钟</span></div>
-            <h3 class="story-title">编舞模型的<em>风格向量</em>能不能交易？</h3>
-        </div>
-        <div class="story-card" onclick="showPage('art')">
-            <div class="story-image"><canvas data-thumb="story5"></canvas><div class="story-tag">对谈</div></div>
+            <h3 class="story-title">编舞模型的<em>风格向量</em>能不能切换？</h3>
+        </a>
+        <a class="story-card" href="#art">
+            <div class="story-image"><canvas data-thumb="story5" aria-hidden="true"></canvas><div class="story-tag">对谈</div></div>
             <div class="story-meta"><span>对谈 · 03.30</span><span>约 12 分钟</span></div>
-            <h3 class="story-title">与 Popping 老师 W 的<em>三次对话</em>。</h3>
+            <h3 class="story-title">与 Hiphop 老师 Rain 的<em>三次对话</em>。</h3>
+        </a>
+                </div>
+                <div class="horiz-card-wall__fade" aria-hidden="true"></div>
+                <span class="horiz-card-wall__hint" aria-hidden="true">→ 继续</span>
+            </div>
+            <div class="horiz-card-wall__foot">
+                <span class="horiz-card-wall__count" aria-hidden="true">01 — 05</span>
+            </div>
         </div>
-    </div>
+    </section>
 
     <!-- MANIFESTO -->
     <section class="manifesto">
@@ -4213,8 +5676,8 @@ body {
         </div>
 
         <div class="experiments">
-            <div class="exp-card" onclick="showPage('exp1')">
-                <canvas class="exp-canvas" data-exp="paper-rig"></canvas>
+            <a class="exp-card" href="#exp1">
+                <canvas class="exp-canvas" data-exp="paper-rig" aria-hidden="true"></canvas>
                 <div class="exp-overlay">
                     <div class="exp-tag">实验 · 01 · 全流程上线</div>
                     <div class="exp-bottom">
@@ -4222,9 +5685,9 @@ body {
                         <p class="exp-desc">上传一张你随手画的纸人或动物——AI 帮它找到关节, 选一段动作, 让它在屏幕上跳起来。</p>
                     </div>
                 </div>
-            </div>
-            <div class="exp-card" onclick="showPage('exp2')">
-                <canvas class="exp-canvas" data-exp="vangogh"></canvas>
+            </a>
+            <a class="exp-card" href="#exp2">
+                <canvas class="exp-canvas" data-exp="vangogh" aria-hidden="true"></canvas>
                 <div class="exp-overlay">
                     <div class="exp-tag">实验 · 02 · 可玩</div>
                     <div class="exp-bottom">
@@ -4232,7 +5695,7 @@ body {
                         <p class="exp-desc">打开摄像头, 把你的舞动转成梵高式的笔触粒子。 拖入一段音乐——低音推动速度, 高音点亮新笔触。</p>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
     </section>
 
@@ -4246,28 +5709,28 @@ body {
             <div>
                 <div class="footer-col-title">展览</div>
                 <div class="footer-col-list">
-                    <a onclick="showPage('agent')">智能导师</a>
-                    <a onclick="showPage('art')">光影为媒</a>
-                    <a onclick="showPage('mr')">虚实之间</a>
-                    <a onclick="showPage('aigc')">The Synthesis</a>
+                    <a href="#agent">智能导师</a>
+                    <a href="#art">光影为媒</a>
+                    <a href="#mr">虚实之间</a>
+                    <a href="#aigc">The Synthesis</a>
                 </div>
             </div>
             <div>
                 <div class="footer-col-title">实验</div>
                 <div class="footer-col-list">
-                    <a onclick="showPage('exp1')">让画动起来</a>
-                    <a onclick="showPage('exp2')">梵高之眼</a>
-                    <a>实验札记</a>
+                    <a href="#exp1">让画动起来</a>
+                    <a href="#exp2">梵高之眼</a>
+                    <a href="#art-flow">代码与我们</a>
                     <a>对谈</a>
                 </div>
             </div>
             <div>
                 <div class="footer-col-title">实验室</div>
                 <div class="footer-col-list">
-                    <a onclick="showPage('about')">关于我们</a>
-                    <a onclick="showPage('about')">研究</a>
-                    <a onclick="showPage('about'); setTimeout(() => document.getElementById('about-contact')?.scrollIntoView({behavior:'smooth'}), 60);">联系</a>
-                    <a onclick="showPage('about'); setTimeout(() => document.getElementById('about-contact')?.scrollIntoView({behavior:'smooth'}), 60);">媒体</a>
+                    <a href="#about">关于我们</a>
+                    <a href="#about">研究</a>
+                    <a href="#about" data-scroll-to="about-contact">联系</a>
+                    <a href="#about" data-scroll-to="about-contact">媒体</a>
                 </div>
             </div>
         </div>
@@ -4285,7 +5748,7 @@ body {
 
     <!-- HERO -->
     <section class="agent-hero">
-        <canvas id="agent-hero-canvas"></canvas>
+        <canvas id="agent-hero-canvas" aria-hidden="true"></canvas>
         <div class="agent-hero-mask"></div>
         <div class="agent-hero-inner">
             <div class="agent-hero-badge"><span class="num">I</span><span>展览 · 线上 · v1.0</span></div>
@@ -4371,10 +5834,10 @@ body {
                 </div>
 
                 <div class="field-row">
-                    <label class="field-label">Gemini API Key<span class="req">选填</span></label>
+                    <label class="field-label">DanceNet API Key<span class="req">选填</span></label>
                     <div>
-                        <input class="field-input" type="text" id="apiKey" placeholder="AIzaSy... — 留空则跳过 LLM 导师点评">
-                        <div class="field-hint">用于生成策展式报告，仅留在本机浏览器，不会上传给我们。</div>
+                        <input class="field-input" type="text" id="apiKey" placeholder="正式授权后启用 — API服务">
+                        <div class="field-hint">当前为展示阶段，分析能力未接入服务；接入后密钥仅留在本机浏览器。</div>
                     </div>
                 </div>
 
@@ -4488,7 +5951,7 @@ body {
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>展览 I · 智能导师 · DanceNet.Lab</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a href="#home" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -4501,14 +5964,14 @@ body {
         <div class="ex-cover art-cover">
             <!-- 背景视频 -->
             <video id="art-cover-video"
-                   src="assets/art-hero.mp4"
-                   poster="assets/art-hero-poster.jpg"
+                   data-src="assets/art-hero.mp4"
+                   data-poster="assets/art-hero-poster.jpg"
                    muted loop playsinline autoplay
-                   preload="auto"></video>
+                   preload="none"></video>
             <!-- 视频遮罩：左→右暗化，右边内容区保持可读 -->
             <div class="art-cover-overlay"></div>
             <!-- 圆形 canvas 动效：左侧叠加 -->
-            <canvas id="art-cover-canvas" class="art-cover-canvas"></canvas>
+            <canvas id="art-cover-canvas" class="art-cover-canvas" aria-hidden="true"></canvas>
             <div class="ex-cover-vignette"></div>
             <div class="ex-cover-content">
                 <div>
@@ -4528,7 +5991,7 @@ body {
                     <dt>状态</dt><dd>研究中</dd>
                     <dt>年份</dt><dd>2026 — 持续</dd>
                     <dt>媒介</dt><dd>17 关键点 · canvas · 时间</dd>
-                    <dt>相关</dt><dd><a onclick="showPage('agent')" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
+                    <dt>相关</dt><dd><a href="#agent" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
                 </dl>
             </aside>
 
@@ -4558,37 +6021,37 @@ body {
                 </div>
                 <div class="ex-aux-card">
                     <div class="ex-aux-card-title">延伸阅读</div>
-                    <p style="margin-bottom:14px;"><a onclick="showPage('art-flow')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 摄像机看见我们</a></p>
-                    <p style="margin-bottom:14px;"><a onclick="showPage('agent')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 智能导师</a></p>
-                    <p><a onclick="showPage('aigc')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ The Synthesis</a></p>
+                    <p style="margin-bottom:14px;"><a href="#art-flow" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 摄像机看见我们</a></p>
+                    <p style="margin-bottom:14px;"><a href="#agent" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 智能导师</a></p>
+                    <p><a href="#aigc" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ The Synthesis</a></p>
                 </div>
             </aside>
         </div>
 
         <!-- Plates -->
         <div class="ex-plates">
-            <div class="ex-plate ex-plate-video" id="plate-flow" onclick="showPage('art-flow')" role="button" tabindex="0">
-                <canvas data-plate="plate-flow"></canvas>
+            <a class="ex-plate ex-plate-video" id="plate-flow" href="#art-flow" aria-label="图版 I · 看见我们 — 进入互动现场">
+                <canvas data-plate="plate-flow" aria-hidden="true"></canvas>
                 <div class="ex-plate-mask"></div>
                 <div class="ex-plate-hint">
                     <span class="ex-plate-hint-mark">▶</span>
                     <span class="ex-plate-hint-txt">点击 · 进入互动现场</span>
                 </div>
-                <div class="ex-plate-cap"><span>图版 I ·看见我们</span><span>实时互动 · 2026</span></div>
-            </div>
+                <div class="ex-plate-cap"><span>图版 I · 看见我们</span><span>实时互动 · 2026</span></div>
+            </a>
             <div class="ex-plate ex-plate-ambient" id="plate-interactive-wrap">
                 <video id="plate-interactive-video"
-                       src="assets/plate-interactive.mp4"
-                       poster="assets/plate-interactive-poster.jpg"
-                       muted loop playsinline preload="metadata"></video>
+                       data-src="assets/plate-interactive.mp4"
+                       data-poster="assets/plate-interactive-poster.jpg"
+                       muted loop playsinline preload="none"></video>
                 <div class="ex-plate-mask"></div>
                 <div class="ex-plate-cap"><span>图版 II · 光影互动</span><span>2026</span></div>
             </div>
             <div class="ex-plate ex-plate-video" id="plate-awaken" onclick="openAwakenModal()" role="button" tabindex="0">
                 <video id="plate-awaken-video"
-                       src="assets/plate-awaken.mp4"
-                       poster="assets/plate-awaken-poster.jpg"
-                       muted loop playsinline autoplay preload="auto"
+                       data-src="assets/plate-awaken.mp4"
+                       data-poster="assets/plate-awaken-poster.jpg"
+                       muted loop playsinline autoplay preload="none"
                        data-art-plate-video></video>
                 <div class="ex-plate-mask"></div>
                 <div class="ex-plate-hint">
@@ -4602,7 +6065,7 @@ body {
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>展览 II · 光影为媒 · DanceNet.Lab</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a href="#home" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -4613,7 +6076,7 @@ body {
 <div id="page-mr" class="page">
     <section class="ex-page">
         <div class="ex-cover">
-            <canvas id="mr-cover-canvas"></canvas>
+            <canvas id="mr-cover-canvas" aria-hidden="true"></canvas>
             <div class="ex-cover-vignette"></div>
             <div class="ex-cover-content">
                 <div>
@@ -4633,7 +6096,7 @@ body {
                     <dt>状态</dt><dd>原型</dd>
                     <dt>硬件</dt><dd>Vision Pro · ARKit</dd>
                     <dt>技术栈</dt><dd>WebXR · MediaPipe 3D</dd>
-                    <dt>相关</dt><dd><a onclick="showPage('agent')" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
+                    <dt>相关</dt><dd><a href="#agent" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
                 </dl>
             </aside>
 
@@ -4661,12 +6124,16 @@ body {
                 </div>
                 <div class="ex-aux-card">
                     <div class="ex-aux-card-title">延伸阅读</div>
-                    <p><a onclick="showPage('agent')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 智能导师</a></p>
+                    <p><a href="#agent" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 智能导师</a></p>
                 </div>
             </aside>
         </div>
 
         <div class="ex-phases">
+            <video class="ex-phases-video" autoplay muted loop playsinline preload="none">
+                <source data-src="assets/mr-phases-bg.mp4" type="video/mp4">
+            </video>
+            <div class="ex-phases-overlay"></div>
             <div class="sec-head" style="margin-bottom:0;">
                 <div class="sec-head-num">路线图<span>从屏幕到空间</span></div>
                 <h2 class="section-title">三个阶段。<br>当前在 <em>第一阶段</em>。</h2>
@@ -4700,7 +6167,7 @@ body {
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>展览 III · 虚实之间 · DanceNet.Lab</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a href="#home" class="mr-back-btn">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -4711,7 +6178,7 @@ body {
 <div id="page-aigc" class="page">
     <section class="ex-page">
         <div class="ex-cover">
-            <canvas id="aigc-cover-canvas"></canvas>
+            <canvas id="aigc-cover-canvas" aria-hidden="true"></canvas>
             <div class="ex-cover-vignette"></div>
             <div class="ex-cover-content">
                 <div>
@@ -4731,7 +6198,7 @@ body {
                     <dt>状态</dt><dd>即将推出</dd>
                     <dt>模型</dt><dd>MDM · MoMask · Custom</dd>
                     <dt>格式</dt><dd>SMPL-X · BVH</dd>
-                    <dt>相关</dt><dd><a onclick="showPage('agent')" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
+                    <dt>相关</dt><dd><a href="#agent" style="color:var(--gold);cursor:pointer;text-decoration:none;">展览 I →</a></dd>
                 </dl>
             </aside>
 
@@ -4761,7 +6228,7 @@ body {
                 </div>
                 <div class="ex-aux-card">
                     <div class="ex-aux-card-title">延伸阅读</div>
-                    <p><a onclick="showPage('art')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 光影为媒</a></p>
+                    <p><a href="#art" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 光影为媒</a></p>
                 </div>
             </aside>
         </div>
@@ -4795,12 +6262,77 @@ body {
                 </div>
             </div>
         </div>
+
+        <!-- ── X · 未来的课 ── -->
+        <div class="ex-future">
+            <div class="ex-future-inner">
+
+                <!-- 左：视频占位卡（待上传） -->
+                <div class="ex-future-video-slot" id="vision-video-slot" role="img" aria-label="视频占位 · 即将上传">
+                    <div class="ex-fvs-play">
+                        <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <polygon points="3,1 15,8 3,15"/>
+                        </svg>
+                    </div>
+                    <div class="ex-fvs-label">即将呈现</div>
+                    <div class="ex-fvs-sub">视频 · 愿景演示</div>
+                </div>
+
+                <!-- 右：同行标题+X · 然后正文 -->
+                <div class="ex-future-right">
+
+                    <!-- 同行行：h2（左）＋ X+元信息（右） -->
+                    <div class="ex-future-header">
+
+                        <h2 class="ex-future-title">未来的舞蹈教学，<br>只<em>属于你</em>。</h2>
+
+                        <div class="ex-future-meta">
+                            <!-- 动态 X（与 β/γ 同款字型，专属光效） -->
+                            <div class="vision-x-wrap" aria-hidden="true">
+                                <span class="vision-x-char">X</span>
+                            </div>
+
+                            <div class="ex-future-meta-text">
+                                <div class="ex-future-eyebrow">下一站 · 愿景</div>
+                                <div class="ex-future-divider"></div>
+                                <p style="font-size:13px;line-height:1.7;color:var(--paper-faint);font-family:var(--f-mono);letter-spacing:0.04em;">不只是生成——<br>是真正属于你的课。</p>
+                                <div class="ex-future-badge">构想中</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 主体正文 -->
+                    <div class="ex-future-body">
+                        <p class="ex-future-lede">教学内容不再是固定的教材——它是实时生成的，根据你当前的学习阶段、你的喜好、你的当前进度，每一次都不同。也许是你喜欢的那个虚拟人物，也许是你一直单曲循环的那首歌，也许恰好是你今天需要练的那个技术点。</p>
+                        <div class="ex-future-pillars">
+                            <div class="ex-future-pillar">
+                                <div class="ex-future-pillar-icon">你喜欢的人物</div>
+                                <div class="ex-future-pillar-label">风格参照</div>
+                                <p class="ex-future-pillar-text">从你仰慕的舞者身上提取动作语言——不是模仿，是用你喜欢的"口音"来和你说话。</p>
+                            </div>
+                            <div class="ex-future-pillar">
+                                <div class="ex-future-pillar-icon">你喜欢的声音</div>
+                                <div class="ex-future-pillar-label">音乐驱动</div>
+                                <p class="ex-future-pillar-text">把你的歌单变成教材。系统读取节奏与情绪，生成与之契合的练习序列，让学习本身就带着赏心悦目。</p>
+                            </div>
+                            <div class="ex-future-pillar">
+                                <div class="ex-future-pillar-icon">你的学习阶段</div>
+                                <div class="ex-future-pillar-label">自适应难度</div>
+                                <p class="ex-future-pillar-text">AI导师跟随你的成长，你现在的学习进度，生成恰好能拉伸你一点点的内容——不太难，不太容易，刚好是你的下一步。</p>
+                            </div>
+                        </div>
+                        <blockquote class="ex-future-quote">"最好的老师，永远知道你现在需要什么。<br>也许 AI 第一次可以做到这件事。"</blockquote>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </section>
 
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>展览 IV · The Synthesis · DanceNet.Lab</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a href="#home" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -4812,9 +6344,9 @@ body {
     <section class="ex-page">
         <div class="ex-cover exp1-cover">
             <video id="exp1-cover-video"
-                src="file:///Users/Zhuanz1/Desktop/4%E6%9C%8830%E6%97%A5%281%29.mov"
+                data-src="assets/exp1-cover-hero.mp4"
                 muted loop playsinline autoplay
-                preload="auto"></video>
+                preload="metadata"></video>
             <div class="ex-cover-vignette"></div>
             <a href="#exp1-playground" class="exp1-cover-hit" aria-label="前往工作台 · 上传作品并试玩"></a>
             <div class="ex-cover-content">
@@ -4836,7 +6368,7 @@ body {
                     <dt>状态</dt><dd>全部五阶段 · 已上线</dd>
                     <dt>类型</dt><dd>纯前端 · 可上传 · 可导出</dd>
                     <dt>关键词</dt><dd>上传 · 裁剪 · 抠图 · 关节 · Rigging · 导出</dd>
-                    <dt>相关</dt><dd><a onclick="showPage('exp2')" style="color:var(--gold);cursor:pointer;text-decoration:none;">实验 02 →</a></dd>
+                    <dt>相关</dt><dd><a href="#exp2" style="color:var(--gold);cursor:pointer;text-decoration:none;">实验 02 →</a></dd>
                 </dl>
             </aside>
 
@@ -4860,7 +6392,7 @@ body {
                 </div>
                 <div class="ex-aux-card">
                     <div class="ex-aux-card-title">下一站</div>
-                    <p><a onclick="showPage('exp2')" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 实验 02 · 梵高之眼</a></p>
+                    <p><a href="#exp2" style="color:var(--paper);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">→ 实验 02 · 梵高之眼</a></p>
                 </div>
             </aside>
         </div>
@@ -5070,14 +6602,14 @@ body {
                 <div class="lab-step is-soon"><div class="lab-step-num">05 · 动作</div><div class="lab-step-flag">即将</div><div class="lab-step-title">让它跳起来。</div><div class="lab-step-desc">选动作，导出。</div></div>
             </div>
 
-            <p class="lab-hint">五步全部上线 · 上传 → 裁剪 → 自动抠图 → 14 关节 → 选一段动作 → 导出。 也可以去玩 <a onclick="showPage('exp2')" style="color:var(--gold);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">实验 02 · 梵高之眼</a>。</p>
+            <p class="lab-hint">五步全部上线 · 上传 → 裁剪 → 自动抠图 → 14 关节 → 选一段动作 → 导出。 也可以去玩 <a href="#exp2" style="color:var(--gold);cursor:pointer;text-decoration:none;border-bottom:1px solid var(--gold);">实验 02 · 梵高之眼</a>。</p>
         </div>
     </section>
 
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>实验 01 · 让画动起来 · DanceNet.Lab</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a href="#home" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -5088,7 +6620,7 @@ body {
 <div id="page-exp2" class="page">
     <section class="ex-page">
         <div class="ex-cover is-clickable" onclick="exp2ScrollToLab(event)">
-            <canvas id="exp2-cover-canvas"></canvas>
+            <canvas id="exp2-cover-canvas" aria-hidden="true"></canvas>
             <div class="ex-cover-vignette"></div>
             <div class="ex-cover-content">
                 <div>
@@ -5237,7 +6769,7 @@ body {
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>实验 02 · 梵高之眼 · DanceNet.Lab</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a href="#home" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -5307,6 +6839,10 @@ body {
             <p>
                 我们相信， 一支舞蹈背后既是身体的语言， 也是数据的轨迹。 当算法学会"看"运动， 教育就有机会从"统一灌输"走向"被看见的因人而异"。 这是 DanceNet.Lab 一直在做的事情。
             </p>
+            <p class="about-intro-coda">
+                「我不能创造的， 我就尚未真正理解。」
+                <span class="about-intro-coda-cite"><em>理查德·费曼</em></span>
+            </p>
         </article>
 
         <aside class="about-intro-aux">
@@ -5345,7 +6881,7 @@ body {
                 <div class="about-value-num">II · Personalization</div>
                 <h3 class="about-value-title">用数据实现<em>因材施教</em></h3>
                 <span class="about-value-rule"></span>
-                <p class="about-value-desc">通过 AI 分析每一具身体的差异， 把"统一课表"变成只属于一个人的学习方案。</p>
+                <p class="about-value-desc">通过 AI 分析每一具身体的差异， 把"姿态"变成制定个人的学习方案。</p>
             </div>
             <div class="about-value">
                 <div class="about-value-num">III · Motivation</div>
@@ -5375,18 +6911,18 @@ body {
         <div class="about-contact-grid">
             <div class="about-contact-card">
                 <div class="k">合作 · 创始人</div>
-                <div class="v"><em>微信：</em>13340381991</div>
+                <div class="v"><em>微信：</em>SD12th_Rain</div>
                 <p>项目共创 · 教育合作 · 学术研究。</p>
             </div>
             <div class="about-contact-card">
-                <div class="k">媒体 · Press</div>
+                <div class="k">媒体 · 邮箱</div>
                 <div class="v"><em>Google@</em>dancenet.lab</div>
                 <p>采访、 展览预告、 媒体素材索取。</p>
             </div>
             <div class="about-contact-card">
-                <div class="k">据点 · Studio</div>
-                <div class="v">重庆 · <em>两江</em></div>
-                <p>研究据点位于山城——— 沿江、 沿坡、 沿节拍。</p>
+                <div class="k">据点 · 实验室</div>
+                <div class="v"><em>重庆</em> · 两江</div>
+                <p>研究据点位于山城——— 沿江、 沿山、 沿姿态。</p>
             </div>
         </div>
     </section>
@@ -5394,7 +6930,7 @@ body {
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>关于 · DanceNet.Lab · 第 04 期 · 2026</span>
-            <span><a onclick="showPage('home')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
+            <span><a href="#home" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到首页</a></span>
         </div>
     </footer>
 </div>
@@ -5431,7 +6967,7 @@ body {
                 <span class="art-flow-hero-corner bl"></span>
                 <span class="art-flow-hero-corner br"></span>
                 <span class="art-flow-hero-stamp">FLOW · No.001</span>
-                <canvas id="art-flow-hero-canvas" data-plate="plate-flow-hero"></canvas>
+                <canvas id="art-flow-hero-canvas" data-plate="plate-flow-hero" aria-hidden="true"></canvas>
                 <figcaption class="art-flow-hero-cap">DANCE WITH PARTICLES · INTERACTIVE MEDIA ART · 2026</figcaption>
             </figure>
         </div>
@@ -5493,7 +7029,7 @@ body {
                 <button type="button" class="art-flow-reel-nav next" aria-label="下一个案例">›</button>
                 <div class="art-flow-reel-stage" id="art-flow-reel-stage">
                     <article class="art-flow-reel-card" data-idx="0">
-                        <video src="assets/art-flow-case-01.mov" muted loop playsinline preload="metadata"></video>
+                        <video data-src="assets/art-flow-case-01.mp4" muted loop playsinline preload="none"></video>
                         <div class="art-flow-reel-shade"></div>
                         <span class="art-flow-reel-corner tl"></span>
                         <span class="art-flow-reel-corner tr"></span>
@@ -5507,7 +7043,7 @@ body {
                         </div>
                     </article>
                     <article class="art-flow-reel-card" data-idx="1">
-                        <video src="assets/art-flow-case-02.mov" muted loop playsinline preload="metadata"></video>
+                        <video data-src="assets/art-flow-case-02.mp4" muted loop playsinline preload="none"></video>
                         <div class="art-flow-reel-shade"></div>
                         <span class="art-flow-reel-corner tl"></span>
                         <span class="art-flow-reel-corner tr"></span>
@@ -5521,7 +7057,7 @@ body {
                         </div>
                     </article>
                     <article class="art-flow-reel-card" data-idx="2">
-                        <video src="assets/art-flow-case-03.mov" muted loop playsinline preload="metadata"></video>
+                        <video data-src="assets/art-flow-case-03.mp4" muted loop playsinline preload="none"></video>
                         <div class="art-flow-reel-shade"></div>
                         <span class="art-flow-reel-corner tl"></span>
                         <span class="art-flow-reel-corner tr"></span>
@@ -5535,7 +7071,7 @@ body {
                         </div>
                     </article>
                     <article class="art-flow-reel-card" data-idx="3">
-                        <video src="assets/art-flow-case-04.mov" muted loop playsinline preload="metadata"></video>
+                        <video data-src="assets/art-flow-case-04.mp4" muted loop playsinline preload="none"></video>
                         <div class="art-flow-reel-shade"></div>
                         <span class="art-flow-reel-corner tl"></span>
                         <span class="art-flow-reel-corner tr"></span>
@@ -5549,7 +7085,7 @@ body {
                         </div>
                     </article>
                     <article class="art-flow-reel-card" data-idx="4">
-                        <video src="assets/art-flow-case-05.mov" muted loop playsinline preload="metadata"></video>
+                        <video data-src="assets/art-flow-case-05.mp4" muted loop playsinline preload="none"></video>
                         <div class="art-flow-reel-shade"></div>
                         <span class="art-flow-reel-corner tl"></span>
                         <span class="art-flow-reel-corner tr"></span>
@@ -5585,10 +7121,12 @@ body {
             <h2>它在<em>哪里</em>跳过？</h2>
             <p class="lede">从街舞 cypher、 商业开幕、 美术馆装置到校园开放课——同一套技术骨架, 在不同语境里长出截然不同的样貌。</p>
         </div>
-        <div class="art-flow-share-list">
+        <div class="horiz-card-wall">
+            <div class="horiz-card-wall__viewport">
+                <div class="art-flow-share-list horiz-card-wall__track">
             <article class="art-flow-share-item">
                 <div class="art-flow-share-cover">
-                    <video src="assets/exp1-hero-april30.mov" muted loop playsinline autoplay preload="auto" aria-label="Kpop 舞蹈 MV 转绘特效粒子案例 · 预览"></video>
+                    <video data-src="assets/exp1-hero-april30.mp4" muted loop playsinline autoplay preload="none" aria-label="Kpop 舞蹈 MV 转绘特效粒子案例 · 预览"></video>
                 </div>
                 <div class="art-flow-share-text">
                     <div class="art-flow-share-tag">CASE 01 · 后期项目</div>
@@ -5599,24 +7137,33 @@ body {
                     </div>
                 </div>
             </article>
-            <article class="art-flow-share-item" data-empty="true">
-                <div class="art-flow-share-cover"></div>
+            <article class="art-flow-share-item">
+                <div class="art-flow-share-cover">
+                    <video data-src="assets/share-case02-cv.mp4" data-poster="assets/share-case02-poster.png" muted loop playsinline autoplay preload="none" aria-label="Python 计算机视觉重现 TouchDesigner 效果 · 预览"></video>
+                </div>
                 <div class="art-flow-share-text">
-                    <div class="art-flow-share-tag">CASE 02 · 装置</div>
-                    <h3 class="art-flow-share-title">案例标题<em>占位</em>。</h3>
-                    <p class="art-flow-share-desc">美术馆 / 艺术节 装置型展陈案例。 关注的是非舞者观众如何被装置"邀请"进入运动。</p>
+                    <div class="art-flow-share-tag">CASE 02 · 技术实验</div>
+                    <h3 class="art-flow-share-title">Python 与<em>计算机视觉</em>重现 TouchDesigner 效果</h3>
+                    <p class="art-flow-share-desc">用 Python + 计算机视觉模型，在纯代码环境里复刻节点式视觉工具的实时效果。</p>
                     <div class="art-flow-share-meta">
-                        <span>场地 · 待填</span><span>时间 · 待填</span><span>合作方 · 待填</span>
+                        <span>抖动 · 斑点跟踪</span><span>色彩搭配选项</span><span>实时摄像头 / 视频文件</span>
                     </div>
                 </div>
             </article>
+                </div>
+                <div class="horiz-card-wall__fade" aria-hidden="true"></div>
+                <span class="horiz-card-wall__hint" aria-hidden="true">→ 继续</span>
+            </div>
+            <div class="horiz-card-wall__foot">
+                <span class="horiz-card-wall__count" aria-hidden="true">01 — 02</span>
+            </div>
         </div>
     </section>
 
     <footer class="footer">
         <div class="footer-bottom" style="border:none;padding:0;">
             <span>展览 II · 子项 · 代码看见我们 · DanceNet.Lab</span>
-            <span><a onclick="showPage('art')" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到 光影为媒</a></span>
+            <span><a href="#art" style="color:var(--paper-soft);cursor:pointer;text-decoration:none;">← 回到 光影为媒</a></span>
         </div>
     </footer>
 </div>
@@ -5700,6 +7247,31 @@ function hydrateStaticAssetUrls(root) {
     });
 }
 
+/**
+ * 进入某一页时再把 [data-src] / [data-poster] 写到真实 src/poster 上，
+ * 避免首屏一次性请求所有子页的 ~300MB 媒体。video 内 <source> 也支持。
+ */
+function hydratePageMedia(pageEl) {
+    if (!pageEl) return;
+    const touched = new Set();
+    pageEl.querySelectorAll('video[data-src]:not([data-hydrated]), img[data-src]:not([data-hydrated])').forEach((el) => {
+        const ds = el.getAttribute('data-src');
+        const dp = el.getAttribute('data-poster');
+        if (ds) el.src = /^(data:|https?:|blob:)/i.test(ds) ? ds : resolveMediaUrl(ds.replace(/^\.\//, ''));
+        if (dp && 'poster' in el) el.poster = /^(data:|https?:|blob:)/i.test(dp) ? dp : resolveMediaUrl(dp.replace(/^\.\//, ''));
+        el.setAttribute('data-hydrated', '1');
+        if (el.tagName === 'VIDEO') touched.add(el);
+    });
+    pageEl.querySelectorAll('source[data-src]:not([data-hydrated])').forEach((s) => {
+        const ds = s.getAttribute('data-src');
+        if (ds) s.src = /^(data:|https?:|blob:)/i.test(ds) ? ds : resolveMediaUrl(ds.replace(/^\.\//, ''));
+        s.setAttribute('data-hydrated', '1');
+        const v = s.closest('video');
+        if (v) touched.add(v);
+    });
+    touched.forEach((v) => { try { v.load(); } catch (_) {} });
+}
+
 /** 实验 01 封面视频播放速率（1 = 原速，越小越慢） */
 const EXP1_COVER_PLAYBACK_RATE = 0.75;
 
@@ -5714,6 +7286,63 @@ function exp1ResumeCoverVideo() {
     if (!v) return;
     v.playbackRate = EXP1_COVER_PLAYBACK_RATE;
     v.play().catch(() => {});
+}
+
+/** 首次进入 exp1 时 lazyInit 晚于 onEnter，单次 play 也会在 display 切换时被忽略；延迟重试与图版页一致 */
+function scheduleExp1CoverVideoPlay() {
+    const pg = document.getElementById('page-exp1');
+    if (!pg || !pg.classList.contains('active')) return;
+    const go = () => exp1ResumeCoverVideo();
+    go();
+    requestAnimationFrame(() => requestAnimationFrame(go));
+    setTimeout(go, 50);
+    setTimeout(go, 200);
+    setTimeout(go, 600);
+}
+
+/* ─────────── Page metadata（title / og / cover image per page） ─────────── */
+const PAGE_META = {
+    home:     { title: 'DanceNet.Lab — 身体、运动与人工智能',      desc: 'DanceNet.Lab 是一所为身体语言而建的实验室。以姿态、音乐与表达为材料，让 AI 成为新的舞蹈合作者。', img: 'assets/og-home.jpg' },
+    agent:    { title: '智能导师 · DanceNet.Lab',                   desc: '一位会观看、度量、并回应舞者身体的 AI Agent。上传视频，从感知到诊断的完整工作流。',              img: 'assets/og-agent.jpg' },
+    art:      { title: '光影为媒 · DanceNet.Lab',                   desc: '把 33 个关键点的时序数据当作画笔，让算法画出一支舞的形状、能量场与频谱。',                       img: 'assets/og-art.jpg' },
+    'art-flow': { title: '代码与我们 · DanceNet.Lab',               desc: '实时摄像头互动：让代码看见你的每一步移动，并把它变成光迹。',                                       img: 'assets/og-art-flow.jpg' },
+    mr:       { title: '虚实之间 · DanceNet.Lab',                   desc: '把 AI 教练搬进混合现实——3D 骨架、运动残影、关节级标注，悬浮于真实空间之中。',                    img: 'assets/og-mr.jpg' },
+    aigc:     { title: 'The Synthesis · DanceNet.Lab',              desc: '从一句话到一段编排：文本驱动动作生成、音乐到编舞作品、风格之间的迁移。',                          img: 'assets/og-aigc.jpg' },
+    exp1:     { title: '让画动起来 · 实验 01 · DanceNet.Lab',       desc: '上传纸人或动物，AI 找到关节，选一段动作，让它在屏幕上跳起来。',                                   img: 'assets/og-exp1.jpg' },
+    exp2:     { title: '梵高之眼 · 实验 02 · DanceNet.Lab',         desc: '打开摄像头，把你的舞动转成梵高式的笔触粒子。低音推动速度，高音点亮新笔触。',                      img: 'assets/og-exp2.jpg' },
+    about:    { title: '关于我们 · DanceNet.Lab',                   desc: 'DanceNet.Lab 是一所关于身体、运动与人工智能的实验室。每季更新。',                                  img: 'assets/og-home.jpg' },
+};
+
+/** 同步更新 <title> 及所有 og / twitter meta */
+function applyPageMeta(name) {
+    const m = PAGE_META[name] || PAGE_META.home;
+    document.title = m.title;
+    const set = (sel, val) => { const el = document.querySelector(sel); if (el) el.setAttribute('content', val); };
+    set('meta[property="og:title"]',       m.title);
+    set('meta[property="og:description"]', m.desc);
+    set('meta[property="og:image"]',       m.img);
+    set('meta[name="twitter:title"]',      m.title);
+    set('meta[name="twitter:description"]', m.desc);
+    set('meta[name="twitter:image"]',      m.img);
+}
+
+/* ─────────── Scroll-position memory ─────────── */
+/** 记录每页离开时的滚动位置，再次进入时恢复（条目超过 TTL 则丢弃） */
+const SCROLL_MEMORY_TTL_MS = 30 * 60 * 1000;
+const __dncScrollMap = new Map();
+
+function dncRememberScroll(pageName, y) {
+    __dncScrollMap.set(pageName, { y, t: Date.now() });
+}
+
+function dncRecallScroll(pageName) {
+    const rec = __dncScrollMap.get(pageName);
+    if (!rec) return null;
+    if (Date.now() - rec.t > SCROLL_MEMORY_TTL_MS) {
+        __dncScrollMap.delete(pageName);
+        return null;
+    }
+    return rec.y;
 }
 
 /* ─────────── Page router ─────────── */
@@ -5743,6 +7372,12 @@ const PAGE_HOOKS = {
     },
     'art-flow': {
         lazyInit: () => initArtFlowPage(),
+        onEnter() {
+            scheduleArtFlowShareVideosPlay();
+        },
+        onLeave() {
+            document.querySelectorAll('#page-art-flow .art-flow-share-cover video').forEach((v) => v.pause());
+        },
     },
     mr: {
         lazyInit: () => initMRCanvas(),
@@ -5753,9 +7388,7 @@ const PAGE_HOOKS = {
     exp1: {
         lazyInit: () => initExp1Page(),
         onEnter() {
-            if (_initialized.has('exp1')) {
-                requestAnimationFrame(() => requestAnimationFrame(() => exp1ResumeCoverVideo()));
-            }
+            scheduleExp1CoverVideoPlay();
         },
         onLeave() {
             if (typeof exp1Pause === 'function') exp1Pause();
@@ -5770,23 +7403,53 @@ const PAGE_HOOKS = {
     },
 };
 
-function showPage(name) {
+function showPage(name, opts) {
+    opts = opts || {};
     const pageEl = document.getElementById('page-' + name);
     if (!pageEl) return;
 
     const prev = __dncActivePage;
+
+    // 离开前保存当前滚动位置（带时间戳，供 TTL 判定）
+    dncRememberScroll(prev, window.scrollY);
+
     PAGE_HOOKS[prev]?.onLeave?.(prev, name);
 
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => {
+        l.classList.remove('active');
+        l.removeAttribute('aria-current');
+    });
     pageEl.classList.add('active');
     const navEl = document.getElementById('nav-' + name);
-    if (navEl) navEl.classList.add('active');
-    if (name === 'art-flow') document.getElementById('nav-art')?.classList.add('active');
+    if (navEl) { navEl.classList.add('active'); navEl.setAttribute('aria-current', 'page'); }
+    if (name === 'art-flow') {
+        const artNav = document.getElementById('nav-art');
+        if (artNav) { artNav.classList.add('active'); artNav.setAttribute('aria-current', 'page'); }
+    }
 
     __dncActivePage = name;
 
-    window.scrollTo({ top: 0 });
+    // 更新 URL hash（不产生历史记录条目，仅更新地址栏 + 支持刷新直链）
+    history.replaceState({ page: name }, '', '#' + name);
+
+    // 更新页面 title 与 og meta
+    applyPageMeta(name);
+
+    hydratePageMedia(pageEl);
+
+    // 恢复滚动：默认恢复该页上次位置；左上角品牌链接触发 opts.scrollHomeToTop（回到首页首屏）
+    let scrollTop;
+    if (opts.scrollHomeToTop && name === 'home') {
+        __dncScrollMap.delete('home');
+        scrollTop = 0;
+    } else {
+        const savedY = dncRecallScroll(name);
+        scrollTop = savedY != null ? savedY : 0;
+    }
+    requestAnimationFrame(() => {
+        window.scrollTo({ top: scrollTop });
+    });
 
     requestAnimationFrame(() => {
         PAGE_HOOKS[name]?.lazyInit?.();
@@ -5795,6 +7458,44 @@ function showPage(name) {
     PAGE_HOOKS[name]?.onEnter?.(name, prev);
     dncNotifyDecorLoops();
 }
+
+/* ─────────── 集中式 SPA 链接拦截 ─────────── */
+/**
+ * 拦截所有 <a href="#pageName"> 点击：阻止默认跳转（避免页面跳动），
+ * 改走 showPage。右键 / 中键 / 屏幕阅读器仍可读取 href 直链。
+ * 左上角 .nav-brand 指向 #home：始终回到首页顶栏与主视觉（首屏）。
+ * 支持 data-scroll-to="elementId" 属性：进入目标页后平滑滚动到指定锚点。
+ */
+document.addEventListener('click', function(e) {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const name = a.getAttribute('href').slice(1);
+    if (!name || !document.getElementById('page-' + name)) return;
+    e.preventDefault();
+    const scrollHomeToTop = !!(a.classList.contains('nav-brand') && name === 'home');
+    showPage(name, { scrollHomeToTop });
+    const scrollTarget = a.dataset.scrollTo;
+    const openAwakenAfter = a.dataset.openAwaken === '1';
+    const prefersReducedMotion = typeof window.matchMedia === 'function'
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const scrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
+    if (scrollTarget) {
+        setTimeout(() => {
+            const el = document.getElementById(scrollTarget);
+            if (!el) return;
+            window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: scrollBehavior });
+            if (openAwakenAfter && typeof openAwakenModal === 'function') {
+                setTimeout(() => openAwakenModal(), prefersReducedMotion ? 120 : 380);
+            }
+        }, 60);
+    }
+});
+
+/* ─────────── Hash 路由：hashchange + 初始化 ─────────── */
+window.addEventListener('hashchange', function() {
+    const name = location.hash.slice(1);
+    if (name && document.getElementById('page-' + name)) showPage(name);
+});
 
 /* 图版 III：从 display:none 切到可见时单次 play() 常被忽略，需延迟重试 + 视口内再播 */
 function schedulePlateAwakenVideoPlay() {
@@ -5854,7 +7555,9 @@ function setupCanvas(canvas) {
     }
     resize();
     window.addEventListener('resize', resize);
-    return { ctx, getW: () => canvas.getBoundingClientRect().width, getH: () => canvas.getBoundingClientRect().height };
+    /* Use the stored canvas buffer size (÷ DPR) rather than live getBoundingClientRect,
+       so CSS transforms (e.g. scale on exhibit-thumb hover) don't distort drawing coords. */
+    return { ctx, getW: () => canvas.width / devicePixelRatio, getH: () => canvas.height / devicePixelRatio };
 }
 
 const COCO_EDGES = [[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,6],[5,7],[7,9],[6,8],[8,10],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
@@ -6103,7 +7806,7 @@ const THUMB_PAINTERS = {
     studio(ctx, t, w, h) {
         const pts = lerpFrames(t * 1.2);
         const fw = Math.min(w*0.68, h*0.62), fh = h*0.76;
-        const mapped = pts.map(p => [w*.5 - fw/2 + p[0]*fw, h*.10 + p[1]*fh]);
+        const mapped = pts.map(p => [w*.5 - fw/2 + p[0]*fw, (h - fh) * 0.5 + p[1]*fh]);
         drawSkeleton(ctx, mapped, fh, {
             lw: 1.1,
             bc: 'rgba(212,165,116,0.82)',
@@ -6120,7 +7823,7 @@ const THUMB_PAINTERS = {
         ctx.fillRect(0,0,w,h);
         for (let i = 0; i < 3; i++) {
             ctx.beginPath();
-            const sy = h * (0.2 + i*0.25);
+            const sy = h * (0.32 + i * 0.18);
             ctx.moveTo(0, sy);
             for (let x = 0; x <= w; x += 4) {
                 ctx.lineTo(x, sy + Math.sin(x*0.04 + t*1.2 + i*1.5) * 12);
@@ -6432,39 +8135,120 @@ function initHomeCanvases() {
 /* ═════════════════════════════════════════════════════════════
    AGENT HERO CANVAS
 ═════════════════════════════════════════════════════════════ */
+/* ── 等高线速度场（marching-squares 实现）── */
+// MS lookup: index = TL<<3 | TR<<2 | BR<<1 | BL, edges 0=top 1=right 2=bottom 3=left
+const _MS_TABLE = [[], [[2,3]], [[1,2]], [[1,3]], [[0,1]], [[0,3],[1,2]],
+                   [[0,2]], [[0,3]], [[0,3]], [[0,2]], [[0,1],[2,3]],
+                   [[0,1]], [[1,3]], [[1,2]], [[2,3]], []];
+
 function initAgentHero() {
     if (alreadyInited('agentHero')) return;
     const canvas = document.getElementById('agent-hero-canvas');
+    if (!canvas) return;
     const { ctx, getW, getH } = setupCanvas(canvas);
-    let t = 0;
-    const trails = [];
+    let t = 0, scanY = 0;
+    let prevMapped = null;
+
+    const COLS = 44, ROWS = 62;
+    const field = new Float32Array(COLS * ROWS);
+
+    /* 7 等高线等级 → 冷(paper) … 热(gold) */
+    const CLVL = [
+        [0.09, 'rgba(235,231,223,0.10)'],
+        [0.18, 'rgba(235,231,223,0.16)'],
+        [0.29, 'rgba(235,231,223,0.24)'],
+        [0.41, 'rgba(212,165,116,0.36)'],
+        [0.54, 'rgba(212,165,116,0.52)'],
+        [0.67, 'rgba(212,165,116,0.68)'],
+        [0.80, 'rgba(212,165,116,0.88)'],
+    ];
+
     dncRegisterDecorLoop('agent-hero', 'agent', () => {
         const w = getW(), h = getH();
-        ctx.fillStyle = 'rgba(10,9,8,0.05)';
-        ctx.fillRect(0,0,w,h);
-        t += 0.0035;
+        ctx.fillStyle = 'rgba(10,9,8,0.06)';
+        ctx.fillRect(0, 0, w, h);
+        t += 0.004;
+
         const pts = lerpFrames(t);
-        const fw = Math.min(w*0.38, h*0.58), fh = h*0.78;
-        const mapped = pts.map(p => [w*0.5 - fw/2 + p[0]*fw, h*0.08 + p[1]*fh]);
-        trails.push(mapped.map(p=>[...p]));
-        if (trails.length > 40) trails.shift();
-        trails.forEach((fr, fi) => {
-            const a = fi/trails.length;
-            BODY_EDGES.forEach(([i,j]) => {
-                ctx.beginPath();
-                ctx.moveTo(fr[i][0], fr[i][1]);
-                ctx.lineTo(fr[j][0], fr[j][1]);
-                ctx.strokeStyle = `rgba(212,165,116,${a*0.08})`;
-                ctx.lineWidth = 0.7; ctx.stroke();
-            });
+        const fw = Math.min(w * 0.39, h * 0.56), fh = h * 0.78;
+        const mapped = pts.map(p => [
+            w * 0.5 - fw / 2 + p[0] * fw,
+            (h - fh) * 0.52 + p[1] * fh,
+        ]);
+
+        /* 逐关节速度 */
+        const speeds = mapped.map((p, k) => {
+            if (!prevMapped) return 0;
+            const dx = p[0] - prevMapped[k][0], dy = p[1] - prevMapped[k][1];
+            return Math.sqrt(dx * dx + dy * dy);
         });
+        prevMapped = mapped.map(p => [...p]);
+
+        /* 标量速度场（高斯叠加）*/
+        const sigma2 = (fh * 0.13) * (fh * 0.13);
+        const cw = w / COLS, ch = h / ROWS;
+        let maxV = 0;
+        for (let r = 0; r < ROWS; r++) {
+            const py = (r + 0.5) * ch;
+            for (let c = 0; c < COLS; c++) {
+                const px = (c + 0.5) * cw;
+                let val = 0;
+                for (let k = 0; k < mapped.length; k++) {
+                    const dx = px - mapped[k][0], dy = py - mapped[k][1];
+                    val += (0.35 + speeds[k] * 6) * Math.exp(-(dx * dx + dy * dy) / sigma2);
+                }
+                field[r * COLS + c] = val;
+                if (val > maxV) maxV = val;
+            }
+        }
+        if (maxV < 0.001) maxV = 0.001;
+
+        /* marching-squares 等高线 */
+        for (const [level, color] of CLVL) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.05;
+            ctx.beginPath();
+            for (let r = 0; r < ROWS - 1; r++) {
+                const y0 = r * ch;
+                for (let c = 0; c < COLS - 1; c++) {
+                    const x0 = c * cw;
+                    const vtl = field[r * COLS + c] / maxV;
+                    const vtr = field[r * COLS + c + 1] / maxV;
+                    const vbr = field[(r + 1) * COLS + c + 1] / maxV;
+                    const vbl = field[(r + 1) * COLS + c] / maxV;
+                    const idx = (vtl >= level ? 8 : 0) | (vtr >= level ? 4 : 0)
+                              | (vbr >= level ? 2 : 0) | (vbl >= level ? 1 : 0);
+                    for (const [e1, e2] of _MS_TABLE[idx]) {
+                        /* 边中点插值 */
+                        let x1, y1, x2, y2, t0;
+                        if (e1 === 0) { t0 = (level-vtl)/(vtr-vtl+1e-9); x1=x0+t0*cw; y1=y0; }
+                        else if (e1===1){ t0=(level-vtr)/(vbr-vtr+1e-9); x1=x0+cw; y1=y0+t0*ch; }
+                        else if (e1===2){ t0=(level-vbl)/(vbr-vbl+1e-9); x1=x0+t0*cw; y1=y0+ch; }
+                        else            { t0=(level-vtl)/(vbl-vtl+1e-9); x1=x0; y1=y0+t0*ch; }
+                        if (e2 === 0) { t0 = (level-vtl)/(vtr-vtl+1e-9); x2=x0+t0*cw; y2=y0; }
+                        else if (e2===1){ t0=(level-vtr)/(vbr-vtr+1e-9); x2=x0+cw; y2=y0+t0*ch; }
+                        else if (e2===2){ t0=(level-vbl)/(vbr-vbl+1e-9); x2=x0+t0*cw; y2=y0+ch; }
+                        else            { t0=(level-vtl)/(vbl-vtl+1e-9); x2=x0; y2=y0+t0*ch; }
+                        ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+                    }
+                }
+            }
+            ctx.stroke();
+        }
+
+        /* 骨架轮廓（略提亮，与大图分层一致）*/
         drawSkeleton(ctx, mapped, fh, {
-            lw: 1.4,
-            bc: 'rgba(212,165,116,0.78)',
-            bc2: 'rgba(212,165,116,0.45)',
-            jr: 2.0,
-            jc: '#ebe7df',
+            lw: 0.92, bc: 'rgba(235,231,223,0.26)', bc2: 'rgba(212,165,116,0.22)',
+            jr: 1.35, jc: 'rgba(235,231,223,0.42)', headGlow: false, jointGlow: false,
         });
+
+        /* 横向扫描高光 */
+        scanY = (scanY + h / (60 * 8)) % h;
+        const sg = ctx.createLinearGradient(0, scanY - 24, 0, scanY + 24);
+        sg.addColorStop(0, 'transparent');
+        sg.addColorStop(0.5, 'rgba(212,165,116,0.13)');
+        sg.addColorStop(1, 'transparent');
+        ctx.fillStyle = sg; ctx.fillRect(0, scanY - 24, w, 48);
     });
 }
 
@@ -6532,6 +8316,24 @@ function initArtFlowPage() {
         drawPlateFlow(ctx, getW, getH, c, 'art-flow-hero', 'art-flow');
     }
     initArtFlowReel();
+    scheduleArtFlowShareVideosPlay();
+}
+
+/* 落地分享区 cover 视频：页面从隐藏切到可见时 autoplay 可能不触发，需延迟 play() */
+function scheduleArtFlowShareVideosPlay() {
+    const pg = document.getElementById('page-art-flow');
+    if (!pg || !pg.classList.contains('active')) return;
+    const videos = () => Array.from(pg.querySelectorAll('.art-flow-share-cover video'));
+    const go = () => {
+        const p = document.getElementById('page-art-flow');
+        if (!p || !p.classList.contains('active')) return;
+        videos().forEach((v) => v.play().catch(() => {}));
+    };
+    go();
+    requestAnimationFrame(() => requestAnimationFrame(go));
+    setTimeout(go, 50);
+    setTimeout(go, 200);
+    setTimeout(go, 600);
 }
 
 /* ─────────── ART · FLOW · 现场记录 3D Coverflow Reel (CIRCULAR) ───────────
@@ -6591,34 +8393,50 @@ function initArtFlowReel() {
         return Math.max(280, w * RADIUS_FACTOR);
     }
 
+    // 每张卡片直接按「最短偏移 × 角度」就位；stage 只负责透视,
+    // 不再叠加 rotateY. 这样无论 active 累积多少圈, 主卡都在 0° 正对相机.
     function applyTransforms(activeFloat) {
         const R = cylinderRadius();
-        // 整个 stage 绕 Y 轴反向旋转, 把目标卡片带到正前方
-        stage.style.transform = `translateZ(${-R * 0.4}px) rotateY(${-activeFloat * ANGLE_STEP}deg)`;
+        stage.style.transform = `translateZ(${-R * 0.4}px)`;
         cards.forEach((c, i) => {
-            // 圆柱位置: 先按自身角度旋转, 再沿局部 Z 轴推到圆柱表面
-            const angle = i * ANGLE_STEP;
-            // 主卡向前再"探出"一点, 强调聚焦感 (越接近主位 fwd 越大)
             const off = shortestOff(i - activeFloat);
             const abs = Math.abs(off);
             const fwd = Math.max(0, 1 - abs) * 56;
             c.style.transform =
                 `translate(-50%, -50%) ` +
-                `rotateY(${angle}deg) translateZ(${R + fwd}px)`;
+                `rotateY(${off * ANGLE_STEP}deg) ` +
+                `translateZ(${R + fwd}px)`;
             const hidden = abs > 2.4;
-            const opacity = hidden ? 0 : Math.max(0.18, 1 - abs * 0.18);
-            c.style.opacity = String(opacity);
-            // visibility:hidden delays on CSS transition so it waits for opacity fade,
-            // but when becoming visible we remove it immediately (no delay).
-            if (hidden) {
-                c.style.visibility = 'hidden';
-            } else {
-                c.style.visibility = '';
-            }
+            c.style.opacity = String(hidden ? 0 : Math.max(0.16, 0.95 - abs * 0.32));
             c.style.filter = abs < 0.5
                 ? 'none'
-                : `brightness(${Math.max(0.30, 0.75 - abs * 0.10)}) blur(${Math.min(abs * 0.6, 2.0)}px)`;
+                : `brightness(${Math.max(0.28, 0.82 - abs * 0.14)}) blur(${Math.min(abs * 1.0, 2.8)}px)`;
             c.style.zIndex = String(hidden ? 0 : 200 - Math.round(abs * 10));
+        });
+    }
+
+    // 当一次 step 会让某卡片沿「环形最短路径」从 +N/2 端跳到 -N/2 端
+    // (shortestOff 在 ±N/2 处的离散翻转), 若走 CSS transition 会从
+    // 正前方横扫过屏幕. 这里检测到此类卡片, 先无过渡瞬移到新位置
+    // (它此刻 opacity≈0, 位于圆柱背面, 不可见), 再走正常过渡.
+    function teleportWrappingCards(prevActive, nextActive, stepBy) {
+        const threshold = Math.max(Math.abs(stepBy), 1) + 0.5;
+        const R = cylinderRadius();
+        cards.forEach((c, i) => {
+            const prevOff = shortestOff(i - prevActive);
+            const newOff = shortestOff(i - nextActive);
+            if (Math.abs(newOff - prevOff) <= threshold) return;
+            const absNew = Math.abs(newOff);
+            const fwd = Math.max(0, 1 - absNew) * 56;
+            const prevTransition = c.style.transition;
+            c.style.transition = 'none';
+            c.style.opacity = '0';
+            c.style.transform =
+                `translate(-50%, -50%) ` +
+                `rotateY(${newOff * ANGLE_STEP}deg) ` +
+                `translateZ(${R + fwd}px)`;
+            void c.offsetHeight; // force reflow so next style change animates
+            c.style.transition = prevTransition;
         });
     }
 
@@ -6645,8 +8463,11 @@ function initArtFlowReel() {
 
     // 步进: 永远以"最短路径"调整 active 的无界值
     function step(by) {
-        state.active = state.active + by;
+        const prevActive = state.active;
+        const nextActive = state.active + by;
         stage.classList.remove('is-dragging');
+        teleportWrappingCards(prevActive, nextActive, by);
+        state.active = nextActive;
         applyTransforms(state.active);
         applyActiveSideEffects();
     }
@@ -10915,21 +12736,24 @@ function exp2DrawAudioFx(ctx, w, h, now, a) {
 }
 
 /* ═════════════════════════════════════════════════════════════
-   AGENT API — 根地址来自 api-config.js（window.__DANCENET_API_ORIGIN__）
-   或调试：?api=https%3A%2F%2F主机%2F子路径 （需 URL 编码）
+   AGENT API — 开发阶段占位（不发起网络请求；正式环境再接后端或第三方 API）
 ═════════════════════════════════════════════════════════════ */
-function resolveApiOrigin() {
-    if (typeof window !== 'undefined' && window.__DANCENET_API_ORIGIN__)
-        return String(window.__DANCENET_API_ORIGIN__).replace(/\/$/, '');
-    try {
-        const u = new URLSearchParams(window.location.search);
-        const q = u.get('api');
-        if (q) return decodeURIComponent(q).replace(/\/$/, '');
-    } catch (_) {}
-    return '';
+const AGENT_API_UNAVAILABLE_MSG = '未连接 API 服务，请联系我们进行授权。';
+
+function agentApiUnavailable() {
+    showToast(AGENT_API_UNAVAILABLE_MSG, 'warn', '服务未就绪');
 }
-const API_ORIGIN = resolveApiOrigin();
-const API_BASE = API_ORIGIN ? API_ORIGIN + '/api' : '/api';
+
+/** 「全量分析」与「仅姿态分析」共用：需先选视频，再提示未接入服务 */
+function tryStartAgentAnalysis() {
+    const videoFile = document.getElementById('videoFile').files[0];
+    if (!videoFile) {
+        showToast('请先选择或拖入一个视频文件。', 'warn', '未选择文件');
+        return;
+    }
+    agentApiUnavailable();
+}
+
 let currentResult = null;
 let currentVideoFile = null;
 
@@ -10957,7 +12781,7 @@ if (uploadZone) {
 }
 
 function downloadResults() {
-    if (!currentResult) { alert('暂无可下载的分析结果。'); return; }
+    if (!currentResult) { showToast('暂无可下载的分析结果，请先完成一次分析。', 'warn'); return; }
     const blob = new Blob([JSON.stringify(currentResult, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -10998,39 +12822,7 @@ function showResult() {
     document.getElementById('result-block').classList.remove('hidden');
 }
 
-async function startPoseAnalysis() {
-    const videoFile = document.getElementById('videoFile').files[0];
-    if (!videoFile) { alert('请先选择视频文件'); return; }
-    currentVideoFile = videoFile;
-    document.getElementById('poseAnalyzeBtn').disabled = true;
-    showProgress();
-    try {
-        updateStep(1, 'active', '上传中…');
-        updateProgress(10);
-        const fd = new FormData(); fd.append('video', videoFile);
-        const up = await fetch(`${API_BASE}/upload`, { method: 'POST', body: fd });
-        if (!up.ok) throw new Error('上传失败');
-        const { filename } = await up.json();
-        updateStep(1, 'done', `已接收 · ${filename}`);
-        updateProgress(30);
-
-        updateStep(2, 'active', '读取姿态…');
-        const an = await fetch(`${API_BASE}/analyze`, {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ filename })
-        });
-        if (!an.ok) { const e = await an.json(); throw new Error(e.error || '分析失败'); }
-        const result = await an.json();
-        updateStep(2, 'done', '已提取姿态');
-        updateStep(3, 'done', '时序分析完成');
-        updateProgress(100);
-        showPoseResults(result);
-    } catch(e) {
-        alert('错误：' + e.message);
-    } finally {
-        document.getElementById('poseAnalyzeBtn').disabled = false;
-    }
-}
+function startPoseAnalysis() { tryStartAgentAnalysis(); }
 
 function showPoseResults(result) {
     currentResult = result;
@@ -11047,205 +12839,49 @@ function showPoseResults(result) {
     window.scrollTo({ top: document.getElementById('result-block').offsetTop - 100, behavior: 'smooth' });
 }
 
-async function startWaveAnalysis() {
-    const videoFile = document.getElementById('videoFile').files[0];
-    if (!videoFile) { alert('请先选择视频文件'); return; }
-    currentVideoFile = videoFile;
-    document.getElementById('waveAnalyzeBtn').disabled = true;
-    showProgress();
-    try {
-        updateStep(1, 'active', '上传中…');
-        updateProgress(10);
-        const fd = new FormData(); fd.append('video', videoFile);
-        const up = await fetch(`${API_BASE}/upload`, { method: 'POST', body: fd });
-        if (!up.ok) throw new Error('上传失败：' + up.status);
-        const { filename } = await up.json();
-        updateStep(1, 'done', `已接收 · ${filename}`);
-        updateProgress(28);
-
-        updateStep(2, 'active', '提取运动中…');
-        updateProgress(45);
-        const an = await fetch(`${API_BASE}/analyze`, {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ filename })
-        });
-        if (!an.ok) { const e = await an.json(); throw new Error(e.error || '姿态分析失败'); }
-        await an.json();
-        updateStep(2, 'done', '已提取姿态');
-        updateProgress(62);
-
-        updateStep(3, 'active', '计算 Wave 分数…');
-        const wv = await fetch(`${API_BASE}/wave_analyze`, {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ filename, arm: 'both' })
-        });
-        if (!wv.ok) { const e = await wv.json(); throw new Error(e.error || 'Wave 分析失败'); }
-        const result = await wv.json();
-        updateStep(3, 'done', 'Wave 已计算');
-        updateProgress(100);
-        showWaveResults(result);
-    } catch(e) {
-        alert('错误：' + e.message);
-        updateStep(2, 'active', '✕ ' + e.message);
-    } finally {
-        document.getElementById('waveAnalyzeBtn').disabled = false;
-    }
-}
+function startWaveAnalysis() { tryStartAgentAnalysis(); }
 
 function showWaveResults(result) {
     currentResult = result;
-    const wave = result.wave_analysis;
-    const left = wave.left_arm, right = wave.right_arm;
+    const wave = result.wave_analysis || {};
+    const left = wave.left_arm || {}, right = wave.right_arm || {};
+    const pose = result.agent1_pose_analysis || {};
+    const temporal = result.agent2_temporal_analysis || {};
     showResult();
     document.getElementById('statsGrid').innerHTML = `
-        <div class="r-metric"><div class="r-metric-val">${wave.overall_score}</div><div class="r-metric-label">综合</div></div>
-        <div class="r-metric"><div class="r-metric-val">${left.total_score}</div><div class="r-metric-label">左臂</div></div>
-        <div class="r-metric"><div class="r-metric-val">${right.total_score}</div><div class="r-metric-label">右臂</div></div>
-        <div class="r-metric"><div class="r-metric-val">${result.visualization ? '✓' : '✕'}</div><div class="r-metric-label">可视化</div></div>
+        <div class="r-metric"><div class="r-metric-val">${wave.overall_score ?? '—'}</div><div class="r-metric-label">综合评分</div></div>
+        <div class="r-metric"><div class="r-metric-val">${pose.duration ?? '—'}<span style="font-size:20px;">s</span></div><div class="r-metric-label">时长</div></div>
+        <div class="r-metric"><div class="r-metric-val">${temporal.estimated_bpm ?? '—'}</div><div class="r-metric-label">BPM</div></div>
+        <div class="r-metric"><div class="r-metric-val">${result.skill_level ?? '—'}</div><div class="r-metric-label">水平</div></div>
     `;
     document.getElementById('sidebar-download').disabled = false;
     window.scrollTo({ top: document.getElementById('result-block').offsetTop - 100, behavior: 'smooth' });
 }
 
-async function getLLMReport() {
-    const btn = document.getElementById('getLlmBtn');
-    const card = document.getElementById('llm-report-card');
-    const loading = document.getElementById('llm-loading');
-    const content = document.getElementById('llm-report-content');
-    const chatCard = document.getElementById('chat-card');
+function getLLMReport() { agentApiUnavailable(); }
 
-    card.classList.remove('hidden');
-    loading.classList.remove('hidden');
-    content.classList.add('hidden');
-    chatCard.classList.add('hidden');
-    btn.disabled = true; btn.textContent = '正在生成…';
-
-    let prog = 0;
-    const iv = setInterval(() => {
-        prog = Math.min(90, prog + Math.random()*15);
-        document.getElementById('llm-progress').style.width = prog + '%';
-    }, 500);
-
-    try {
-        const res = await fetch(`${API_BASE}/llm_report`, {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({
-                filename: currentResult.file,
-                wave_result: currentResult,
-                video_filename: currentVideoFile?.name
-            })
-        });
-        const data = await res.json();
-        clearInterval(iv);
-        document.getElementById('llm-progress').style.width = '100%';
-
-        if (data.error) {
-            alert('失败：' + data.error);
-        } else {
-            const text = data.report;
-            const qRegex = /👉 提问：(.+?)(?=\n|👉 提问：|$)/g;
-            let qs = [], m;
-            while ((m = qRegex.exec(text)) !== null) qs.push(m[1].trim());
-            const cleanText = text.replace(/💬 导师随堂问答[\s\S]*/, '').trim();
-
-            loading.classList.add('hidden');
-            content.classList.remove('hidden');
-            content.innerHTML = cleanText;
-
-            const qContainer = document.getElementById('suggested-questions');
-            const qBtns = document.getElementById('question-buttons');
-            if (qs.length > 0) {
-                qBtns.innerHTML = '';
-                qs.forEach(q => {
-                    const b = document.createElement('button');
-                    b.className = 'q-pill'; b.textContent = q;
-                    b.onclick = () => handleQuestionClick(q);
-                    qBtns.appendChild(b);
-                });
-                qContainer.classList.remove('hidden');
-            }
-
-            const vParts = text.split('推荐视频：');
-            const vContainer = document.getElementById('video-button-container');
-            vContainer.innerHTML = '';
-            if (vParts.length > 1) {
-                const [vTitle, vUrl] = vParts[1].split('|').map(s => s.trim());
-                if (vTitle && vUrl) {
-                    const vb = document.createElement('button');
-                    vb.className = 'btn-secondary';
-                    vb.style.cssText = 'width:100%; justify-content:center;';
-                    vb.textContent = '▷ ' + vTitle;
-                    vb.onclick = () => showVideoModal(vUrl);
-                    vContainer.appendChild(vb);
-                    vContainer.classList.remove('hidden');
-                }
-            }
-
-            chatCard.classList.remove('hidden');
-        }
-        btn.textContent = '重新生成读解';
-        btn.disabled = false;
-    } catch(e) {
-        clearInterval(iv);
-        alert('请求失败：' + e.message);
-        btn.disabled = false;
-        btn.textContent = '生成策展式读解 →';
-    }
-}
-
-async function handleQuestionClick(q) {
+function handleQuestionClick(q) {
     document.getElementById('suggested-questions').classList.add('hidden');
-    await sendChatMessageDirect(q);
+    sendChatMessageDirect(q);
 }
 
-async function sendChatMessageDirect(message) {
-    if (!message || !currentResult) return;
-    const msgs = document.getElementById('chat-messages');
-    // Remove empty hint
-    const empty = msgs.querySelector('.msg-empty');
-    if (empty) empty.remove();
-    const userDiv = document.createElement('div');
-    userDiv.className = 'msg-user'; userDiv.textContent = message;
-    msgs.appendChild(userDiv);
-    const loadDiv = document.createElement('div');
-    loadDiv.className = 'msg-ai';
-    loadDiv.innerHTML = '<span class="report-loading-dots"><span></span><span></span><span></span></span>';
-    msgs.appendChild(loadDiv);
-    msgs.scrollTop = msgs.scrollHeight;
-    try {
-        const res = await fetch(`${API_BASE}/chat`, {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ question: message, previous_data: currentResult })
-        });
-        const data = await res.json();
-        msgs.removeChild(loadDiv);
-        const aiDiv = document.createElement('div');
-        aiDiv.className = 'msg-ai';
-        aiDiv.innerHTML = data.error
-            ? `<span style="color:var(--ember)">错误：${data.error}</span>`
-            : data.reply.replace(/\n/g, '<br>');
-        msgs.appendChild(aiDiv);
-        msgs.scrollTop = msgs.scrollHeight;
-    } catch(e) {
-        if (loadDiv.parentNode) msgs.removeChild(loadDiv);
-        alert('发送失败：' + e.message);
-    }
+function sendChatMessageDirect(message) {
+    if (!message) return;
+    agentApiUnavailable();
 }
 
 function sendChatPreset(text) {
-    if (!currentResult) { alert('请先完成一次分析。'); return; }
     const inp = document.getElementById('chat-input');
     if (inp) inp.value = '';
     sendChatMessageDirect(text);
 }
 
-async function sendChatMessage() {
+function sendChatMessage() {
     const inp = document.getElementById('chat-input');
     const msg = inp.value.trim();
     if (!msg) return;
-    if (!currentResult) { alert('请先完成一次分析。'); return; }
     inp.value = '';
-    await sendChatMessageDirect(msg);
+    sendChatMessageDirect(msg);
 }
 
 function showVideoModal(url) {
@@ -11535,13 +13171,111 @@ function bindInteractivePlateHover() {
     wrap.addEventListener('mouseleave', () => { vid.pause(); });
 }
 
+/* ═════════════════════════════════════════════════════════════
+   TOAST NOTIFICATION SYSTEM
+   showToast(msg, type = 'error'|'warn'|'ok', title?)
+═════════════════════════════════════════════════════════════ */
+(function() {
+    const HOST_ID = 'dnl-toast-host';
+    const ICONS = { error: '✕', warn: '!', ok: '✓' };
+    const LABELS = { error: '出错了', warn: '提示', ok: '完成' };
+    const DURATION = { error: 6000, warn: 4000, ok: 3000 };
+
+    function getHost() {
+        let h = document.getElementById(HOST_ID);
+        if (!h) {
+            h = document.createElement('div');
+            h.id = HOST_ID;
+            h.setAttribute('role', 'status');
+            h.setAttribute('aria-live', 'polite');
+            document.body.appendChild(h);
+        }
+        return h;
+    }
+
+    window.showToast = function(msg, type, title) {
+        type = type || 'error';
+        const host = getHost();
+        const el = document.createElement('div');
+        el.className = `dnl-toast dnl-toast--${type}`;
+        el.setAttribute('role', 'alert');
+        el.innerHTML = `
+            <span class="dnl-toast__icon" aria-hidden="true">${ICONS[type] || '!'}</span>
+            <div class="dnl-toast__body">
+                <div class="dnl-toast__title">${title || LABELS[type] || '提示'}</div>
+                <div class="dnl-toast__msg">${msg}</div>
+            </div>
+            <button class="dnl-toast__close" aria-label="关闭通知" onclick="this.parentNode.remove()">×</button>
+        `.trim();
+        host.appendChild(el);
+        const dur = DURATION[type] || 5000;
+        setTimeout(() => {
+            if (!el.parentNode) return;
+            el.classList.add('is-exiting');
+            el.addEventListener('animationend', () => el.remove(), { once: true });
+        }, dur);
+    };
+})();
+
+function initReelPlayer() {
+    const player = document.getElementById('reel-player');
+    if (!player) return;
+
+    const preview = player.querySelector('.reel-card--preview');
+    const embed = player.querySelector('.reel-embed');
+    const iframe = embed?.querySelector('iframe');
+    const closeBtn = embed?.querySelector('.reel-embed-close');
+    const bvid = player.dataset.bvid;
+    if (!preview || !embed || !iframe || !bvid) return;
+
+    function openPlayer() {
+        if (!iframe.src) {
+            iframe.src = `https://player.bilibili.com/player.html?bvid=${encodeURIComponent(bvid)}&autoplay=1&high_quality=1`;
+        }
+        player.classList.add('is-playing');
+        embed.removeAttribute('aria-hidden');
+        closeBtn?.focus();
+    }
+
+    function closePlayer() {
+        player.classList.remove('is-playing');
+        embed.setAttribute('aria-hidden', 'true');
+        iframe.removeAttribute('src');
+        preview.focus();
+    }
+
+    preview.addEventListener('click', openPlayer);
+    closeBtn?.addEventListener('click', closePlayer);
+    player.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && player.classList.contains('is-playing')) {
+            e.preventDefault();
+            closePlayer();
+        }
+    });
+}
+
 /* ─────────── Initial init ─────────── */
 hydrateStaticAssetUrls();
+hydratePageMedia(document.querySelector('.page.active'));
 bindInteractivePlateHover();
 hydrateAwakenPlateFromStorage();
 setupPlateAwakenViewportPlay();
-document.getElementById('nav-home').classList.add('active');
-initHomeCanvases();
+initReelPlayer();
+
+// Hash 路由初始化：刷新 / 直链 / 书签均可定位到正确页面
+(function() {
+    const initPage = location.hash.slice(1) || 'home';
+    if (initPage !== 'home' && document.getElementById('page-' + initPage)) {
+        showPage(initPage);
+    } else {
+        // 默认首页：手动设置 hash 与 title，不重复触发完整 showPage 流程
+        history.replaceState({ page: 'home' }, '', '#home');
+        applyPageMeta('home');
+        document.getElementById('nav-home').classList.add('active');
+        document.getElementById('nav-home').setAttribute('aria-current', 'page');
+        initHomeCanvases();
+    }
+})();
 </script>
 </body>
 </html>
