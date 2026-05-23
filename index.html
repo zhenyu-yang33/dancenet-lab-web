@@ -5750,7 +5750,13 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
         padding: 24px 20px;
     }
     .ex-plates {
-        gap: 12px;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding-bottom: 64px;
+    }
+    .ex-plate {
+        aspect-ratio: 4 / 5;
+        max-height: min(78vw, 480px);
     }
     .manifesto {
         padding: 48px 20px;
@@ -5946,13 +5952,72 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
         line-height: 1.35;
     }
 
+    /* ── Art-flow · 子页 mobile ── */
+    .art-flow-hero {
+        padding-top: calc(var(--nav-h) + env(safe-area-inset-top, 0px) + 48px);
+        padding-bottom: 48px;
+    }
+    .art-flow-hero-title {
+        font-size: clamp(40px, 11vw, 54px);
+    }
+    .art-flow-hero-meta {
+        flex-wrap: wrap;
+        gap: 10px 16px;
+    }
+    .art-flow-hero-tags {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+    .art-flow-hero-tag {
+        text-align: center;
+        font-size: 9.5px;
+        padding: 10px 8px;
+    }
+    .art-flow-hero-canvas-wrap {
+        aspect-ratio: 4 / 5;
+        max-height: min(72vw, 420px);
+    }
+    .art-flow-hero-cap {
+        font-size: 8px;
+        letter-spacing: 0.14em;
+        white-space: normal;
+        text-align: center;
+        max-width: calc(100% - 32px);
+        line-height: 1.4;
+    }
+    .art-flow-principle,
+    .art-flow-cases,
+    .art-flow-share {
+        padding-top: 48px;
+        padding-bottom: 48px;
+    }
+    .art-flow-section-head .lede {
+        font-size: 15px;
+    }
+    .art-flow-share-title {
+        font-size: clamp(22px, 6vw, 28px);
+    }
+    .horiz-card-wall .art-flow-share-text {
+        padding: 18px 18px 22px;
+    }
+    .horiz-card-wall .art-flow-share-meta {
+        gap: 10px 14px;
+    }
+
     /* ── Home · horizontal card walls ── */
+    .horiz-card-wall {
+        margin-inline: 0;
+    }
     .stories-scroll,
     .horiz-card-wall .art-flow-share-list.horiz-card-wall__track {
         scroll-padding-inline: max(20px, env(safe-area-inset-left, 0px));
         overscroll-behavior-x: contain;
         gap: 16px;
         -webkit-overflow-scrolling: touch;
+    }
+    .horiz-card-wall .art-flow-share-item {
+        flex: 0 0 min(320px, calc(100vw - 48px));
     }
     .story-card {
         flex: 0 0 min(268px, 80vw);
@@ -5969,12 +6034,14 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
         background: rgba(10, 9, 8, 0.5);
         border: 1px solid rgba(235, 231, 223, 0.08);
         border-radius: 2px;
+        right: max(12px, env(safe-area-inset-right, 0px));
     }
     .horiz-card-wall__fade {
-        width: 48px;
+        width: 36px;
     }
     .horiz-card-wall__foot {
         padding-top: 4px;
+        padding-bottom: max(20px, env(safe-area-inset-bottom, 0px));
     }
 
     /* ── Home · experiment cards ── */
@@ -6111,6 +6178,82 @@ a.nav-submenu-link { -webkit-tap-highlight-color: transparent; }
     .about-hero-tag {
         font-size: 10px;
         padding: 10px 14px;
+    }
+}
+
+/* ═════════════════════════════════════════════════════════════
+   MOBILE · Phase 3 — issue bar + manifesto readability
+   Scoped to max-width: 768px / 480px only
+═════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    /* P1 · issue bar：两行静态展示，去掉横滑 ticker */
+    .issue-bar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 14px;
+        overflow-x: visible;
+        padding-top: 14px;
+        padding-bottom: 14px;
+    }
+    .issue-bar > .dot {
+        display: none;
+    }
+    .issue-bar > div:not(.dot) {
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        color: var(--paper-soft);
+        white-space: normal;
+        line-height: 1.45;
+    }
+    .issue-bar > div:nth-child(1) {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    .issue-bar > div:nth-child(3) {
+        grid-column: 2;
+        grid-row: 1;
+    }
+    .issue-bar > div:nth-child(5) {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+    .issue-bar > div:nth-child(n+7) {
+        display: none;
+    }
+    .issue-bar strong {
+        color: var(--paper);
+        font-weight: 500;
+    }
+
+    /* P2 · 宣言区：段落间距与行高 */
+    .manifesto {
+        padding-top: 52px;
+        padding-bottom: 52px;
+    }
+    .manifesto::before {
+        font-size: clamp(120px, 32vw, 200px);
+        top: 20px;
+    }
+    .manifesto .eyebrow {
+        margin-bottom: 22px;
+    }
+    .manifesto-quote {
+        font-size: clamp(24px, 6.4vw, 34px);
+        line-height: 1.28;
+        margin-bottom: 28px;
+    }
+    .manifesto-body {
+        font-size: 16px;
+        line-height: 1.88;
+        color: var(--paper-soft);
+    }
+    .manifesto-body p {
+        margin-bottom: 1.28em;
+    }
+    .manifesto-body p:first-child::first-letter {
+        font-size: 3.2em;
+        line-height: 0.92;
+        padding: 4px 10px 0 0;
     }
 }
 
@@ -9370,6 +9513,10 @@ function initArtFlowPage() {
     if (c) {
         const { ctx, getW, getH } = setupCanvas(c);
         drawPlateFlow(ctx, getW, getH, c, 'art-flow-hero', 'art-flow');
+        requestAnimationFrame(() => {
+            window.dispatchEvent(new Event('resize'));
+            dncNotifyDecorLoops();
+        });
     }
     initArtFlowReel();
     scheduleArtFlowShareVideosPlay();
@@ -9656,13 +9803,23 @@ function rgbToHsl(r, g, b) {
 */
 function drawPlateFlow(ctx, getW, getH, canvasEl, loopId, pageId) {
     const mouse = { x: -9999, y: -9999, lastMove: 0 };
-    canvasEl.addEventListener('mousemove', e => {
+    const syncPointer = (clientX, clientY) => {
         const r = canvasEl.getBoundingClientRect();
-        mouse.x = e.clientX - r.left;
-        mouse.y = e.clientY - r.top;
+        mouse.x = clientX - r.left;
+        mouse.y = clientY - r.top;
         mouse.lastMove = performance.now();
-    });
+    };
+    canvasEl.addEventListener('mousemove', e => syncPointer(e.clientX, e.clientY));
     canvasEl.addEventListener('mouseleave', () => {
+        mouse.x = -9999; mouse.y = -9999;
+    });
+    canvasEl.addEventListener('touchstart', e => {
+        if (e.touches[0]) syncPointer(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+    canvasEl.addEventListener('touchmove', e => {
+        if (e.touches[0]) syncPointer(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+    canvasEl.addEventListener('touchend', () => {
         mouse.x = -9999; mouse.y = -9999;
     });
 
